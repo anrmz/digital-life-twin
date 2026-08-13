@@ -1,0 +1,438 @@
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import {
+  LucideCheck,
+  LucideClock,
+  LucideHistory,
+  LucideListChecks,
+  LucideListPlus,
+  LucideNotebookPen,
+  LucidePencil,
+  LucideTrash2,
+  LucideX,
+} from '@lucide/angular';
+import gsap from 'gsap';
+import { LanguageService } from '../../../../core/services/language.service';
+import { Badge, type BadgeVariant } from '../../../../shared/ui/badge/badge';
+import { Button } from '../../../../shared/ui/button/button';
+import {
+  CATEGORY_KEYS,
+  PRIORITY_KEYS,
+  STATUS_KEYS,
+  dueLabel,
+  durationLabel,
+  isOverdue,
+  type Task,
+} from '../../models/task.models';
+import { TaskService } from '../../services/task.service';
+
+@Component({
+  selector: 'app-task-detail',
+  imports: [
+    Button,
+    Badge,
+    FormsModule,
+    LucideX,
+    LucidePencil,
+    LucideTrash2,
+    LucideCheck,
+    LucideClock,
+    LucideListChecks,
+    LucideListPlus,
+    LucideNotebookPen,
+    LucideHistory,
+  ],
+  template: `
+    <div class="fixed inset-0 z-40" role="dialog" aria-modal="true" [attr.aria-label]="task()?.title">
+      <div class="absolute inset-0 bg-navy-900/40 backdrop-blur-[2px]" (click)="closed.emit()"></div>
+      <aside
+        class="details-panel absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l border-line bg-background shadow-drawer"
+      >
+        @if (task(); as task) {
+          <header class="flex items-start justify-between gap-3 border-b border-line px-5 py-4">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <app-badge [variant]="statusVariant()" [dot]="statusInfo().dot">
+                  {{ statusInfo().label }}
+                </app-badge>
+                <app-badge variant="outline">{{ categoryLabel(task.category) }}</app-badge>
+              </div>
+              <h3 class="mt-1.5 font-display text-lg font-semibold tracking-tight text-primary">
+                {{ task.title }}
+              </h3>
+            </div>
+            <button
+              type="button"
+              appButton
+              variant="ghost"
+              size="icon"
+              aria-label="Fermer les détails"
+              (click)="closed.emit()"
+            >
+              <svg lucideX class="h-4 w-4" aria-hidden="true"></svg>
+            </button>
+          </header>
+
+          <div class="flex-1 overflow-y-auto px-5 py-4">
+            @if (task.description) {
+              <p class="text-sm leading-relaxed text-ink-muted">{{ task.description }}</p>
+            }
+
+            <dl class="mt-5 grid grid-cols-2 gap-2">
+              <div class="rounded-panel border border-line bg-surface-muted/50 p-3">
+                <dt class="text-[11px] font-medium text-ink-faint">Statut</dt>
+                <dd class="mt-0.5 text-sm font-semibold text-primary">
+                  {{ statusLabel(task.status) }}
+                </dd>
+              </div>
+              <div class="rounded-panel border border-line bg-surface-muted/50 p-3">
+                <dt class="text-[11px] font-medium text-ink-faint">Priorité</dt>
+                <dd class="mt-0.5 text-sm font-semibold text-primary">
+                  {{ priorityLabel(task.priority) }}
+                </dd>
+              </div>
+              <div class="rounded-panel border border-line bg-surface-muted/50 p-3">
+                <dt class="text-[11px] font-medium text-ink-faint">Échéance</dt>
+                <dd class="mt-0.5 text-sm font-semibold text-primary">
+                  {{ dueLabel(task.dueDate) }}
+                </dd>
+              </div>
+              <div class="rounded-panel border border-line bg-surface-muted/50 p-3">
+                <dt class="text-[11px] font-medium text-ink-faint">Durée</dt>
+                <dd class="mt-0.5 text-sm font-semibold text-primary">
+                  {{ durationLabel(task.duration) }}
+                </dd>
+              </div>
+            </dl>
+
+            <!-- Progression -->
+            <section class="mt-5 rounded-card border border-line bg-surface p-4 shadow-soft">
+              <div class="flex items-center justify-between gap-3">
+                <h4 class="text-sm font-semibold text-primary">Progression</h4>
+                <span class="font-display text-lg font-bold tabular-nums text-accent-dark">
+                  {{ progress() }}%
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="5"
+                class="mt-3 h-1.5 w-full cursor-pointer accent-teal-500"
+                [value]="progress()"
+                aria-label="Progression de la tâche"
+                (input)="onProgress($event)"
+              />
+              <p class="mt-2 text-[11px] text-ink-faint">
+                {{ progressNote() }}
+              </p>
+            </section>
+
+            <!-- Notes -->
+            <section class="mt-4 rounded-card border border-line bg-surface p-4 shadow-soft">
+              <div class="flex items-center justify-between gap-3">
+                <h4 class="flex items-center gap-2 text-sm font-semibold text-primary">
+                  <svg lucideNotebookPen class="h-4 w-4 text-accent-dark" aria-hidden="true"></svg>
+                  Notes
+                </h4>
+                @if (notesDirty()) {
+                  <button appButton variant="ghost" size="sm" (click)="saveNotes()">Enregistrer</button>
+                }
+              </div>
+              <textarea
+                class="mt-2.5 w-full resize-none rounded-panel border border-line bg-background px-3 py-2 text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                rows="3"
+                placeholder="Ajouter une note…"
+                aria-label="Notes de la tâche"
+                [ngModel]="notesDraft()"
+                (ngModelChange)="notesDraft.set($event)"
+              ></textarea>
+              @if (notesSaved()) {
+                <p class="mt-1.5 text-[11px] font-medium text-success">Notes enregistrées.</p>
+              }
+            </section>
+
+            <!-- Sous-tâches -->
+            <section class="mt-4 rounded-card border border-line bg-surface p-4 shadow-soft">
+              <h4 class="flex items-center gap-2 text-sm font-semibold text-primary">
+                <svg lucideListChecks class="h-4 w-4 text-accent-dark" aria-hidden="true"></svg>
+                Sous-tâches
+                <span class="text-xs font-medium text-ink-faint">
+                  ({{ doneCount() }}/{{ task.subtasks.length }})
+                </span>
+              </h4>
+
+              @if (task.subtasks.length > 0) {
+                <ul class="mt-3 space-y-1.5">
+                  @for (subtask of task.subtasks; track subtask.id) {
+                    <li class="group flex items-center gap-2.5 rounded-panel px-2 py-1.5 transition-colors hover:bg-surface-muted">
+                      <button
+                        type="button"
+                        class="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-md border transition-all duration-200"
+                        [class.border-accent]="subtask.done"
+                        [class.bg-accent]="subtask.done"
+                        [class.text-white]="subtask.done"
+                        [class.border-line-strong]="!subtask.done"
+                        [class.text-transparent]="!subtask.done"
+                        [attr.aria-label]="(subtask.done ? 'Marquer comme non faite : ' : 'Marquer comme faite : ') + subtask.title"
+                        (click)="service.toggleSubtask(task.id, subtask.id)"
+                      >
+                        <svg lucideCheck class="h-3 w-3" stroke-width="3" aria-hidden="true"></svg>
+                      </button>
+                      <span
+                        class="min-w-0 flex-1 text-sm text-ink"
+                        [class.line-through]="subtask.done"
+                        [class.text-ink-faint]="subtask.done"
+                      >
+                        {{ subtask.title }}
+                      </span>
+                      <button
+                        type="button"
+                        class="flex h-6 w-6 shrink-0 items-center justify-center rounded-panel text-ink-faint opacity-0 transition-all hover:bg-danger-light hover:text-danger group-hover:opacity-100"
+                        [attr.aria-label]="'Supprimer la sous-tâche ' + subtask.title"
+                        (click)="service.removeSubtask(task.id, subtask.id)"
+                      >
+                        <svg lucideX class="h-3.5 w-3.5" aria-hidden="true"></svg>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="mt-3 text-xs text-ink-faint">Aucune sous-tâche pour le moment.</p>
+              }
+
+              <div class="mt-3 flex gap-2">
+                <input
+                  class="h-9 min-w-0 flex-1 rounded-panel border border-line bg-background px-3 text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  placeholder="Ajouter une sous-tâche…"
+                  aria-label="Nouvelle sous-tâche"
+                  [ngModel]="subtaskDraft()"
+                  (ngModelChange)="subtaskDraft.set($event)"
+                  (keydown.enter)="addSubtask()"
+                />
+                <button
+                  appButton
+                  variant="secondary"
+                  size="sm"
+                  type="button"
+                  [disabled]="!subtaskDraft().trim()"
+                  aria-label="Ajouter la sous-tâche"
+                  (click)="addSubtask()"
+                >
+                  <svg lucideListPlus class="h-4 w-4" aria-hidden="true"></svg>
+                  Ajouter
+                </button>
+              </div>
+            </section>
+
+            <!-- Activité -->
+            @if (task.activity.length > 0) {
+              <section class="mt-4">
+                <h4 class="flex items-center gap-2 text-sm font-semibold text-primary">
+                  <svg lucideHistory class="h-4 w-4 text-accent-dark" aria-hidden="true"></svg>
+                  Activité
+                </h4>
+                <ul class="mt-2.5 space-y-2">
+                  @for (item of task.activity; track item.id) {
+                    <li class="flex items-center gap-2.5 text-xs text-ink-muted">
+                      <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-accent/60"></span>
+                      <span>
+                        <svg lucideClock class="mr-1.5 inline h-3 w-3 text-ink-faint" aria-hidden="true"></svg>
+                        {{ item.label }}
+                      </span>
+                    </li>
+                  }
+                </ul>
+              </section>
+            }
+          </div>
+
+          <!-- Actions -->
+          <footer class="space-y-2 border-t border-line px-5 py-4">
+            <button appButton variant="secondary" size="md" class="w-full" (click)="service.toggleComplete(task.id)">
+              <svg lucideCheck class="h-4 w-4" aria-hidden="true"></svg>
+              {{ task.status === 'done' ? 'Marquer comme non terminée' : 'Marquer comme terminée' }}
+            </button>
+            <div class="grid grid-cols-2 gap-2">
+              <button appButton variant="outline" size="md" class="w-full" (click)="edit.emit(task)">
+                <svg lucidePencil class="h-4 w-4" aria-hidden="true"></svg>
+                Modifier
+              </button>
+              @if (!confirmDelete()) {
+                <button appButton variant="danger" size="md" class="w-full" (click)="confirmDelete.set(true)">
+                  <svg lucideTrash2 class="h-4 w-4" aria-hidden="true"></svg>
+                  Supprimer
+                </button>
+              } @else {
+                <div class="col-span-2 flex items-center justify-between gap-2 rounded-panel border border-danger/30 bg-danger-light/50 p-2 pl-3">
+                  <span class="text-xs font-medium text-danger">Confirmer la suppression ?</span>
+                  <div class="flex gap-1.5">
+                    <button appButton variant="ghost" size="sm" (click)="confirmDelete.set(false)">Annuler</button>
+                    <button appButton variant="danger" size="sm" (click)="deleteTask(task)">Supprimer</button>
+                  </div>
+                </div>
+              }
+            </div>
+          </footer>
+        }
+      </aside>
+    </div>
+  `,
+})
+export class TaskDetail {
+  readonly task = input.required<Task | null>();
+  readonly closed = output<void>();
+  readonly edit = output<Task>();
+
+  protected readonly service = inject(TaskService);
+
+  private readonly languageService = inject(LanguageService);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  protected readonly confirmDelete = signal(false);
+  protected readonly subtaskDraft = signal('');
+  protected readonly notesDraft = signal('');
+  protected readonly notesSaved = signal(false);
+  protected readonly notesDirty = signal(false);
+
+  private lastTaskId: string | null = null;
+
+  protected readonly CATEGORY_KEYS = CATEGORY_KEYS;
+  protected readonly PRIORITY_KEYS = PRIORITY_KEYS;
+  protected readonly STATUS_KEYS = STATUS_KEYS;
+  protected readonly dueLabel = dueLabel;
+  protected readonly durationLabel = durationLabel;
+
+  protected categoryLabel(value: Task['category']): string {
+    return this.languageService.translate(CATEGORY_KEYS[value]);
+  }
+
+  protected priorityLabel(value: Task['priority']): string {
+    return this.languageService.translate(PRIORITY_KEYS[value]);
+  }
+
+  protected statusLabel(value: Task['status']): string {
+    return this.languageService.translate(STATUS_KEYS[value]);
+  }
+
+  protected readonly progress = computed(() => {
+    const task = this.task();
+    if (!task) {
+      return 0;
+    }
+    return this.service.subtaskProgress(task);
+  });
+
+  protected readonly progressNote = computed(() => {
+    const task = this.task();
+    if (!task) {
+      return '';
+    }
+    if (task.subtasks.length > 0) {
+      return `Calculée depuis ${task.subtasks.length} sous-tâche${task.subtasks.length > 1 ? 's' : ''}.`;
+    }
+    return 'Progression manuelle de la tâche.';
+  });
+
+  protected readonly doneCount = computed(
+    () => this.task()?.subtasks.filter((sub) => sub.done).length ?? 0,
+  );
+
+  protected readonly statusInfo = computed(() => {
+    const task = this.task();
+    if (!task) {
+      return { label: '', variant: 'neutral' as BadgeVariant, dot: false };
+    }
+    if (isOverdue(task)) {
+      return { label: 'En retard', variant: 'danger' as BadgeVariant, dot: true };
+    }
+    switch (task.status) {
+      case 'done':
+        return { label: 'Terminée', variant: 'success' as BadgeVariant, dot: false };
+      case 'in-progress':
+        return { label: 'En cours', variant: 'accent' as BadgeVariant, dot: true };
+      default:
+        return { label: 'À faire', variant: 'neutral' as BadgeVariant, dot: false };
+    }
+  });
+
+  protected readonly statusVariant = computed(() => this.statusInfo().variant);
+
+  constructor() {
+    effect(() => {
+      const task = this.task();
+      if (!task || task.id !== this.lastTaskId) {
+        this.lastTaskId = task?.id ?? null;
+        this.notesDraft.set(task?.notes ?? '');
+        this.notesDirty.set(false);
+        this.confirmDelete.set(false);
+        this.subtaskDraft.set('');
+      } else {
+        this.notesDirty.set(this.notesDraft() !== task.notes);
+      }
+      if (this.reduced) {
+        return;
+      }
+      requestAnimationFrame(() => {
+        const panel = this.host.nativeElement.querySelector<HTMLElement>('.details-panel');
+        const overlay = this.host.nativeElement.querySelector<HTMLElement>('.fixed');
+        if (panel) {
+          gsap.fromTo(panel, { x: 48, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
+        }
+        if (overlay) {
+          gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' });
+        }
+      });
+    });
+  }
+
+  protected onProgress(event: Event): void {
+    const task = this.task();
+    if (!task) {
+      return;
+    }
+    const value = (event.target as HTMLInputElement).valueAsNumber;
+    this.service.updateProgress(task.id, value);
+  }
+
+  protected addSubtask(): void {
+    const task = this.task();
+    if (!task) {
+      return;
+    }
+    this.service.addSubtask(task.id, this.subtaskDraft());
+    this.subtaskDraft.set('');
+  }
+
+  protected saveNotes(): void {
+    const task = this.task();
+    if (!task) {
+      return;
+    }
+    this.service.updateNotes(task.id, this.notesDraft().trim());
+    this.notesDirty.set(false);
+    this.notesSaved.set(true);
+    setTimeout(() => this.notesSaved.set(false), 2000);
+  }
+
+  protected deleteTask(task: Task): void {
+    this.service.deleteTask(task.id);
+    this.closed.emit();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.closed.emit();
+  }
+}
