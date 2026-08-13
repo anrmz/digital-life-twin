@@ -21,7 +21,7 @@ import { BrandLogo } from '../../../../shared/components/brand-logo/brand-logo';
         ></div>
 
         <div class="relative flex h-full flex-col justify-between px-12 py-10 xl:px-16">
-          <app-brand-logo tone="light" />
+          <app-brand-logo tone="light" size="lg" />
 
           <div class="max-w-md">
             <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-teal-200">

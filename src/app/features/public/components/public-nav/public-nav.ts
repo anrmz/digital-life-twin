@@ -44,7 +44,7 @@ const LINKS: PublicLink[] = [
       <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:h-[72px] lg:px-8">
         <app-brand-logo tone="light" />
 
-        <nav class="hidden items-center gap-1 md:flex" [attr.aria-label]="primaryNavLabel()">
+        <nav class="hidden items-center gap-1 lg:flex" [attr.aria-label]="primaryNavLabel()">
           @for (link of links(); track link.path) {
             <a
               [routerLink]="link.path"
@@ -57,7 +57,7 @@ const LINKS: PublicLink[] = [
           }
         </nav>
 
-        <div class="hidden items-center gap-2.5 md:flex">
+        <div class="hidden items-center gap-2.5 lg:flex">
           <app-dropdown #publicLangDropdown="dropdown">
             <button
               appDropdownTrigger
@@ -114,7 +114,7 @@ const LINKS: PublicLink[] = [
         </div>
 
         <button
-          class="flex h-10 w-10 items-center justify-center rounded-panel text-white transition-colors duration-200 hover:bg-white/10 md:hidden"
+          class="flex h-10 w-10 items-center justify-center rounded-panel text-white transition-colors duration-200 hover:bg-white/10 lg:hidden"
           (click)="menuOpen.set(!menuOpen())"
           [attr.aria-expanded]="menuOpen()"
           [attr.aria-label]="menuOpen() ? closeMenuLabel() : openMenuLabel()"
@@ -129,7 +129,7 @@ const LINKS: PublicLink[] = [
 
       @if (menuOpen()) {
         <nav
-          class="border-t border-white/10 bg-primary-darker px-4 pb-5 pt-3 md:hidden"
+          class="border-t border-white/10 bg-primary-darker px-4 pb-5 pt-3 lg:hidden"
           [attr.aria-label]="mobileNavLabel()"
         >
           <div class="flex flex-col gap-1">
