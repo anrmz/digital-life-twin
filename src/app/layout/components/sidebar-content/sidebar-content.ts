@@ -8,12 +8,13 @@ import { LanguageService } from '../../../core/services/language.service';
   selector: 'app-sidebar-content',
   template: `
     <div class="flex h-full flex-col">
-      <app-brand-logo
-        tone="light"
-        size="md"
-        link="/dashboard"
-        class="h-16 w-full shrink-0 border-b border-white/5 px-5"
-      />
+      <div class="shrink-0 border-b border-white/5 px-5 pt-6 pb-5">
+        <app-brand-logo
+          tone="light"
+          size="md"
+          link="/dashboard"
+        />
+      </div>
 
       <div class="scrollbar-thin flex-1 overflow-y-auto px-3 py-4">
         @for (section of sections(); track $index) {
