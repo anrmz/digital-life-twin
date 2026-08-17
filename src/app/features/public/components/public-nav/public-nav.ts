@@ -63,7 +63,7 @@ const LINKS: PublicLink[] = [
           </div>
 
           <button
-            class="flex h-10 w-10 items-center justify-center rounded-panel text-white transition-colors duration-200 hover:bg-white/10 lg:hidden"
+            class="flex h-9 w-9 items-center justify-center rounded-panel text-white transition-colors duration-200 hover:bg-white/10 lg:hidden"
             (click)="menuOpen.set(!menuOpen())"
             [attr.aria-expanded]="menuOpen()"
             [attr.aria-label]="menuOpen() ? closeMenuLabel() : openMenuLabel()"

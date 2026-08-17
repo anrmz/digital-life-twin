@@ -19,7 +19,7 @@ import { LanguageService } from '../../../core/services/language.service';
         @for (section of sections(); track $index) {
           <div class="mb-6">
             <p
-              class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/40"
+              class="mb-2.5 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/50"
             >
               {{ section.label }}
             </p>
@@ -36,7 +36,7 @@ import { LanguageService } from '../../../core/services/language.service';
 
       <div class="shrink-0 border-t border-white/5 px-3 py-3">
         <p
-          class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/40"
+          class="mb-2.5 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/50"
         >
           {{ accountLabel() }}
         </p>
@@ -47,7 +47,7 @@ import { LanguageService } from '../../../core/services/language.service';
             </li>
           }
         </ul>
-        <p class="mt-4 px-3 text-[11px] font-medium tracking-wide text-white/30">
+        <p class="mt-4 px-3 text-[11px] font-medium tracking-wide text-white/35">
           Digital Life Twin · {{ version() }}
         </p>
       </div>

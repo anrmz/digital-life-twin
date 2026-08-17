@@ -116,7 +116,7 @@ const FREE_RATIO = 195 / 240; // 3h15m sur un objectif de 4h
 
           <div class="relative flex items-start justify-between gap-3">
             <div>
-              <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-teal-200">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-teal-100">
                 {{ productivity() }}
               </p>
               <h2 class="mt-1 font-display text-lg font-semibold tracking-tight text-white">
@@ -124,7 +124,7 @@ const FREE_RATIO = 195 / 240; // 3h15m sur un objectif de 4h
               </h2>
             </div>
             <span
-              class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-teal-200 ring-1 ring-white/15"
+              class="inline-flex shrink-0 items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-teal-100 ring-1 ring-white/15"
             >
               <svg lucideTrendingUp class="h-3.5 w-3.5" aria-hidden="true"></svg>
               {{ vsYesterday() }}
@@ -134,21 +134,21 @@ const FREE_RATIO = 195 / 240; // 3h15m sur un objectif de 4h
           <div class="relative mt-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p class="font-display text-5xl font-bold leading-none tracking-tight sm:text-6xl">
-                <span #prodCount>0</span><span class="text-teal-300">%</span>
+                <span #prodCount>0</span><span class="text-teal-200">%</span>
               </p>
-              <p class="mt-3 text-sm text-white/70">{{ tasksCompleted() }}</p>
+              <p class="mt-3 text-sm text-white/80">{{ tasksCompleted() }}</p>
             </div>
-            <div class="hidden items-center gap-2 rounded-panel bg-white/10 px-3 py-2 sm:flex">
-              <svg lucideTarget class="h-4 w-4 text-teal-300" aria-hidden="true"></svg>
-              <span class="text-sm text-white/85">{{ dailyGoal() }}</span>
+            <div class="hidden items-center gap-2 rounded-panel bg-white/10 px-3 py-2 sm:flex ring-1 ring-white/10">
+              <svg lucideTarget class="h-4 w-4 text-teal-200" aria-hidden="true"></svg>
+              <span class="text-sm text-white/90">{{ dailyGoal() }}</span>
             </div>
           </div>
 
           <div class="relative mt-6">
-            <div class="h-2 w-full overflow-hidden rounded-full bg-white/15">
+            <div class="h-2 w-full overflow-hidden rounded-full bg-white/10">
               <div
                 data-fill="78"
-                class="h-full w-full origin-left rounded-full bg-gradient-to-r from-teal-300 to-accent"
+                class="h-full w-full origin-left rounded-full bg-gradient-to-r from-teal-200 to-accent-lighter"
                 style="transform-origin: left center;"
                 [style.transform]="'scaleX(0.78)'"
               ></div>
@@ -158,15 +158,15 @@ const FREE_RATIO = 195 / 240; // 3h15m sur un objectif de 4h
           <div class="relative mt-6 grid grid-cols-3 gap-3 border-t border-white/10 pt-5">
             <div>
               <p class="font-display text-xl font-semibold text-white">2h 30m</p>
-              <p class="mt-0.5 text-xs text-white/75">{{ focusTime() }}</p>
+              <p class="mt-0.5 text-xs text-white/80">{{ focusTime() }}</p>
             </div>
             <div class="border-l border-white/10 pl-3">
               <p class="font-display text-xl font-semibold text-white">3</p>
-              <p class="mt-0.5 text-xs text-white/75">{{ breaksTaken() }}</p>
+              <p class="mt-0.5 text-xs text-white/80">{{ breaksTaken() }}</p>
             </div>
             <div class="border-l border-white/10 pl-3">
               <p class="font-display text-xl font-semibold text-white">75%</p>
-              <p class="mt-0.5 text-xs text-white/75">{{ goalsMet() }}</p>
+              <p class="mt-0.5 text-xs text-white/80">{{ goalsMet() }}</p>
             </div>
           </div>
         </section>

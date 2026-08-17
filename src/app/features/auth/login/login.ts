@@ -102,7 +102,7 @@ type FormStatus = 'idle' | 'loading' | 'error';
               />
               <button
                 type="button"
-                class="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-panel text-ink-faint transition-colors hover:bg-surface-muted hover:text-primary"
+                class="absolute right-1.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-panel text-ink-faint transition-colors duration-200 hover:bg-surface-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                 (click)="showPassword.set(!showPassword())"
                 [attr.aria-label]="showPassword() ? hidePassword() : showPasswordLabel()"
               >

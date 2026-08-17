@@ -22,7 +22,7 @@ const DARK_TRIGGER =
       <button
         appDropdownTrigger
         type="button"
-        class="relative inline-flex h-10 items-center gap-1.5 rounded-panel px-2.5 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+        class="relative inline-flex h-9 items-center gap-1.5 rounded-panel px-2.5 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
         [class]="triggerClasses()"
         [attr.aria-label]="languageLabel()"
       >

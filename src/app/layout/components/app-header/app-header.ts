@@ -43,10 +43,10 @@ import { LanguageService } from '../../../core/services/language.service';
   ],
   template: `
     <header
-      class="sticky top-0 z-20 border-b border-line bg-background/80 backdrop-blur-md"
+      class="sticky top-0 z-20 border-b border-line bg-background/90 backdrop-blur-lg"
     >
       <div
-        class="flex h-[60px] items-center gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8"
+        class="flex h-[64px] items-center gap-2 px-4 sm:gap-3 sm:px-6 lg:px-8"
       >
         <button
           appButton
@@ -78,13 +78,15 @@ import { LanguageService } from '../../../core/services/language.service';
           </kbd>
         </label>
 
-        <div class="ms-auto flex items-center gap-2 sm:gap-3">
+        <div class="ms-auto flex items-center gap-1.5 sm:gap-2.5">
           <div class="me-1 hidden flex-col items-end xl:flex">
             <span class="text-sm font-semibold capitalize leading-tight text-primary">
               {{ weekday() }}
             </span>
-            <span class="text-xs leading-tight text-ink-muted">{{ fullDate() }}</span>
+            <span class="text-[11px] leading-tight text-ink-muted">{{ fullDate() }}</span>
           </div>
+
+          <div class="hidden h-6 w-px bg-line sm:block"></div>
 
           <a
             routerLink="/notifications"
@@ -96,8 +98,6 @@ import { LanguageService } from '../../../core/services/language.service';
               class="absolute end-1.5 top-1.5 flex h-2 w-2 rounded-full bg-accent ring-2 ring-background"
             ></span>
           </a>
-
-          <div class="hidden h-6 w-px bg-line sm:block"></div>
 
           <app-language-selector tone="surface" />
 

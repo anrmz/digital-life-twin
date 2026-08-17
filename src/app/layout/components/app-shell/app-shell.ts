@@ -11,12 +11,12 @@ import { Drawer } from '../../../shared/ui/drawer/drawer';
 @Component({
   selector: 'app-shell',
   template: `
-    <div class="min-h-dvh">
+    <div class="min-h-dvh bg-background">
       <app-sidebar />
 
-      <div class="lg:ps-72">
+      <div class="min-h-dvh lg:ps-[280px]">
         <app-header (menu)="drawerOpen.set(true)" />
-        <main #page class="mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <main #page class="mx-auto w-full max-w-[1320px] px-4 py-5 sm:px-6 lg:px-8 lg:py-6">
           <router-outlet />
         </main>
       </div>

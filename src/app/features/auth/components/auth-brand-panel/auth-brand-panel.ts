@@ -44,7 +44,7 @@ const STORY_ICONS: readonly LucideIcon[] = [
         aria-hidden="true"
       ></div>
 
-      <div class="relative flex h-full min-h-dvh flex-col justify-between gap-8 px-8 py-10 xl:px-14">
+      <div class="relative flex h-full min-h-dvh flex-col justify-between gap-6 px-8 py-10 xl:px-14">
         <app-brand-logo tone="light" size="lg" />
 
         <div class="max-w-lg">
