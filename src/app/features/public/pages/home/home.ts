@@ -57,7 +57,7 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
   template: `
     <!-- ================= Hero ================= -->
     <section
-      class="relative overflow-hidden bg-primary-darker text-white"
+      class="relative flex min-h-[100svh] items-center overflow-hidden bg-primary-darker text-white"
       aria-labelledby="hero-title"
     >
       <div class="absolute inset-0 bg-grid-light opacity-50" aria-hidden="true"></div>
@@ -80,7 +80,7 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
       ></div>
 
       <div
-        class="relative mx-auto grid max-w-7xl gap-14 px-4 pb-24 pt-32 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-10 lg:px-8 lg:pb-32 lg:pt-44"
+        class="relative mx-auto grid w-full max-w-7xl gap-10 px-4 pb-12 pt-28 sm:px-6 sm:pb-16 sm:pt-32 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-12 lg:px-8 lg:pb-16 lg:pt-36"
       >
         <div>
           <span
@@ -92,17 +92,17 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
 
           <h1
             id="hero-title"
-            class="mt-6 font-display text-display leading-[1.05] tracking-tight text-white"
+            class="mt-5 font-display text-display leading-[1.05] tracking-tight text-white"
           >
             {{ heroTitleA() }}
             <span class="text-gradient-light">{{ heroTitleB() }}</span>
           </h1>
 
-          <p class="mt-6 max-w-xl text-body-lg leading-relaxed text-white/70">
+          <p class="mt-5 max-w-xl text-body-lg leading-relaxed text-white/70">
             {{ heroDescription() }}
           </p>
 
-          <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
               appMagnetic
               routerLink="/register"
@@ -123,7 +123,7 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
             </a>
           </div>
 
-          <div class="mt-12 grid max-w-lg grid-cols-3 gap-4 border-t border-white/10 pt-7">
+          <div class="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t border-white/10 pt-6">
             @for (stat of stats(); track stat.label) {
               <div>
                 <p class="font-display text-2xl font-semibold tracking-tight text-white">
@@ -136,12 +136,12 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
         </div>
 
         <!-- Hero preview (decorative) -->
-        <div class="relative mx-auto w-full max-w-lg lg:max-w-none" aria-hidden="true">
+        <div class="relative mx-auto hidden w-full max-w-lg lg:block" aria-hidden="true">
           <div
             class="absolute -inset-8 rounded-[2.5rem] bg-gradient-to-br from-accent/20 via-transparent to-primary/30 blur-2xl"
           ></div>
           <div
-            class="animate-float relative rounded-2xl border border-white/10 bg-[#0e2236] p-3 shadow-popover"
+            class="animate-float relative rounded-2xl border border-white/10 bg-[#0e2236]/90 p-4 shadow-popover backdrop-blur-sm"
           >
             <div class="flex items-center gap-1.5 px-2 pb-3 pt-1">
               <span class="h-2.5 w-2.5 rounded-full bg-white/15"></span>
@@ -150,45 +150,45 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
             </div>
 
             <div class="grid grid-cols-2 gap-3">
-              <div class="rounded-xl bg-white/5 p-3.5">
+              <div class="rounded-xl bg-white/5 p-4">
                 <p class="text-[10px] font-medium uppercase tracking-wider text-white/65">
                   {{ previewProductivity() }}
                 </p>
-                <p class="mt-1.5 font-display text-2xl font-semibold text-white">78%</p>
-                <div class="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/10">
+                <p class="mt-2 font-display text-2xl font-semibold text-white">78%</p>
+                <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
                   <div class="h-full w-[78%] rounded-full bg-accent"></div>
                 </div>
               </div>
-              <div class="rounded-xl bg-white/5 p-3.5">
+              <div class="rounded-xl bg-white/5 p-4">
                 <p class="text-[10px] font-medium uppercase tracking-wider text-white/65">{{
                   previewTasks()
                 }}</p>
-                <p class="mt-1.5 font-display text-2xl font-semibold text-white">
+                <p class="mt-2 font-display text-2xl font-semibold text-white">
                   6<span class="text-sm font-normal text-white/65">/8</span>
                 </p>
-                <div class="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/10">
+                <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
                   <div class="h-full w-[75%] rounded-full bg-teal-300"></div>
                 </div>
               </div>
-              <div class="rounded-xl bg-white/5 p-3.5">
+              <div class="rounded-xl bg-white/5 p-4">
                 <p class="text-[10px] font-medium uppercase tracking-wider text-white/65">
                   {{ previewHydration() }}
                 </p>
-                <p class="mt-1.5 font-display text-2xl font-semibold text-white">
+                <p class="mt-2 font-display text-2xl font-semibold text-white">
                   1,7<span class="text-sm font-normal text-white/65">L</span>
                 </p>
-                <div class="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/10">
+                <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
                   <div class="h-full w-[68%] rounded-full bg-sky-300"></div>
                 </div>
               </div>
-              <div class="rounded-xl bg-white/5 p-3.5">
+              <div class="rounded-xl bg-white/5 p-4">
                 <p class="text-[10px] font-medium uppercase tracking-wider text-white/65">
                   {{ previewSleep() }}
                 </p>
-                <p class="mt-1.5 font-display text-2xl font-semibold text-white">
+                <p class="mt-2 font-display text-2xl font-semibold text-white">
                   7h20<span class="text-sm font-normal text-white/65"></span>
                 </p>
-                <div class="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/10">
+                <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
                   <div class="h-full w-[82%] rounded-full bg-indigo-300"></div>
                 </div>
               </div>
@@ -215,11 +215,92 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
             </div>
           </div>
         </div>
+
+        <!-- Mobile preview (compact) -->
+        <div class="relative mx-auto w-full max-w-sm lg:hidden" aria-hidden="true">
+          <div
+            class="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-accent/20 via-transparent to-primary/30 blur-2xl"
+          ></div>
+          <div
+            class="animate-float relative rounded-2xl border border-white/10 bg-[#0e2236]/90 p-3 shadow-popover backdrop-blur-sm"
+          >
+            <div class="flex items-center gap-1.5 px-2 pb-2 pt-1">
+              <span class="h-2 w-2 rounded-full bg-white/15"></span>
+              <span class="h-2 w-2 rounded-full bg-white/15"></span>
+              <span class="h-2 w-2 rounded-full bg-white/15"></span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div class="rounded-lg bg-white/5 p-3">
+                <p class="text-[9px] font-medium uppercase tracking-wider text-white/65">
+                  {{ previewProductivity() }}
+                </p>
+                <p class="mt-1 font-display text-xl font-semibold text-white">78%</p>
+                <div class="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
+                  <div class="h-full w-[78%] rounded-full bg-accent"></div>
+                </div>
+              </div>
+              <div class="rounded-lg bg-white/5 p-3">
+                <p class="text-[9px] font-medium uppercase tracking-wider text-white/65">{{
+                  previewTasks()
+                }}</p>
+                <p class="mt-1 font-display text-xl font-semibold text-white">
+                  6<span class="text-xs font-normal text-white/65">/8</span>
+                </p>
+                <div class="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
+                  <div class="h-full w-[75%] rounded-full bg-teal-300"></div>
+                </div>
+              </div>
+              <div class="rounded-lg bg-white/5 p-3">
+                <p class="text-[9px] font-medium uppercase tracking-wider text-white/65">
+                  {{ previewHydration() }}
+                </p>
+                <p class="mt-1 font-display text-xl font-semibold text-white">
+                  1,7<span class="text-xs font-normal text-white/65">L</span>
+                </p>
+                <div class="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
+                  <div class="h-full w-[68%] rounded-full bg-sky-300"></div>
+                </div>
+              </div>
+              <div class="rounded-lg bg-white/5 p-3">
+                <p class="text-[9px] font-medium uppercase tracking-wider text-white/65">
+                  {{ previewSleep() }}
+                </p>
+                <p class="mt-1 font-display text-xl font-semibold text-white">
+                  7h20<span class="text-xs font-normal text-white/65"></span>
+                </p>
+                <div class="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
+                  <div class="h-full w-[82%] rounded-full bg-indigo-300"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-2 rounded-lg bg-white/5 p-3">
+              <div class="flex items-center justify-between">
+                <p class="text-[9px] font-medium uppercase tracking-wider text-white/65">
+                  {{ previewWeeklyActivity() }}
+                </p>
+                <span class="inline-flex items-center gap-1 text-[9px] font-semibold text-teal-300">
+                  <svg lucideTrendingUp class="h-3 w-3" aria-hidden="true"></svg>
+                  +12%
+                </span>
+              </div>
+              <div class="mt-2 flex h-16 items-end gap-1.5">
+                @for (height of weeklyBars; track $index) {
+                  <div
+                    class="flex-1 rounded-t-sm bg-gradient-to-t from-accent/35 to-accent"
+                    [style.height.%]="height"
+                  ></div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- ================= Pillars ================= -->
-    <section id="plateforme" class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32" aria-labelledby="pillars-title">
+    <section id="plateforme" class="mx-auto max-w-7xl px-4 pb-24 pt-16 sm:px-6 lg:px-8 lg:pb-32 lg:pt-20" aria-labelledby="pillars-title">
       <div class="mx-auto max-w-2xl text-center" appReveal>
         <p class="text-xs font-semibold uppercase tracking-[0.18em] text-accent-dark">{{ pillarsEyebrow() }}</p>
         <h2 id="pillars-title" class="mt-3 font-display text-h1 tracking-tight text-primary">
