@@ -57,19 +57,15 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
   template: `
     <!-- ================= Hero ================= -->
     <section
-      class="relative flex min-h-[100svh] items-center overflow-hidden bg-cover bg-center bg-no-repeat text-white max-md:bg-[center_30%]"
+      class="relative flex min-h-[100svh] items-center overflow-hidden bg-cover bg-center bg-no-repeat bg-primary-darker text-white max-md:bg-[center_30%]"
       [style.backgroundImage]="'url(/brand/hero-section.jpg)'"
       aria-labelledby="hero-title"
     >
       <div
-        class="absolute inset-0 bg-primary-darker/85"
+        class="absolute inset-0 bg-gradient-to-r from-primary-darker/80 via-primary-darker/40 to-transparent max-md:from-primary-darker/85 max-md:via-primary-darker/60 max-md:to-primary-darker/20"
         aria-hidden="true"
       ></div>
-      <div
-        class="absolute inset-0 bg-gradient-to-r from-primary-darker via-primary-darker/70 to-transparent max-md:via-primary-darker/80 max-md:to-primary-darker/30"
-        aria-hidden="true"
-      ></div>
-      <div class="absolute inset-0 bg-grid-light opacity-30" aria-hidden="true"></div>
+      <div class="pointer-events-none absolute inset-0 bg-grid-light opacity-20" aria-hidden="true"></div>
       <div
         class="animate-glow-pulse pointer-events-none absolute -left-44 -top-40 h-[34rem] w-[34rem] rounded-full bg-accent/20 blur-[130px]"
         aria-hidden="true"
