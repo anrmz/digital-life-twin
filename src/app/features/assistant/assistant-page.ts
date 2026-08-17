@@ -29,19 +29,19 @@ const TONE_DOT: Record<ContextItem['tone'], string> = {
   danger: 'bg-danger',
 };
 
-function timeNow(): string {
-  return new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' }).format(
+function timeNow(locale: string): string {
+  return new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(
     new Date(),
   );
 }
 
-function welcomeMessage(): AssistantMessage {
+function welcomeMessage(locale: string): AssistantMessage {
   return {
     id: makeId('am'),
     role: 'assistant',
     contentKey: WELCOME_KEY,
     contentVars: { name: 'Sarah' },
-    time: timeNow(),
+    time: timeNow(locale),
   };
 }
 
@@ -299,11 +299,12 @@ export class AssistantPage implements AfterViewInit {
   }
 
   protected newConversation(): void {
+    const locale = this.languageService.getLocale();
     const conversation: AssistantConversation = {
       id: `c-${Date.now()}`,
       titleKey: 'assistantPage.newDiscussion',
       updatedAt: new Date().toISOString(),
-      messages: [welcomeMessage()],
+      messages: [welcomeMessage(locale)],
     };
     this.conversations.update((list) => [conversation, ...list]);
     this.activeId.set(conversation.id);
@@ -327,7 +328,7 @@ export class AssistantPage implements AfterViewInit {
       id: makeId('m'),
       role: 'user',
       content: text,
-      time: timeNow(),
+      time: timeNow(this.languageService.getLocale()),
     };
     this.conversations.update((list) =>
       list.map((item) =>
@@ -352,7 +353,7 @@ export class AssistantPage implements AfterViewInit {
               updatedAt: new Date().toISOString(),
               messages: [
                 ...item.messages,
-                { id: makeId('m'), role: 'assistant', content: replyText, time: timeNow() },
+                { id: makeId('m'), role: 'assistant', content: replyText, time: timeNow(this.languageService.getLocale()) },
               ],
             }
           : item,

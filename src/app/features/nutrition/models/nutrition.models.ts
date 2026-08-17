@@ -90,16 +90,16 @@ export function dayKey(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-export function formatKcal(n: number): string {
-  return n.toLocaleString('fr-FR');
+export function formatKcal(n: number, locale = 'fr-FR'): string {
+  return n.toLocaleString(locale);
 }
 
 export function formatGrams(n: number): string {
   return `${n} g`;
 }
 
-export function formatLiters(ml: number): string {
-  return `${(ml / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 2 })} L`;
+export function formatLiters(ml: number, locale = 'fr-FR'): string {
+  return `${(ml / 1000).toLocaleString(locale, { maximumFractionDigits: 2 })} L`;
 }
 
 export const MOCK_MEALS: Meal[] = [

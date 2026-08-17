@@ -91,21 +91,23 @@ export function isOverdue(task: Task): boolean {
   return task.status !== 'done' && task.dueDate < todayISO();
 }
 
-const WEEKDAYS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
-
-export function dueLabel(iso: string): string {
+export function dueLabel(
+  iso: string,
+  locale = 'fr-FR',
+  t?: (key: string) => string,
+): string {
   if (iso === todayISO()) {
-    return "Aujourd'hui";
+    return t ? t('commonExtended.dueToday') : "Aujourd'hui";
   }
   if (iso === daysFromNow(1)) {
-    return 'Demain';
+    return t ? t('commonExtended.dueTomorrow') : 'Demain';
   }
   if (iso === daysFromNow(-1)) {
-    return 'Hier';
+    return t ? t('commonExtended.dueYesterday') : 'Hier';
   }
   const [year, month, day] = iso.split('-').map(Number);
   const date = new Date(year, month - 1, day);
-  const weekday = WEEKDAYS[date.getDay()];
+  const weekday = new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(date);
   return `${weekday[0].toUpperCase()}${weekday.slice(1)}`;
 }
 

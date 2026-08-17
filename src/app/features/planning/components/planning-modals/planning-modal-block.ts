@@ -1,7 +1,8 @@
-import { Component, effect, input, output, signal } from '@angular/core';
+import { Component, effect, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Button } from '../../../../shared/ui/button/button';
 import { Modal } from '../../../../shared/ui/modal/modal';
+import { LanguageService } from '../../../../core/services/language.service';
 import {
   todayISO,
   toMinutes,
@@ -16,14 +17,14 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
   imports: [Modal, Button, FormsModule],
   template: `
     <app-modal
-      [title]="(entry() ? 'Modifier le bloc' : 'Nouveau bloc horaire')"
-      subtitle="Réservé au sport, aux pauses ou aux moments de repos."
+      [title]="entry() ? t('planningModal.blockEditTitle') : t('planningModal.blockNewTitle')"
+      [subtitle]="t('planningModal.blockSubtitle')"
       (closed)="closed.emit()"
     >
       <form (ngSubmit)="save()" novalidate>
         <div [class]="GRID_2">
           <div [class]="FIELD">
-            <label [class]="LABEL" for="block-type">Type</label>
+            <label [class]="LABEL" for="block-type">{{ t('planningModal.blockType') }}</label>
             <select
               id="block-type"
               [class]="INPUT"
@@ -31,13 +32,13 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
               name="type"
               (ngModelChange)="type.set($event)"
             >
-              <option value="sport">Sport</option>
-              <option value="break">Pause</option>
-              <option value="free">Temps libre</option>
+              <option value="sport">{{ t('categories.sport') }}</option>
+              <option value="break">{{ t('planningModal.breakLabel') }}</option>
+              <option value="free">{{ t('categories.free') }}</option>
             </select>
           </div>
           <div [class]="FIELD">
-            <label [class]="LABEL" for="block-date">Date</label>
+            <label [class]="LABEL" for="block-date">{{ t('eventForm.date') }}</label>
             <input
               id="block-date"
               [class]="INPUT"
@@ -50,12 +51,12 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
         </div>
 
         <div [class]="FIELD + ' mt-3'">
-          <label [class]="LABEL" for="block-title">Titre</label>
+          <label [class]="LABEL" for="block-title">{{ t('tasksForm.title') }}</label>
           <input
             id="block-title"
             [class]="INPUT"
             type="text"
-            placeholder="Séance cardio, déjeuner…"
+            [placeholder]="t('planningModal.blockTitlePlaceholder')"
             autocomplete="off"
             [ngModel]="title()"
             name="title"
@@ -64,12 +65,12 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
         </div>
 
         <div [class]="FIELD + ' mt-3'">
-          <label [class]="LABEL" for="block-desc">Description</label>
+          <label [class]="LABEL" for="block-desc">{{ t('eventForm.description') }}</label>
           <textarea
             id="block-desc"
             [class]="TEXTAREA"
             rows="2"
-            placeholder="Précisions optionnelles…"
+            [placeholder]="t('planningModal.blockDescPlaceholder')"
             [ngModel]="description()"
             name="description"
             (ngModelChange)="description.set($event)"
@@ -78,7 +79,7 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
 
         <div [class]="GRID_2 + ' mt-3'">
           <div [class]="FIELD">
-            <label [class]="LABEL" for="block-start">Début</label>
+            <label [class]="LABEL" for="block-start">{{ t('eventForm.start') }}</label>
             <input
               id="block-start"
               [class]="INPUT"
@@ -89,7 +90,7 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
             />
           </div>
           <div [class]="FIELD">
-            <label [class]="LABEL" for="block-end">Fin</label>
+            <label [class]="LABEL" for="block-end">{{ t('eventForm.end') }}</label>
             <input
               id="block-end"
               [class]="INPUT"
@@ -102,12 +103,12 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
         </div>
 
         @if (submitted() && !title().trim()) {
-          <p [class]="ERROR_TEXT + ' mt-3'">Le titre est obligatoire.</p>
+          <p [class]="ERROR_TEXT + ' mt-3'">{{ t('tasksForm.titleRequired') }}</p>
         }
 
         <div [class]="ACTIONS">
-          <button appButton variant="ghost" size="md" type="button" (click)="closed.emit()">Annuler</button>
-          <button appButton variant="primary" size="md" type="submit">Enregistrer</button>
+          <button appButton variant="ghost" size="md" type="button" (click)="closed.emit()">{{ t('common.cancel') }}</button>
+          <button appButton variant="primary" size="md" type="submit">{{ t('common.save') }}</button>
         </div>
       </form>
     </app-modal>
@@ -133,6 +134,10 @@ export class PlanningModalBlock {
   protected readonly GRID_2 = GRID_2;
   protected readonly ACTIONS = ACTIONS;
   protected readonly ERROR_TEXT = ERROR_TEXT;
+
+  private readonly languageService = inject(LanguageService);
+  protected readonly t = (key: string, vars?: Record<string, string>) =>
+    this.languageService.translate<string>(key, vars);
 
   constructor() {
     effect(() => {

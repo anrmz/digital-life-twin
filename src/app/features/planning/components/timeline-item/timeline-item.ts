@@ -14,6 +14,7 @@ import {
   PRIORITY_KEYS,
   STATUS_KEYS,
   entryDurationLabel,
+  getEntryVisual,
   type PlanningCategory,
   type PlanningEntry,
   type PlanningPriority,
@@ -40,7 +41,7 @@ const STATUS_VARIANT: Record<TaskStatus, BadgeVariant> = {
       class="group relative flex gap-3 sm:gap-4"
       role="button"
       tabindex="0"
-      [attr.aria-label]="'Ouvrir le détail de ' + entry().title"
+      [attr.aria-label]="t('planningExtended.detailOpenAria') + entry().title"
       (click)="open.emit(entry())"
       (keydown.enter)="open.emit(entry())"
       (keydown.space)="open.emit(entry()); $event.preventDefault()"
@@ -91,7 +92,7 @@ const STATUS_VARIANT: Record<TaskStatus, BadgeVariant> = {
                       [class.text-transparent]="!isDone()"
                       [class.hover:border-accent]="!isDone()"
                       [class.hover:text-accent]="!isDone()"
-                      [attr.aria-label]="isDone() ? 'Marquer comme non terminée' : 'Marquer comme terminée'"
+                      [attr.aria-label]="isDone() ? t('tasksDetail.markUndone') : t('tasksDetail.markDone')"
                       (click)="toggle.emit(entry()); $event.stopPropagation()"
                     >
                       <svg lucideCheck class="h-3.5 w-3.5" stroke-width="3" aria-hidden="true"></svg>
@@ -101,7 +102,7 @@ const STATUS_VARIANT: Record<TaskStatus, BadgeVariant> = {
                     <button
                       type="button"
                       class="flex h-7 w-7 items-center justify-center rounded-panel text-ink-faint transition-colors hover:bg-surface-muted hover:text-primary"
-                      [attr.aria-label]="'Modifier ' + entry().title"
+                      [attr.aria-label]="t('planningExtended.editAria') + entry().title"
                       (click)="edit.emit(entry()); $event.stopPropagation()"
                     >
                       <svg lucidePencil class="h-3.5 w-3.5" aria-hidden="true"></svg>
@@ -134,7 +135,7 @@ const STATUS_VARIANT: Record<TaskStatus, BadgeVariant> = {
                 @if (entry().type === 'event' && participantCount() > 0) {
                   <span class="inline-flex items-center gap-1 text-[11px] text-ink-faint">
                     <svg lucideUsers class="h-3 w-3" aria-hidden="true"></svg>
-                    {{ participantCount() }} participants
+                    {{ participantCount() }}{{ t('planningExtended.participantsCount') }}
                   </span>
                 }
               </div>
@@ -155,13 +156,15 @@ export class TimelineItem {
 
   private readonly languageService = inject(LanguageService);
 
+  t = (key: string, vars?: Record<string, string>) => this.languageService.translate<string>(key, vars);
+
   protected readonly PRIORITY_VARIANT = PRIORITY_VARIANT;
   protected readonly STATUS_VARIANT = STATUS_VARIANT;
   protected readonly CATEGORY_KEYS = CATEGORY_KEYS;
   protected readonly PRIORITY_KEYS = PRIORITY_KEYS;
   protected readonly STATUS_KEYS = STATUS_KEYS;
 
-  protected readonly visual = computed(() => ENTRY_VISUALS[this.entry().type]);
+  protected readonly visual = computed(() => getEntryVisual(this.entry().type, (key) => this.languageService.translate(key)));
   protected readonly duration = computed(() => entryDurationLabel(this.entry()));
   protected readonly isDone = computed(() => this.entry().status === 'done');
   protected readonly canEdit = computed(() => this.entry().type !== 'free');

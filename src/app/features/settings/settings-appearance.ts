@@ -11,53 +11,8 @@ import {
   type AccentPreference,
   type ThemePreference,
 } from './services/settings.service';
+import { LanguageService } from '../../core/services/language.service';
 import { SettingsOption } from './settings-option';
-
-const THEME_OPTIONS: {
-  value: ThemePreference;
-  label: string;
-  description: string;
-  icon: LucideIcon;
-}[] = [
-  {
-    value: 'light',
-    label: 'Clair',
-    description: 'Surfaces claires et contrastes doux.',
-    icon: LucideSun,
-  },
-  {
-    value: 'dark',
-    label: 'Sombre',
-    description: 'Nuits profondes aux accents marines.',
-    icon: LucideMoon,
-  },
-  {
-    value: 'system',
-    label: 'Système',
-    description: "Suivre les préférences de l'appareil.",
-    icon: LucideMonitor,
-  },
-];
-
-const ACCENT_OPTIONS: {
-  value: AccentPreference;
-  label: string;
-  description: string;
-  icon: LucideIcon;
-}[] = [
-  {
-    value: 'teal',
-    label: 'Teal',
-    description: 'Le vert d’eau signature.',
-    icon: LucidePalette,
-  },
-  {
-    value: 'navy',
-    label: 'Navy',
-    description: 'Le bleu marine institutionnel.',
-    icon: LucidePalette,
-  },
-];
 
 @Component({
   selector: 'app-settings-appearance',
@@ -66,19 +21,19 @@ const ACCENT_OPTIONS: {
     <div class="space-y-5">
       <header>
         <h2 class="font-display text-xl font-semibold tracking-tight text-primary">
-          Apparence
+          {{ title() }}
         </h2>
         <p class="mt-1 text-sm leading-relaxed text-ink-muted">
-          Personnalisez l'apparence de Digital Life Twin.
+          {{ subtitle() }}
         </p>
       </header>
 
       <section class="rounded-card border border-line bg-surface p-5 shadow-card sm:p-6">
         <h3 class="font-display text-base font-semibold tracking-tight text-primary">
-          Mode d'affichage
+          {{ themeTitle() }}
         </h3>
         <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-@for (option of themeOptions; track option.value) {
+@for (option of themeOptions(); track option.value) {
               <app-settings-option
                 group="st-theme"
                 [value]="option.value"
@@ -93,10 +48,10 @@ const ACCENT_OPTIONS: {
 
         <div class="mt-6 border-t border-line pt-6">
           <h3 class="font-display text-base font-semibold tracking-tight text-primary">
-            Accent visuel
+            {{ accentTitle() }}
           </h3>
           <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-@for (option of accentOptions; track option.value) {
+@for (option of accentOptions(); track option.value) {
                 <app-settings-option
                   group="st-accent"
                   [value]="option.value"
@@ -111,10 +66,9 @@ const ACCENT_OPTIONS: {
           </div>
         </div>
 
-        <!-- Aperçu compact -->
         <div class="mt-6 border-t border-line pt-6">
           <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ink-muted">
-            Aperçu
+            {{ preview() }}
           </p>
           <div
             class="mt-3 overflow-hidden rounded-card border border-line shadow-card"
@@ -154,12 +108,27 @@ const ACCENT_OPTIONS: {
 })
 export class SettingsAppearance {
   protected readonly service = inject(SettingsService);
+  protected readonly languageService = inject(LanguageService);
 
   protected readonly appearance = computed(() => this.service.state().appearance);
   protected readonly appliedTheme = this.service.appliedTheme;
 
-  protected readonly themeOptions = THEME_OPTIONS;
-  protected readonly accentOptions = ACCENT_OPTIONS;
+  protected readonly title = this.languageService.translateSignal('settings.nav.appearance');
+  protected readonly subtitle = this.languageService.translateSignal('settings.appearance.subtitle');
+  protected readonly themeTitle = this.languageService.translateSignal('settings.appearance.themeTitle');
+  protected readonly accentTitle = this.languageService.translateSignal('settings.appearance.accentTitle');
+  protected readonly preview = this.languageService.translateSignal('settings.appearance.preview');
+
+  protected readonly themeOptions = computed(() => [
+    { value: 'light' as ThemePreference, label: this.languageService.translate('settings.appearance.lightLabel'), description: this.languageService.translate('settings.appearance.lightDesc'), icon: LucideSun },
+    { value: 'dark' as ThemePreference, label: this.languageService.translate('settings.appearance.darkLabel'), description: this.languageService.translate('settings.appearance.darkDesc'), icon: LucideMoon },
+    { value: 'system' as ThemePreference, label: this.languageService.translate('settings.appearance.systemLabel'), description: this.languageService.translate('settings.appearance.systemDesc'), icon: LucideMonitor },
+  ]);
+
+  protected readonly accentOptions = computed(() => [
+    { value: 'teal' as AccentPreference, label: 'Teal', description: this.languageService.translate('settings.appearance.tealDesc'), icon: LucidePalette },
+    { value: 'navy' as AccentPreference, label: 'Navy', description: this.languageService.translate('settings.appearance.navyDesc'), icon: LucidePalette },
+  ]);
 
   private readonly isDark = computed(() => this.appliedTheme() === 'dark');
   private readonly isNavyAccent = computed(

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import {
   LucideDownload,
   LucideInfo,
@@ -9,30 +9,7 @@ import { Modal } from '../../shared/ui/modal/modal';
 import { Toast, type ToastTone } from '../../shared/ui/toast/toast';
 import { SettingsService } from './services/settings.service';
 import { SettingsToggle } from './settings-toggle';
-
-interface PrivacyRow {
-  key: 'analytics' | 'personalization' | 'aiContext';
-  label: string;
-  description: string;
-}
-
-const PRIVACY_ROWS: PrivacyRow[] = [
-  {
-    key: 'analytics',
-    label: 'Autoriser les statistiques d’utilisation',
-    description: 'Nous aidons à comprendre comment la plateforme est utilisée.',
-  },
-  {
-    key: 'personalization',
-    label: 'Autoriser la personnalisation de l’expérience',
-    description: 'Adapter les recommandations et la mise en page à vos habitudes.',
-  },
-  {
-    key: 'aiContext',
-    label: 'Autoriser l’utilisation des données de contexte pour les suggestions IA',
-    description: 'L’assistant peut s’appuyer sur vos données pour suggérer des actions.',
-  },
-];
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-settings-privacy',
@@ -49,10 +26,10 @@ const PRIVACY_ROWS: PrivacyRow[] = [
     <div class="space-y-5">
       <header>
         <h2 class="font-display text-xl font-semibold tracking-tight text-primary">
-          Confidentialité
+          {{ pageTitle() }}
         </h2>
         <p class="mt-1 text-sm leading-relaxed text-ink-muted">
-          Contrôlez vos données et votre confidentialité.
+          {{ pageSubtitle() }}
         </p>
       </header>
 
@@ -62,15 +39,15 @@ const PRIVACY_ROWS: PrivacyRow[] = [
             <svg lucideInfo class="h-5 w-5" aria-hidden="true"></svg>
           </span>
           <div>
-            <p class="text-sm font-semibold text-primary">Données personnelles</p>
+            <p class="text-sm font-semibold text-primary">{{ personalDataLabel() }}</p>
             <p class="mt-0.5 text-xs leading-relaxed text-ink-muted">
-              Vos préférences sont stockées localement dans cette version frontend.
+              {{ localNotice() }}
             </p>
           </div>
         </div>
 
         <div class="mt-5 space-y-0 divide-y divide-line">
-          @for (row of rows; track row.key) {
+          @for (row of rows(); track row.key) {
             <div class="py-4">
               <app-settings-toggle
                 [id]="'st-privacy-' + row.key"
@@ -86,11 +63,11 @@ const PRIVACY_ROWS: PrivacyRow[] = [
         <div class="mt-5 flex flex-col gap-2 border-t border-line pt-5 sm:flex-row">
           <button appButton variant="outline" size="md" (click)="exportData()">
             <svg lucideDownload class="h-4 w-4" aria-hidden="true"></svg>
-            Exporter mes données
+            {{ exportDataLabel() }}
           </button>
           <button appButton variant="ghost" size="md" (click)="resetOpen.set(true)">
             <svg lucideRotateCcw class="h-4 w-4" aria-hidden="true"></svg>
-            Réinitialiser mes préférences
+            {{ resetPrefsLabel() }}
           </button>
         </div>
       </section>
@@ -98,19 +75,19 @@ const PRIVACY_ROWS: PrivacyRow[] = [
 
     @if (resetOpen()) {
       <app-modal
-        title="Réinitialiser mes préférences"
-        subtitle="Cette action ne supprime pas votre compte ni vos données de démonstration."
+        [title]="resetPrefsLabel()"
+        [subtitle]="resetSubtitle()"
         (closed)="resetOpen.set(false)"
       >
         <p class="text-sm leading-relaxed text-ink">
-          Vos paramètres de confidentialité seront rétablis par défaut. Voulez-vous continuer ?
+          {{ resetDescription() }}
         </p>
         <div class="mt-6 flex justify-end gap-2">
           <button appButton variant="ghost" size="md" type="button" (click)="resetOpen.set(false)">
-            Annuler
+            {{ cancelLabel() }}
           </button>
           <button appButton variant="primary" size="md" type="button" (click)="confirmReset()">
-            Réinitialiser
+            {{ resetLabel() }}
           </button>
         </div>
       </app-modal>
@@ -123,11 +100,42 @@ const PRIVACY_ROWS: PrivacyRow[] = [
 })
 export class SettingsPrivacy {
   protected readonly service = inject(SettingsService);
-  protected readonly rows = PRIVACY_ROWS;
+  private readonly languageService = inject(LanguageService);
 
   protected readonly resetOpen = signal(false);
   protected readonly toast = signal<string | null>(null);
   protected readonly toastTone = signal<ToastTone>('primary');
+
+  private readonly t = (key: string) => this.languageService.translate<string>(key);
+
+  protected readonly pageTitle = this.languageService.translateSignal('settings.nav.privacy');
+  protected readonly pageSubtitle = this.languageService.translateSignal('settings.privacy.subtitle');
+  protected readonly personalDataLabel = this.languageService.translateSignal('settingsExtras.personalData');
+  protected readonly localNotice = this.languageService.translateSignal('settings.privacy.localNotice');
+  protected readonly exportDataLabel = this.languageService.translateSignal('settings.privacy.exportData');
+  protected readonly resetPrefsLabel = this.languageService.translateSignal('settings.privacy.resetPrefs');
+  protected readonly resetSubtitle = this.languageService.translateSignal('settings.privacy.resetSubtitle');
+  protected readonly resetDescription = this.languageService.translateSignal('settings.privacy.resetDescription');
+  protected readonly cancelLabel = this.languageService.translateSignal('common.cancel');
+  protected readonly resetLabel = this.languageService.translateSignal('common.reset');
+
+  protected readonly rows = computed(() => [
+    {
+      key: 'analytics' as const,
+      label: this.t('settings.privacy.analyticsLabel'),
+      description: this.t('settings.privacy.analyticsDesc'),
+    },
+    {
+      key: 'personalization' as const,
+      label: this.t('settings.privacy.personalizationLabel'),
+      description: this.t('settings.privacy.personalizationDesc'),
+    },
+    {
+      key: 'aiContext' as const,
+      label: this.t('settings.privacy.aiContextLabel'),
+      description: this.t('settings.privacy.aiContextDesc'),
+    },
+  ]);
 
   protected exportData(): void {
     const json = this.service.exportData();
@@ -143,13 +151,13 @@ export class SettingsPrivacy {
     URL.revokeObjectURL(url);
 
     this.toastTone.set('success');
-    this.toast.set('Vos données ont été exportées.');
+    this.toast.set(this.t('settings.privacy.toastExported'));
   }
 
   protected confirmReset(): void {
     this.resetOpen.set(false);
     this.service.resetPreferences();
     this.toastTone.set('success');
-    this.toast.set('Préférences réinitialisées.');
+    this.toast.set(this.t('settings.privacy.toastReset'));
   }
 }

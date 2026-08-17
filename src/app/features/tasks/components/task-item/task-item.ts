@@ -52,7 +52,7 @@ const CATEGORY_CHIP: Record<Task['category'], string> = {
       [class.ring-accent/20]="selected()"
       role="button"
       tabindex="0"
-      [attr.aria-label]="'Ouvrir le détail de ' + task().title"
+      [attr.aria-label]="t('tasksExtended.detailOpenAria') + task().title"
       (click)="open.emit(task())"
       (keydown.enter)="open.emit(task())"
       (keydown.space)="open.emit(task()); $event.preventDefault()"
@@ -69,7 +69,7 @@ const CATEGORY_CHIP: Record<Task['category'], string> = {
         [class.text-transparent]="!isDone()"
         [class.hover:border-accent]="!isDone()"
         [class.hover:text-accent]="!isDone()"
-        [attr.aria-label]="isDone() ? 'Marquer comme non terminée' : 'Marquer comme terminée'"
+        [attr.aria-label]="isDone() ? t('tasksDetail.markUndone') : t('tasksDetail.markDone')"
         (click)="toggle.emit(task()); $event.stopPropagation()"
       >
         <svg lucideCheck class="h-3.5 w-3.5" stroke-width="3" aria-hidden="true"></svg>
@@ -135,6 +135,8 @@ export class TaskItem {
   private readonly languageService = inject(LanguageService);
   private readonly checkBtn = viewChild<ElementRef<HTMLElement>>('checkBtn');
 
+  t = (key: string, vars?: Record<string, string>) => this.languageService.translate<string>(key, vars);
+
   protected readonly CATEGORY_CHIP = CATEGORY_CHIP;
   protected readonly PRIORITY_COLOR = PRIORITY_COLOR;
   protected readonly CATEGORY_KEYS = CATEGORY_KEYS;
@@ -152,7 +154,7 @@ export class TaskItem {
   protected readonly isDone = computed(() => this.task().status === 'done');
   protected readonly overdue = computed(() => isOverdue(this.task()));
   protected readonly categoryIcon = computed(() => CATEGORY_ICONS[this.task().category]);
-  protected readonly dueText = computed(() => dueLabel(this.task().dueDate));
+  protected readonly dueText = computed(() => dueLabel(this.task().dueDate, this.languageService.getLocale(), (key) => this.languageService.translate(key)));
 
   protected readonly progress = computed(() => {
     const subs = this.task().subtasks;
@@ -164,15 +166,15 @@ export class TaskItem {
 
   protected readonly statusInfo = computed(() => {
     if (this.overdue()) {
-      return { label: 'En retard', variant: 'danger' as BadgeVariant, dot: true };
+      return { label: this.t('statuses.overdue'), variant: 'danger' as BadgeVariant, dot: true };
     }
     switch (this.task().status) {
       case 'done':
-        return { label: 'Terminée', variant: 'success' as BadgeVariant, dot: false };
+        return { label: this.t('statuses.done'), variant: 'success' as BadgeVariant, dot: false };
       case 'in-progress':
-        return { label: 'En cours', variant: 'accent' as BadgeVariant, dot: true };
+        return { label: this.t('statuses.inProgress'), variant: 'accent' as BadgeVariant, dot: true };
       default:
-        return { label: 'À faire', variant: 'neutral' as BadgeVariant, dot: false };
+        return { label: this.t('statuses.todo'), variant: 'neutral' as BadgeVariant, dot: false };
     }
   });
 

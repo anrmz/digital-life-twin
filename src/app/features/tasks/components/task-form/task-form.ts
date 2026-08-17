@@ -1,5 +1,6 @@
-import { Component, effect, input, output, signal } from '@angular/core';
+import { Component, effect, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LanguageService } from '../../../../core/services/language.service';
 import { Button } from '../../../../shared/ui/button/button';
 import { Modal } from '../../../../shared/ui/modal/modal';
 import {
@@ -11,30 +12,23 @@ import {
 } from '../../models/task.models';
 import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './form-styles';
 
-const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
-  { value: 'work', label: 'Travail' },
-  { value: 'personal', label: 'Personnel' },
-  { value: 'sport', label: 'Sport' },
-  { value: 'studies', label: 'Études' },
-];
-
 @Component({
   selector: 'app-task-form',
   imports: [Modal, Button, FormsModule],
   template: `
     <app-modal
-      [title]="task() ? 'Modifier la tâche' : 'Nouvelle tâche'"
-      subtitle="Précisez la catégorie, la priorité et l'échéance de votre tâche."
+      [title]="task() ? t('tasksForm.editTitle') : t('tasksForm.newTitle')"
+      [subtitle]="t('tasksForm.subtitle')"
       (closed)="closed.emit()"
     >
       <form (ngSubmit)="save()" novalidate>
         <div [class]="FIELD">
-          <label [class]="LABEL" for="task-title">Titre</label>
+          <label [class]="LABEL" for="task-title">{{ t('tasksForm.title') }}</label>
           <input
             id="task-title"
             [class]="INPUT"
             type="text"
-            placeholder="Réviser le chapitre 5 d'algorithmique"
+            [placeholder]="t('tasksForm.titlePlaceholder')"
             autocomplete="off"
             [ngModel]="title()"
             name="title"
@@ -43,12 +37,12 @@ const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
         </div>
 
         <div [class]="FIELD + ' mt-3'">
-          <label [class]="LABEL" for="task-desc">Description</label>
+          <label [class]="LABEL" for="task-desc">{{ t('tasksForm.description') }}</label>
           <textarea
             id="task-desc"
             [class]="TEXTAREA"
             rows="3"
-            placeholder="Quelques précisions, objectifs ou ressources…"
+            [placeholder]="t('tasksForm.descriptionPlaceholder')"
             [ngModel]="description()"
             name="description"
             (ngModelChange)="description.set($event)"
@@ -57,7 +51,7 @@ const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
 
         <div [class]="GRID_2 + ' mt-3'">
           <div [class]="FIELD">
-            <label [class]="LABEL" for="task-status">Statut</label>
+            <label [class]="LABEL" for="task-status">{{ t('tasksForm.status') }}</label>
             <select
               id="task-status"
               [class]="INPUT"
@@ -65,13 +59,13 @@ const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
               name="status"
               (ngModelChange)="status.set($event)"
             >
-              <option value="todo">À faire</option>
-              <option value="in-progress">En cours</option>
-              <option value="done">Terminée</option>
+              <option value="todo">{{ t('statuses.todo') }}</option>
+              <option value="in-progress">{{ t('statuses.inProgress') }}</option>
+              <option value="done">{{ t('statuses.done') }}</option>
             </select>
           </div>
           <div [class]="FIELD">
-            <label [class]="LABEL" for="task-priority">Priorité</label>
+            <label [class]="LABEL" for="task-priority">{{ t('tasksForm.priority') }}</label>
             <select
               id="task-priority"
               [class]="INPUT"
@@ -79,16 +73,16 @@ const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
               name="priority"
               (ngModelChange)="priority.set($event)"
             >
-              <option value="low">Basse</option>
-              <option value="medium">Moyenne</option>
-              <option value="high">Haute</option>
+              <option value="low">{{ t('priorities.low') }}</option>
+              <option value="medium">{{ t('priorities.medium') }}</option>
+              <option value="high">{{ t('priorities.high') }}</option>
             </select>
           </div>
         </div>
 
         <div [class]="GRID_2 + ' mt-3'">
           <div [class]="FIELD">
-            <label [class]="LABEL" for="task-category">Catégorie</label>
+            <label [class]="LABEL" for="task-category">{{ t('tasksForm.category') }}</label>
             <select
               id="task-category"
               [class]="INPUT"
@@ -96,13 +90,13 @@ const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
               name="category"
               (ngModelChange)="category.set($event)"
             >
-              @for (option of CATEGORY_OPTIONS; track option.value) {
+              @for (option of categoryOptions(); track option.value) {
                 <option [value]="option.value">{{ option.label }}</option>
               }
             </select>
           </div>
           <div [class]="FIELD">
-            <label [class]="LABEL" for="task-date">Échéance</label>
+            <label [class]="LABEL" for="task-date">{{ t('tasksForm.dueDate') }}</label>
             <input
               id="task-date"
               [class]="INPUT"
@@ -116,7 +110,7 @@ const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
 
         <div [class]="GRID_2 + ' mt-3'">
           <div [class]="FIELD">
-            <label [class]="LABEL" for="task-start">Heure de début</label>
+            <label [class]="LABEL" for="task-start">{{ t('tasksForm.startTime') }}</label>
             <input
               id="task-start"
               [class]="INPUT"
@@ -127,7 +121,7 @@ const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
             />
           </div>
           <div [class]="FIELD">
-            <label [class]="LABEL" for="task-duration">Durée (minutes)</label>
+            <label [class]="LABEL" for="task-duration">{{ t('tasksForm.duration') }}</label>
             <input
               id="task-duration"
               [class]="INPUT"
@@ -142,7 +136,7 @@ const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
         </div>
 
         <div [class]="FIELD + ' mt-3'">
-          <label [class]="LABEL" for="task-progress">Progression (%)</label>
+          <label [class]="LABEL" for="task-progress">{{ t('tasksForm.progress') }}</label>
           <input
             id="task-progress"
             [class]="INPUT"
@@ -156,12 +150,12 @@ const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
         </div>
 
         <div [class]="FIELD + ' mt-3'">
-          <label [class]="LABEL" for="task-notes">Notes</label>
+          <label [class]="LABEL" for="task-notes">{{ t('tasksForm.notes') }}</label>
           <textarea
             id="task-notes"
             [class]="TEXTAREA"
             rows="2"
-            placeholder="Notes, liens, ressources…"
+            [placeholder]="t('tasksForm.notesPlaceholder')"
             [ngModel]="notes()"
             name="notes"
             (ngModelChange)="notes.set($event)"
@@ -169,14 +163,14 @@ const CATEGORY_OPTIONS: { value: TaskCategory; label: string }[] = [
         </div>
 
         @if (submitted() && !title().trim()) {
-          <p [class]="ERROR_TEXT + ' mt-3'">Le titre est obligatoire.</p>
+          <p [class]="ERROR_TEXT + ' mt-3'">{{ t('tasksForm.titleRequired') }}</p>
         }
 
         <div [class]="ACTIONS">
           <button appButton variant="ghost" size="md" type="button" (click)="closed.emit()">
-            Annuler
+            {{ t('common.cancel') }}
           </button>
-          <button appButton variant="primary" size="md" type="submit">Enregistrer</button>
+          <button appButton variant="primary" size="md" type="submit">{{ t('common.save') }}</button>
         </div>
       </form>
     </app-modal>
@@ -206,7 +200,19 @@ export class TaskForm {
   protected readonly GRID_2 = GRID_2;
   protected readonly ACTIONS = ACTIONS;
   protected readonly ERROR_TEXT = ERROR_TEXT;
-  protected readonly CATEGORY_OPTIONS = CATEGORY_OPTIONS;
+
+  private readonly languageService = inject(LanguageService);
+
+  t = (key: string, vars?: Record<string, string>) => this.languageService.translate<string>(key, vars);
+
+  protected categoryOptions(): { value: TaskCategory; label: string }[] {
+    return [
+      { value: 'work', label: this.t('categories.work') },
+      { value: 'personal', label: this.t('categories.personal') },
+      { value: 'sport', label: this.t('categories.sport') },
+      { value: 'studies', label: this.t('categories.studies') },
+    ];
+  }
 
   constructor() {
     effect(() => {

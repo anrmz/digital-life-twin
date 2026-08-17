@@ -84,8 +84,8 @@ export function formatDuration(minutes: number): string {
   return rest === 0 ? `${hours} h` : `${hours} h ${rest}`;
 }
 
-export function formatDistance(km: number): string {
-  return km === 0 ? '—' : `${km.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} km`;
+export function formatDistance(km: number, locale = 'fr-FR'): string {
+  return km === 0 ? '—' : `${km.toLocaleString(locale, { maximumFractionDigits: 1 })} km`;
 }
 
 export const MOCK_WORKOUTS: Workout[] = [

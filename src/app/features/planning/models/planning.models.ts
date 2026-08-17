@@ -176,44 +176,34 @@ export function weekDates(iso: string): string[] {
   });
 }
 
-export function weekdayLabel(iso: string): string {
-  return ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'][parseISO(iso).getDay()];
+export function weekdayLabel(iso: string, locale = 'fr-FR'): string {
+  const date = parseISO(iso);
+  const label = new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date);
+  return `${label[0].toUpperCase()}${label.slice(1)}`;
 }
 
 export function dayNumber(iso: string): string {
   return String(parseISO(iso).getDate());
 }
 
-export function formatWeekRange(isos: string[]): string {
-  const first = formatDayMonth(isos[0]);
-  const last = formatDayMonth(isos[isos.length - 1]);
+export function formatWeekRange(isos: string[], locale = 'fr-FR'): string {
+  const first = formatDayMonth(isos[0], locale);
+  const last = formatDayMonth(isos[isos.length - 1], locale);
   return `${first} – ${last}`;
 }
 
-export function formatDayMonth(iso: string): string {
-  const months = [
-    'janvier',
-    'février',
-    'mars',
-    'avril',
-    'mai',
-    'juin',
-    'juillet',
-    'août',
-    'septembre',
-    'octobre',
-    'novembre',
-    'décembre',
-  ];
+export function formatDayMonth(iso: string, locale = 'fr-FR'): string {
   const date = parseISO(iso);
-  return `${date.getDate()} ${months[date.getMonth()]}`;
+  return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' }).format(date);
 }
 
-export function formatLongDate(iso: string): string {
-  const days = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+export function formatLongDate(iso: string, locale = 'fr-FR'): string {
   const date = parseISO(iso);
-  const cap = days[date.getDay()];
-  return `${cap[0].toUpperCase()}${cap.slice(1)} ${formatDayMonth(iso)}`;
+  return new Intl.DateTimeFormat(locale, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  }).format(date);
 }
 
 // ---------------------------------------------------------------------------
@@ -257,7 +247,7 @@ export interface EntryVisual {
   dot: string;
   chip: string;
   card: string;
-  label: string;
+  labelKey: string;
 }
 
 export const ENTRY_VISUALS: Record<PlanningEntryType, EntryVisual> = {
@@ -266,37 +256,42 @@ export const ENTRY_VISUALS: Record<PlanningEntryType, EntryVisual> = {
     dot: 'bg-primary',
     chip: 'bg-primary/10 text-primary',
     card: 'bg-surface border-l-primary',
-    label: 'Tâche',
+    labelKey: 'planningExtended.entryTypeTask',
   },
   event: {
     icon: LucideBriefcase,
     dot: 'bg-accent',
     chip: 'bg-accent/10 text-accent-dark',
     card: 'bg-surface border-l-accent',
-    label: 'Événement',
+    labelKey: 'planningExtended.entryTypeEvent',
   },
   break: {
     icon: LucideHeart,
     dot: 'bg-warning',
     chip: 'bg-warning/15 text-amber-700',
     card: 'bg-surface border-l-warning',
-    label: 'Pause',
+    labelKey: 'planningExtended.entryTypeBreak',
   },
   sport: {
     icon: LucideDumbbell,
     dot: 'bg-danger',
     chip: 'bg-danger/10 text-danger',
     card: 'bg-surface border-l-danger',
-    label: 'Sport',
+    labelKey: 'planningExtended.entryTypeSport',
   },
   free: {
     icon: LucideHome,
     dot: 'bg-navy-300',
     chip: 'bg-surface-muted text-ink-muted',
     card: 'bg-surface-muted/60 border-l-navy-300 border-dashed',
-    label: 'Temps libre',
+    labelKey: 'planningExtended.entryTypeFree',
   },
 };
+
+export function getEntryVisual(type: PlanningEntryType, t: (key: string) => string): EntryVisual & { label: string } {
+  const { labelKey, ...rest } = ENTRY_VISUALS[type];
+  return { ...rest, labelKey, label: t(labelKey) };
+}
 
 // ---------------------------------------------------------------------------
 // Sample data

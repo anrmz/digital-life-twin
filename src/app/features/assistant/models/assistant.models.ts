@@ -33,8 +33,8 @@ export const SUGGESTED_QUESTION_KEYS: string[] = [
 
 export const WELCOME_KEY = 'assistantPage.welcome';
 
-function nowLabel(): string {
-  return new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' }).format(
+function nowLabel(locale = 'fr-FR'): string {
+  return new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(
     new Date(),
   );
 }

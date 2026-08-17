@@ -4,14 +4,9 @@ import {
   SettingsService,
   type TextSize,
 } from './services/settings.service';
+import { LanguageService } from '../../core/services/language.service';
 import { SettingsToggle } from './settings-toggle';
 import { SettingsOption } from './settings-option';
-
-const TEXT_SIZES: { value: TextSize; label: string; description: string }[] = [
-  { value: 'normal', label: 'Normal', description: 'Taille standard' },
-  { value: 'large', label: 'Grande', description: 'Confort de lecture' },
-  { value: 'xlarge', label: 'Très grande', description: 'Lecture facilitée' },
-];
 
 @Component({
   selector: 'app-settings-accessibility',
@@ -23,10 +18,10 @@ const TEXT_SIZES: { value: TextSize; label: string; description: string }[] = [
     <div class="space-y-5">
       <header>
         <h2 class="font-display text-xl font-semibold tracking-tight text-primary">
-          Accessibilité
+          {{ title() }}
         </h2>
         <p class="mt-1 text-sm leading-relaxed text-ink-muted">
-          Adaptez l'expérience à vos besoins.
+          {{ subtitle() }}
         </p>
       </header>
 
@@ -35,8 +30,8 @@ const TEXT_SIZES: { value: TextSize; label: string; description: string }[] = [
           <div class="py-4">
             <app-settings-toggle
               id="st-a11y-motion"
-              label="Réduire les animations"
-              description="Désactive les transitions et les animations pour un confort accru."
+              [label]="reduceMotionLabel()"
+              [description]="reduceMotionDesc()"
               [checked]="a11y().reduceMotion"
               (checkedChange)="service.toggleAccessibility('reduceMotion')"
             />
@@ -44,8 +39,8 @@ const TEXT_SIZES: { value: TextSize; label: string; description: string }[] = [
           <div class="py-4">
             <app-settings-toggle
               id="st-a11y-contrast"
-              label="Contraste renforcé"
-              description="Renforce les contours et la visibilité des séparations."
+              [label]="highContrastLabel()"
+              [description]="highContrastDesc()"
               [checked]="a11y().highContrast"
               (checkedChange)="service.toggleAccessibility('highContrast')"
             />
@@ -53,8 +48,8 @@ const TEXT_SIZES: { value: TextSize; label: string; description: string }[] = [
           <div class="py-4">
             <app-settings-toggle
               id="st-a11y-focus"
-              label="Focus clavier"
-              description="Affiche un repère visuel renforcé lors de la navigation au clavier."
+              [label]="focusKeyboardLabel()"
+              [description]="focusKeyboardDesc()"
               [checked]="a11y().focusKeyboard"
               (checkedChange)="service.toggleAccessibility('focusKeyboard')"
             />
@@ -63,10 +58,10 @@ const TEXT_SIZES: { value: TextSize; label: string; description: string }[] = [
 
         <div class="mt-5 border-t border-line pt-6">
           <h3 class="font-display text-base font-semibold tracking-tight text-primary">
-            Taille du texte
+            {{ textSizeTitle() }}
           </h3>
           <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            @for (option of textSizes; track option.value) {
+            @for (option of textSizes(); track option.value) {
               <app-settings-option
                 group="st-text-size"
                 [value]="option.value"
@@ -82,7 +77,7 @@ const TEXT_SIZES: { value: TextSize; label: string; description: string }[] = [
         <div class="mt-6 rounded-panel border border-accent/25 bg-teal-50/40 p-4">
           <p class="flex items-center gap-2 text-xs font-medium text-accent-dark">
             <svg lucideMousePointerClick class="h-4 w-4" aria-hidden="true"></svg>
-            Ces réglages s'appliquent immédiatement à toute l'application.
+            {{ applyNotice() }}
           </p>
         </div>
       </section>
@@ -91,8 +86,25 @@ const TEXT_SIZES: { value: TextSize; label: string; description: string }[] = [
 })
 export class SettingsAccessibility {
   protected readonly service = inject(SettingsService);
+  protected readonly languageService = inject(LanguageService);
   protected readonly a11y = computed(() => this.service.state().accessibility);
-  protected readonly textSizes = TEXT_SIZES;
+
+  protected readonly title = this.languageService.translateSignal('settings.nav.accessibility');
+  protected readonly subtitle = this.languageService.translateSignal('settings.accessibility.subtitle');
+  protected readonly reduceMotionLabel = this.languageService.translateSignal('settings.accessibility.reduceMotion');
+  protected readonly reduceMotionDesc = this.languageService.translateSignal('settings.accessibility.reduceMotionDesc');
+  protected readonly highContrastLabel = this.languageService.translateSignal('settings.accessibility.highContrast');
+  protected readonly highContrastDesc = this.languageService.translateSignal('settings.accessibility.highContrastDesc');
+  protected readonly focusKeyboardLabel = this.languageService.translateSignal('settings.accessibility.focusKeyboard');
+  protected readonly focusKeyboardDesc = this.languageService.translateSignal('settings.accessibility.focusKeyboardDesc');
+  protected readonly textSizeTitle = this.languageService.translateSignal('settings.accessibility.textSizeTitle');
+  protected readonly applyNotice = this.languageService.translateSignal('settings.accessibility.applyNotice');
+
+  protected readonly textSizes = computed(() => [
+    { value: 'normal' as TextSize, label: this.languageService.translate('settings.accessibility.normalLabel'), description: this.languageService.translate('settings.accessibility.normalDesc') },
+    { value: 'large' as TextSize, label: this.languageService.translate('settings.accessibility.largeLabel'), description: this.languageService.translate('settings.accessibility.largeDesc') },
+    { value: 'xlarge' as TextSize, label: this.languageService.translate('settings.accessibility.xlargeLabel'), description: this.languageService.translate('settings.accessibility.xlargeDesc') },
+  ]);
 
   protected onTextSizeChange(value: string): void {
     this.service.setTextSize(value as TextSize);

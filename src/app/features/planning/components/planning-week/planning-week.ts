@@ -1,4 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
+import { LanguageService } from '../../../../core/services/language.service';
 import {
   dayNumber,
   formatWeekRange,
@@ -70,13 +71,18 @@ import { PlanningService } from '../../services/planning.service';
 })
 export class PlanningWeek {
   protected readonly service = inject(PlanningService);
+  private readonly languageService = inject(LanguageService);
   protected readonly selectedDate = computed(() => this.service.selectedDate());
   protected readonly rangeLabel = computed(() =>
-    formatWeekRange(this.service.week()),
+    formatWeekRange(this.service.week(), this.languageService.getLocale()),
   );
 
   protected readonly today = todayISO;
-  protected readonly weekdayLabel = weekdayLabel;
+
+  protected weekdayLabel(iso: string): string {
+    return weekdayLabel(iso, this.languageService.getLocale());
+  }
+
   protected readonly dayNumber = dayNumber;
 
   protected hasEntries(iso: string): boolean {

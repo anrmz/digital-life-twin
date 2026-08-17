@@ -69,7 +69,7 @@ function defaults(): SettingsState {
       lastName: 'Martin',
       email: 'sarah.martin@example.com',
       timezone: 'Europe/Paris',
-      language: 'Français',
+      language: 'fr',
     },
     appearance: {
       theme: 'system',

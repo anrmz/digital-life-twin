@@ -26,6 +26,7 @@ import { Modal } from '../../shared/ui/modal/modal';
 import { Toast, type ToastTone } from '../../shared/ui/toast/toast';
 import { ProfileService, type ProfileState } from './services/profile.service';
 import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from '../../shared/ui/form-styles/form-styles';
+import { LanguageService } from '../../core/services/language.service';
 
 const LANGUAGES = ['Français', 'English', 'العربية'];
 const TIMEZONES = [
@@ -67,18 +68,18 @@ const TIMEZONES = [
       <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-muted">
-            Compte
+            {{ t('profile.eyebrow') }}
           </p>
           <h1 class="mt-0.5 font-display text-2xl font-bold tracking-tight text-primary sm:text-3xl">
-            Profil
+            {{ t('profile.title') }}
           </h1>
           <p class="mt-1 text-sm text-ink-muted">
-            Vos informations personnelles, vos objectifs et vos préférences.
+            {{ t('profile.subtitle') }}
           </p>
         </div>
         <button appButton variant="accent" size="md" (click)="editOpen.set(true)">
           <svg lucidePencil class="h-4 w-4" aria-hidden="true"></svg>
-          Modifier le profil
+          {{ t('profile.editProfile') }}
         </button>
       </header>
 
@@ -90,7 +91,7 @@ const TIMEZONES = [
             <h2 class="mt-4 font-display text-xl font-semibold tracking-tight text-white">{{ fullName }}</h2>
             <p class="mt-0.5 text-sm text-white/70">{{ state().email }}</p>
             <div class="mt-3 flex items-center gap-2">
-              <app-badge variant="accent">Membre Digital Life Twin</app-badge>
+              <app-badge variant="accent">{{ t('profile.memberBadge') }}</app-badge>
             </div>
           </div>
 
@@ -105,7 +106,7 @@ const TIMEZONES = [
             </p>
             <p class="flex items-center gap-2.5 text-sm text-white/80">
               <svg lucideMapPin class="h-4 w-4 text-teal-200" aria-hidden="true"></svg>
-              Casablanca, Maroc
+              {{ t('profileExtended.location') }}
             </p>
           </div>
         </section>
@@ -120,36 +121,36 @@ const TIMEZONES = [
                 </span>
                 <div>
                   <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">
-                    Activité
+                    {{ t('profile.activity') }}
                   </p>
                   <h2 class="font-display text-base font-semibold tracking-tight text-primary">
-                    Résumé du compte
+                    {{ t('profile.accountSummary') }}
                   </h2>
                 </div>
               </div>
-              <app-badge variant="success" [dot]="true">Actif</app-badge>
+              <app-badge variant="success" [dot]="true">{{ t('profile.active') }}</app-badge>
             </div>
 
             <div class="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
               <div class="rounded-panel border border-line bg-surface-muted/50 p-4">
                 <svg lucideTarget class="h-4 w-4 text-accent-dark" aria-hidden="true"></svg>
                 <p class="mt-2 font-display text-2xl font-bold tabular-nums text-primary">156</p>
-                <p class="text-[11px] text-ink-muted">tâches terminées</p>
+                <p class="text-[11px] text-ink-muted">{{ t('profile.stats.tasksDone') }}</p>
               </div>
               <div class="rounded-panel border border-line bg-surface-muted/50 p-4">
                 <svg lucideCalendarDays class="h-4 w-4 text-accent-dark" aria-hidden="true"></svg>
                 <p class="mt-2 font-display text-2xl font-bold tabular-nums text-primary">48</p>
-                <p class="text-[11px] text-ink-muted">événements créés</p>
+                <p class="text-[11px] text-ink-muted">{{ t('profile.stats.eventsCreated') }}</p>
               </div>
               <div class="rounded-panel border border-line bg-surface-muted/50 p-4">
                 <svg lucideTimer class="h-4 w-4 text-accent-dark" aria-hidden="true"></svg>
                 <p class="mt-2 font-display text-2xl font-bold tabular-nums text-primary">12</p>
-                <p class="text-[11px] text-ink-muted">séances de sport</p>
+                <p class="text-[11px] text-ink-muted">{{ t('profile.stats.workouts') }}</p>
               </div>
               <div class="rounded-panel border border-line bg-surface-muted/50 p-4">
                 <svg lucideSmile class="h-4 w-4 text-accent-dark" aria-hidden="true"></svg>
                 <p class="mt-2 font-display text-2xl font-bold tabular-nums text-primary">82</p>
-                <p class="text-[11px] text-ink-muted">équilibre /100</p>
+                <p class="text-[11px] text-ink-muted">{{ t('profile.stats.balance') }}</p>
               </div>
             </div>
           </section>
@@ -162,36 +163,36 @@ const TIMEZONES = [
               </span>
               <div>
                 <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">
-                  Identité
-                </p>
-                <h2 class="font-display text-base font-semibold tracking-tight text-primary">
-                  Informations personnelles
+                  {{ t('profile.identity') }}
+                  </p>
+                  <h2 class="font-display text-base font-semibold tracking-tight text-primary">
+                    {{ t('profile.personalInfo') }}
                 </h2>
               </div>
             </div>
             <dl class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <dt class="text-xs text-ink-faint">Nom complet</dt>
+                <dt class="text-xs text-ink-faint">{{ t('profile.fullName') }}</dt>
                 <dd class="mt-0.5 text-sm font-semibold text-primary">{{ fullName }}</dd>
               </div>
               <div>
                 <dt class="flex items-center gap-1.5 text-xs text-ink-faint">
                   <svg lucideMail class="h-3.5 w-3.5" aria-hidden="true"></svg>
-                  Email
+                  {{ t('profile.email') }}
                 </dt>
                 <dd class="mt-0.5 text-sm font-semibold text-primary">{{ state().email }}</dd>
               </div>
               <div>
-                <dt class="text-xs text-ink-faint">Fuseau horaire</dt>
+                <dt class="text-xs text-ink-faint">{{ t('profile.timezone') }}</dt>
                 <dd class="mt-0.5 text-sm font-semibold text-primary">{{ state().timezone }}</dd>
               </div>
               <div>
-                <dt class="text-xs text-ink-faint">Langue</dt>
+                <dt class="text-xs text-ink-faint">{{ t('profile.language') }}</dt>
                 <dd class="mt-0.5 text-sm font-semibold text-primary">{{ state().language }}</dd>
               </div>
             </dl>
             <div class="mt-5 rounded-panel border border-line bg-surface-muted/50 p-4">
-              <p class="text-xs font-semibold uppercase tracking-wide text-ink-muted">À propos</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-ink-muted">{{ t('profile.about') }}</p>
               <p class="mt-1.5 text-sm leading-relaxed text-ink">{{ state().bio }}</p>
             </div>
           </section>
@@ -204,10 +205,10 @@ const TIMEZONES = [
               </span>
               <div>
                 <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">
-                  Objectifs
-                </p>
-                <h2 class="font-display text-base font-semibold tracking-tight text-primary">
-                  Préférences de bien-être
+                  {{ t('profile.goals') }}
+                  </p>
+                  <h2 class="font-display text-base font-semibold tracking-tight text-primary">
+                    {{ t('profile.wellnessPrefs') }}
                 </h2>
               </div>
             </div>
@@ -216,32 +217,32 @@ const TIMEZONES = [
               <div class="rounded-panel border border-line bg-surface p-4">
                 <div class="flex items-center gap-2 text-accent-dark">
                   <svg lucideMoon class="h-4 w-4" aria-hidden="true"></svg>
-                  <span class="text-xs font-medium">Sommeil</span>
+                  <span class="text-xs font-medium">{{ t('profile.sleep') }}</span>
                 </div>
                 <p class="mt-2 font-display text-2xl font-bold tabular-nums text-primary">
                   {{ wellness().sleepTarget }} h
                 </p>
-                <p class="text-[11px] text-ink-muted">objectif par nuit</p>
+                <p class="text-[11px] text-ink-muted">{{ t('profile.sleepGoalNote') }}</p>
               </div>
               <div class="rounded-panel border border-line bg-surface p-4">
                 <div class="flex items-center gap-2 text-accent-dark">
                   <svg lucideDroplets class="h-4 w-4" aria-hidden="true"></svg>
-                  <span class="text-xs font-medium">Hydratation</span>
+                  <span class="text-xs font-medium">{{ t('profile.hydration') }}</span>
                 </div>
                 <p class="mt-2 font-display text-2xl font-bold tabular-nums text-primary">
                   {{ wellness().waterTarget }} L
                 </p>
-                <p class="text-[11px] text-ink-muted">objectif par jour</p>
+                <p class="text-[11px] text-ink-muted">{{ t('profile.hydrationGoalNote') }}</p>
               </div>
               <div class="rounded-panel border border-line bg-surface p-4">
                 <div class="flex items-center gap-2 text-accent-dark">
                   <svg lucideTimer class="h-4 w-4" aria-hidden="true"></svg>
-                  <span class="text-xs font-medium">Activité</span>
+                  <span class="text-xs font-medium">{{ t('profile.activity') }}</span>
                 </div>
                 <p class="mt-2 font-display text-2xl font-bold tabular-nums text-primary">
                   {{ wellness().activeMinutesTarget }} min
                 </p>
-                <p class="text-[11px] text-ink-muted">minutes actives / jour</p>
+                <p class="text-[11px] text-ink-muted">{{ t('profile.activeGoalNote') }}</p>
               </div>
             </div>
 
@@ -249,20 +250,20 @@ const TIMEZONES = [
               <div class="flex items-center justify-between gap-3">
                 <span class="flex items-center gap-2 text-sm text-ink">
                   <svg lucideBellRing class="h-4 w-4 text-ink-muted" aria-hidden="true"></svg>
-                  Rappels de bien-être
+                  {{ t('profile.wellnessReminders') }}
                 </span>
                 <span class="flex items-center gap-2 text-xs text-ink-muted">
-                  {{ prefs().wellnessReminders ? 'Activés' : 'Désactivés' }}
+                  {{ prefs().wellnessReminders ? t('profile.enabled') : t('profile.disabled') }}
                   <span class="h-2 w-2 rounded-full" [class.bg-accent]="prefs().wellnessReminders" [class.bg-surface-strong]="!prefs().wellnessReminders"></span>
                 </span>
               </div>
               <div class="flex items-center justify-between gap-3">
                 <span class="flex items-center gap-2 text-sm text-ink">
                   <svg lucideClock class="h-4 w-4 text-ink-muted" aria-hidden="true"></svg>
-                  Heures calmes
+                  {{ t('profile.quietHours') }}
                 </span>
                 <span class="text-xs tabular-nums text-ink-muted">
-                  {{ prefs().quietHoursEnabled ? prefs().quietStart + ' — ' + prefs().quietEnd : 'Désactivées' }}
+                  {{ prefs().quietHoursEnabled ? prefs().quietStart + ' — ' + prefs().quietEnd : t('profileExtended.quietHoursDisabled') }}
                 </span>
               </div>
             </div>
@@ -273,14 +274,14 @@ const TIMEZONES = [
 
     @if (editOpen()) {
       <app-modal
-        title="Modifier le profil"
-        subtitle="Mettez à jour vos informations personnelles."
+        [title]="t('profile.editProfile')"
+        [subtitle]="t('profile.editSubtitle')"
         (closed)="editOpen.set(false)"
       >
         <form (ngSubmit)="saveProfile()" novalidate>
           <div [class]="GRID_2">
             <div [class]="FIELD">
-              <label [class]="LABEL" for="pf-first">Prénom</label>
+              <label [class]="LABEL" for="pf-first">{{ t('profile.firstName') }}</label>
               <input
                 id="pf-first"
                 [class]="INPUT"
@@ -291,7 +292,7 @@ const TIMEZONES = [
               />
             </div>
             <div [class]="FIELD">
-              <label [class]="LABEL" for="pf-last">Nom</label>
+              <label [class]="LABEL" for="pf-last">{{ t('profile.lastName') }}</label>
               <input
                 id="pf-last"
                 [class]="INPUT"
@@ -304,7 +305,7 @@ const TIMEZONES = [
           </div>
 
           <div [class]="FIELD + ' mt-3'">
-            <label [class]="LABEL" for="pf-email">Email</label>
+            <label [class]="LABEL" for="pf-email">{{ t('profile.email') }}</label>
             <input
               id="pf-email"
               [class]="INPUT"
@@ -317,7 +318,7 @@ const TIMEZONES = [
 
           <div [class]="GRID_2 + ' mt-3'">
             <div [class]="FIELD">
-              <label [class]="LABEL" for="pf-tz">Fuseau horaire</label>
+              <label [class]="LABEL" for="pf-tz">{{ t('profile.timezone') }}</label>
               <select
                 id="pf-tz"
                 [class]="INPUT"
@@ -331,7 +332,7 @@ const TIMEZONES = [
               </select>
             </div>
             <div [class]="FIELD">
-              <label [class]="LABEL" for="pf-lang">Langue</label>
+              <label [class]="LABEL" for="pf-lang">{{ t('profile.language') }}</label>
               <select
                 id="pf-lang"
                 [class]="INPUT"
@@ -339,15 +340,15 @@ const TIMEZONES = [
                 name="language"
                 (ngModelChange)="patchDraft({ language: $event })"
               >
-                @for (language of LANGUAGES; track language) {
-                  <option [value]="language">{{ language }}</option>
+                @for (lang of languageOptions; track lang.code) {
+                  <option [value]="lang.name">{{ lang.name }}</option>
                 }
               </select>
             </div>
           </div>
 
           <div [class]="FIELD + ' mt-3'">
-            <label [class]="LABEL" for="pf-bio">À propos</label>
+            <label [class]="LABEL" for="pf-bio">{{ t('profile.about') }}</label>
             <textarea
               id="pf-bio"
               [class]="TEXTAREA"
@@ -359,16 +360,16 @@ const TIMEZONES = [
           </div>
 
           @if (submitted() && !draft().firstName.trim()) {
-            <p [class]="ERROR_TEXT + ' mt-3'">Le prénom est obligatoire.</p>
+            <p [class]="ERROR_TEXT + ' mt-3'">{{ t('profile.firstNameRequired') }}</p>
           }
 
           <div [class]="ACTIONS">
             <button appButton variant="ghost" size="md" type="button" (click)="editOpen.set(false)">
-              Annuler
+              {{ t('common.cancel') }}
             </button>
             <button appButton variant="primary" size="md" type="submit">
               <svg lucideSave class="h-4 w-4" aria-hidden="true"></svg>
-              Enregistrer
+              {{ t('common.save') }}
             </button>
           </div>
         </form>
@@ -382,7 +383,11 @@ const TIMEZONES = [
 })
 export class ProfilePage implements AfterViewInit {
   private readonly service = inject(ProfileService);
+  private readonly languageService = inject(LanguageService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  protected readonly languageOptions = this.languageService.languageOptions;
+  protected readonly t = (key: string, vars?: Record<string, string>) => this.languageService.translate<string>(key, vars);
 
   protected readonly state = this.service.state;
   protected readonly prefs = this.service.prefs;
@@ -419,7 +424,7 @@ export class ProfilePage implements AfterViewInit {
     this.service.saveProfile(this.draft());
     this.editOpen.set(false);
     this.toastTone.set('success');
-    this.toast.set('Profil mis à jour avec succès.');
+    this.toast.set(this.t('profile.toast.updated'));
   }
 
   ngAfterViewInit(): void {

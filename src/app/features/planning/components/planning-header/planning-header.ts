@@ -63,7 +63,7 @@ export class PlanningHeader {
   protected readonly today = this.languageService.translateSignal('planning.header.today');
   protected readonly goToToday = this.languageService.translateSignal('planning.header.goToToday');
 
-  protected readonly dateLabel = computed(() => formatLongDate(this.service.selectedDate()));
+  protected readonly dateLabel = computed(() => formatLongDate(this.service.selectedDate(), this.languageService.getLocale()));
   protected readonly isToday = computed(() => this.service.selectedDate() === todayISO());
   protected readonly todayTitle = computed(() =>
     this.isToday() ? this.today() : this.goToToday(),

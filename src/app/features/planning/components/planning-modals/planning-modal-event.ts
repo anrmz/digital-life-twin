@@ -1,5 +1,6 @@
-import { Component, effect, input, output, signal } from '@angular/core';
+import { Component, effect, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LanguageService } from '../../../../core/services/language.service';
 import { Button } from '../../../../shared/ui/button/button';
 import { Modal } from '../../../../shared/ui/modal/modal';
 import {
@@ -15,18 +16,18 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
   imports: [Modal, Button, FormsModule],
   template: `
     <app-modal
-      [title]="entry() ? 'Modifier l’événement' : 'Nouvel événement'"
-      subtitle="Lieu, participants et horaires de votre rendez-vous."
+      [title]="entry() ? t('eventForm.editTitle') : t('eventForm.newTitle')"
+      [subtitle]="t('planningModal.eventSubtitle')"
       (closed)="closed.emit()"
     >
       <form (ngSubmit)="save()" novalidate>
         <div [class]="FIELD">
-          <label [class]="LABEL" for="event-title">Titre</label>
+          <label [class]="LABEL" for="event-title">{{ t('eventForm.title') }}</label>
           <input
             id="event-title"
             [class]="INPUT"
             type="text"
-            placeholder="Cours, réunion, rendez-vous…"
+            [placeholder]="t('eventForm.titlePlaceholder')"
             autocomplete="off"
             [ngModel]="title()"
             name="title"
@@ -35,12 +36,12 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
         </div>
 
         <div [class]="FIELD + ' mt-3'">
-          <label [class]="LABEL" for="event-desc">Description</label>
+          <label [class]="LABEL" for="event-desc">{{ t('eventForm.description') }}</label>
           <textarea
             id="event-desc"
             [class]="TEXTAREA"
             rows="3"
-            placeholder="Ordre du jour, informations pratiques…"
+            [placeholder]="t('planningModal.eventDescPlaceholder')"
             [ngModel]="description()"
             name="description"
             (ngModelChange)="description.set($event)"
@@ -49,7 +50,7 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
 
         <div [class]="GRID_2 + ' mt-3'">
           <div [class]="FIELD">
-            <label [class]="LABEL" for="event-date">Date</label>
+            <label [class]="LABEL" for="event-date">{{ t('eventForm.date') }}</label>
             <input
               id="event-date"
               [class]="INPUT"
@@ -60,7 +61,7 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
             />
           </div>
           <div [class]="FIELD">
-            <label [class]="LABEL" for="event-cat">Catégorie</label>
+            <label [class]="LABEL" for="event-cat">{{ t('eventForm.category') }}</label>
             <select
               id="event-cat"
               [class]="INPUT"
@@ -68,17 +69,16 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
               name="category"
               (ngModelChange)="category.set($event)"
             >
-              <option value="work">Travail</option>
-              <option value="personal">Personnel</option>
-              <option value="sport">Sport</option>
-              <option value="meals">Repas</option>
+              @for (opt of categoryOptions(); track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
             </select>
           </div>
         </div>
 
         <div [class]="GRID_2 + ' mt-3'">
           <div [class]="FIELD">
-            <label [class]="LABEL" for="event-start">Début</label>
+            <label [class]="LABEL" for="event-start">{{ t('eventForm.start') }}</label>
             <input
               id="event-start"
               [class]="INPUT"
@@ -89,7 +89,7 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
             />
           </div>
           <div [class]="FIELD">
-            <label [class]="LABEL" for="event-end">Fin</label>
+            <label [class]="LABEL" for="event-end">{{ t('eventForm.end') }}</label>
             <input
               id="event-end"
               [class]="INPUT"
@@ -102,12 +102,12 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
         </div>
 
         <div [class]="FIELD + ' mt-3'">
-          <label [class]="LABEL" for="event-location">Lieu</label>
+          <label [class]="LABEL" for="event-location">{{ t('eventForm.location') }}</label>
           <input
             id="event-location"
             [class]="INPUT"
             type="text"
-            placeholder="Amphithéâtre A, Université"
+            [placeholder]="t('eventForm.locationPlaceholder')"
             autocomplete="off"
             [ngModel]="location()"
             name="location"
@@ -116,12 +116,12 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
         </div>
 
         <div [class]="FIELD + ' mt-3'">
-          <label [class]="LABEL" for="event-participants">Participants (séparés par des virgules)</label>
+          <label [class]="LABEL" for="event-participants">{{ t('eventForm.participants') }}</label>
           <input
             id="event-participants"
             [class]="INPUT"
             type="text"
-            placeholder="Groupe 3A, Dr. Benali"
+            [placeholder]="t('eventForm.participantsPlaceholder')"
             autocomplete="off"
             [ngModel]="participantsText()"
             name="participants"
@@ -130,12 +130,12 @@ import { ACTIONS, ERROR_TEXT, FIELD, GRID_2, INPUT, LABEL, TEXTAREA } from './fo
         </div>
 
         @if (submitted() && !title().trim()) {
-          <p [class]="ERROR_TEXT + ' mt-3'">Le titre est obligatoire.</p>
+          <p [class]="ERROR_TEXT + ' mt-3'">{{ t('eventForm.titleRequired') }}</p>
         }
 
         <div [class]="ACTIONS">
-          <button appButton variant="ghost" size="md" type="button" (click)="closed.emit()">Annuler</button>
-          <button appButton variant="primary" size="md" type="submit">Enregistrer</button>
+          <button appButton variant="ghost" size="md" type="button" (click)="closed.emit()">{{ t('common.cancel') }}</button>
+          <button appButton variant="primary" size="md" type="submit">{{ t('common.save') }}</button>
         </div>
       </form>
     </app-modal>
@@ -163,6 +163,19 @@ export class PlanningModalEvent {
   protected readonly GRID_2 = GRID_2;
   protected readonly ACTIONS = ACTIONS;
   protected readonly ERROR_TEXT = ERROR_TEXT;
+
+  private readonly languageService = inject(LanguageService);
+
+  t = (key: string, vars?: Record<string, string>) => this.languageService.translate<string>(key, vars);
+
+  protected categoryOptions(): { value: PlanningCategory; label: string }[] {
+    return [
+      { value: 'work', label: this.t('categories.work') },
+      { value: 'personal', label: this.t('categories.personal') },
+      { value: 'sport', label: this.t('categories.sport') },
+      { value: 'meals', label: this.t('categories.meals') },
+    ];
+  }
 
   constructor() {
     effect(() => {

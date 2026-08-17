@@ -29,6 +29,7 @@ import {
   ENTRY_VISUALS,
   PRIORITY_KEYS,
   formatDayMonth,
+  getEntryVisual,
   minutesToLabel,
   type PlanningEntry,
 } from '../../models/planning.models';
@@ -63,7 +64,7 @@ import { PlanningService } from '../../services/planning.service';
                 <app-badge [variant]="badgeVariant()">{{ visual()?.label }}</app-badge>
               }
               @if (entry()?.status === 'done') {
-                <app-badge variant="success">Terminée</app-badge>
+                <app-badge variant="success">{{ t('statuses.done') }}</app-badge>
               }
             </div>
             <h3 class="mt-1.5 font-display text-lg font-semibold tracking-tight text-primary">
@@ -75,7 +76,7 @@ import { PlanningService } from '../../services/planning.service';
             appButton
             variant="ghost"
             size="icon"
-            aria-label="Fermer les détails"
+            aria-label="{{ t('eventDetails.close') }}"
             (click)="closed.emit()"
           >
             <svg lucideX class="h-4 w-4" aria-hidden="true"></svg>
@@ -94,7 +95,7 @@ import { PlanningService } from '../../services/planning.service';
                   <svg lucideCalendarDays class="h-4 w-4" aria-hidden="true"></svg>
                 </span>
                 <div>
-                  <dt class="text-xs font-semibold text-ink-muted">Date</dt>
+                  <dt class="text-xs font-semibold text-ink-muted">{{ t('eventDetails.date') }}</dt>
                   <dd class="font-medium text-primary">{{ formatDayMonth(entry.date) }}</dd>
                 </div>
               </div>
@@ -104,7 +105,7 @@ import { PlanningService } from '../../services/planning.service';
                   <svg lucideClock class="h-4 w-4" aria-hidden="true"></svg>
                 </span>
                 <div>
-                  <dt class="text-xs font-semibold text-ink-muted">Horaire</dt>
+                  <dt class="text-xs font-semibold text-ink-muted">{{ t('eventDetails.time') }}</dt>
                   <dd class="font-medium text-primary">
                     {{ entry.start }} – {{ entry.end }}
                     <span class="text-ink-faint">· {{ minutesToLabel(entry.duration) }}</span>
@@ -118,7 +119,7 @@ import { PlanningService } from '../../services/planning.service';
                     <svg lucideTag class="h-4 w-4" aria-hidden="true"></svg>
                   </span>
                   <div>
-                    <dt class="text-xs font-semibold text-ink-muted">Catégorie</dt>
+                    <dt class="text-xs font-semibold text-ink-muted">{{ t('eventDetails.category') }}</dt>
                     <dd class="font-medium text-primary">{{ categoryLabel(entry.category) }}</dd>
                   </div>
                 </div>
@@ -130,7 +131,7 @@ import { PlanningService } from '../../services/planning.service';
                     <svg lucideTimer class="h-4 w-4" aria-hidden="true"></svg>
                   </span>
                   <div>
-                    <dt class="text-xs font-semibold text-ink-muted">Priorité</dt>
+                    <dt class="text-xs font-semibold text-ink-muted">{{ t('planningDetails.priority') }}</dt>
                     <dd class="font-medium text-primary">{{ priorityLabel(entry.priority) }}</dd>
                   </div>
                 </div>
@@ -142,7 +143,7 @@ import { PlanningService } from '../../services/planning.service';
                     <svg lucideMapPin class="h-4 w-4" aria-hidden="true"></svg>
                   </span>
                   <div>
-                    <dt class="text-xs font-semibold text-ink-muted">Lieu</dt>
+                    <dt class="text-xs font-semibold text-ink-muted">{{ t('eventDetails.location') }}</dt>
                     <dd class="font-medium text-primary">{{ entry.location }}</dd>
                   </div>
                 </div>
@@ -154,7 +155,7 @@ import { PlanningService } from '../../services/planning.service';
                     <svg lucideUsers class="h-4 w-4" aria-hidden="true"></svg>
                   </span>
                   <div>
-                    <dt class="text-xs font-semibold text-ink-muted">Participants</dt>
+                    <dt class="text-xs font-semibold text-ink-muted">{{ t('eventDetails.participants') }}</dt>
                     <dd class="font-medium text-primary">{{ entry.participants.join(', ') }}</dd>
                   </div>
                 </div>
@@ -165,13 +166,13 @@ import { PlanningService } from '../../services/planning.service';
               @if (entry.type === 'task') {
                 <button appButton variant="secondary" size="md" class="w-full" (click)="service.toggleComplete(entry.id)">
                   <svg lucideCheck class="h-4 w-4" aria-hidden="true"></svg>
-                  {{ entry.status === 'done' ? 'Marquer comme non terminée' : 'Marquer comme terminée' }}
+                  {{ entry.status === 'done' ? t('tasksDetail.markUndone') : t('tasksDetail.markDone') }}
                 </button>
               }
               @if (entry.type !== 'free') {
                 <button appButton variant="outline" size="md" class="w-full" (click)="edit.emit(entry)">
                   <svg lucidePencil class="h-4 w-4" aria-hidden="true"></svg>
-                  Modifier
+                  {{ t('common.edit') }}
                 </button>
               }
               <button
@@ -182,7 +183,7 @@ import { PlanningService } from '../../services/planning.service';
                 (click)="service.deleteEntry(entry.id)"
               >
                 <svg lucideTrash2 class="h-4 w-4" aria-hidden="true"></svg>
-                Supprimer
+                {{ t('common.delete') }}
               </button>
             </div>
           }
@@ -202,8 +203,10 @@ export class EntryDetails {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  t = (key: string, vars?: Record<string, string>) => this.languageService.translate<string>(key, vars);
+
   protected readonly visual = computed(() =>
-    this.entry() ? ENTRY_VISUALS[this.entry()!.type] : null,
+    this.entry() ? getEntryVisual(this.entry()!.type, (key) => this.languageService.translate(key)) : null,
   );
 
   protected readonly badgeVariant = computed(() =>
@@ -218,8 +221,11 @@ export class EntryDetails {
 
   protected readonly CATEGORY_KEYS = CATEGORY_KEYS;
   protected readonly PRIORITY_KEYS = PRIORITY_KEYS;
-  protected readonly formatDayMonth = formatDayMonth;
   protected readonly minutesToLabel = minutesToLabel;
+
+  protected formatDayMonth(iso: string): string {
+    return formatDayMonth(iso, this.languageService.getLocale());
+  }
 
   protected categoryLabel(value: PlanningEntry['category']): string {
     return this.languageService.translate(CATEGORY_KEYS[value]);

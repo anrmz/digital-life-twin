@@ -14,9 +14,9 @@ import { Field } from '../../shared/ui/field/field';
 import { Toast, type ToastTone } from '../../shared/ui/toast/toast';
 import { InputDirective, SelectDirective } from '../../shared/directives/field-control/field-control';
 import { SettingsService, type ProfileSettings } from './services/settings.service';
+import { LanguageService } from '../../core/services/language.service';
 
 const ACCOUNT_TIMEZONES = ['Europe/Paris', 'Africa/Casablanca', 'UTC'];
-const ACCOUNT_LANGUAGES = ['Français', 'English', 'العربية'];
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -37,9 +37,9 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   template: `
     <div class="space-y-5">
       <header>
-        <h2 class="font-display text-xl font-semibold tracking-tight text-primary">Compte</h2>
+        <h2 class="font-display text-xl font-semibold tracking-tight text-primary">{{ t('settings.nav.account') }}</h2>
         <p class="mt-1 text-sm leading-relaxed text-ink-muted">
-          Gérez vos informations personnelles et votre profil.
+          {{ t('settings.account.subtitle') }}
         </p>
       </header>
 
@@ -53,13 +53,13 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             <p class="font-display text-lg font-semibold tracking-tight text-primary">
               {{ fullName }}
             </p>
-            <p class="text-xs font-medium text-accent-dark">Utilisatrice</p>
+            <p class="text-xs font-medium text-accent-dark">{{ t('settings.account.femaleUser') }}</p>
             <p class="mt-1 truncate text-sm text-ink-muted">{{ profile().email }}</p>
           </div>
         </div>
         <button appButton variant="outline" size="md" (click)="focusForm()">
           <svg lucidePencil class="h-4 w-4" aria-hidden="true"></svg>
-          Modifier le profil
+          {{ t('profile.editProfile') }}
         </button>
       </section>
 
@@ -71,24 +71,24 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           </span>
           <div>
             <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">
-              Identité
+              {{ t('profile.identity') }}
             </p>
             <h3 class="font-display text-base font-semibold tracking-tight text-primary">
-              Informations personnelles
+              {{ t('profile.personalInfo') }}
             </h3>
           </div>
         </div>
 
         <form #profileForm (ngSubmit)="save()" novalidate>
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <app-field id="st-first" label="Prénom" [error]="firstNameError()">
+            <app-field id="st-first" [label]="t('profile.firstName')" [error]="firstNameError()">
               <input
                 id="st-first"
                 #firstNameInput
                 appInput
                 type="text"
                 autocomplete="given-name"
-                placeholder="Prénom"
+                [placeholder]="t('profile.firstName')"
                 [appInputInvalid]="!!firstNameError()"
                 [ngModel]="draft().firstName"
                 name="firstName"
@@ -96,13 +96,13 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
               />
             </app-field>
 
-            <app-field id="st-last" label="Nom" [error]="lastNameError()">
+            <app-field id="st-last" [label]="t('profile.lastName')" [error]="lastNameError()">
               <input
                 id="st-last"
                 appInput
                 type="text"
                 autocomplete="family-name"
-                placeholder="Nom"
+                [placeholder]="t('profile.lastName')"
                 [appInputInvalid]="!!lastNameError()"
                 [ngModel]="draft().lastName"
                 name="lastName"
@@ -112,7 +112,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           </div>
 
           <div class="mt-4">
-            <app-field id="st-email" label="Email" [error]="emailError()">
+            <app-field id="st-email" [label]="t('profile.email')" [error]="emailError()">
               <input
                 id="st-email"
                 appInput
@@ -128,7 +128,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           </div>
 
           <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <app-field id="st-tz" label="Fuseau horaire">
+            <app-field id="st-tz" [label]="t('profile.timezone')">
               <select
                 id="st-tz"
                 appSelect
@@ -142,7 +142,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
               </select>
             </app-field>
 
-            <app-field id="st-lang" label="Langue">
+            <app-field id="st-lang" [label]="t('profile.language')">
               <select
                 id="st-lang"
                 appSelect
@@ -150,8 +150,8 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 name="language"
                 (ngModelChange)="patchDraft({ language: $event })"
               >
-                @for (language of languages; track language) {
-                  <option [value]="language">{{ language }}</option>
+                @for (lang of languageOptions; track lang.code) {
+                  <option [value]="lang.code">{{ lang.flag }} {{ lang.name }}</option>
                 }
               </select>
             </app-field>
@@ -165,11 +165,11 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
               type="button"
               (click)="resetDraft()"
             >
-              Annuler
+              {{ t('common.cancel') }}
             </button>
             <button appButton variant="primary" size="md" type="submit">
               <svg lucideSave class="h-4 w-4" aria-hidden="true"></svg>
-              Enregistrer les modifications
+              {{ t('settings.account.saveChanges') }}
             </button>
           </div>
         </form>
@@ -183,11 +183,14 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 })
 export class SettingsAccount {
   private readonly service = inject(SettingsService);
+  private readonly languageService = inject(LanguageService);
   private readonly form = viewChild<ElementRef<HTMLElement>>('profileForm');
   private readonly firstNameInput = viewChild<ElementRef<HTMLInputElement>>('firstNameInput');
 
   protected readonly timezones = ACCOUNT_TIMEZONES;
-  protected readonly languages = ACCOUNT_LANGUAGES;
+  protected readonly languageOptions = this.languageService.languageOptions;
+
+  t = (key: string, vars?: Record<string, string>) => this.languageService.translate<string>(key, vars);
 
   protected readonly profile = computed(() => this.service.state().profile);
   protected readonly draft = signal<ProfileSettings>(this.service.state().profile);
@@ -203,14 +206,14 @@ export class SettingsAccount {
     if (!this.submitted()) {
       return null;
     }
-    return this.draft().firstName.trim() ? null : 'Le prénom est obligatoire.';
+    return this.draft().firstName.trim() ? null : this.t('profile.firstNameRequired');
   }
 
   protected lastNameError(): string | null {
     if (!this.submitted()) {
       return null;
     }
-    return this.draft().lastName.trim() ? null : 'Le nom est obligatoire.';
+    return this.draft().lastName.trim() ? null : this.t('settings.account.lastNameRequired');
   }
 
   protected emailError(): string | null {
@@ -219,9 +222,9 @@ export class SettingsAccount {
     }
     const email = this.draft().email.trim();
     if (!email) {
-      return "L'adresse email est obligatoire.";
+      return this.t('settings.account.emailRequired');
     }
-    return EMAIL_PATTERN.test(email) ? null : 'Adresse email invalide.';
+    return EMAIL_PATTERN.test(email) ? null : this.t('settings.account.emailInvalid');
   }
 
   protected patchDraft(patch: Partial<ProfileSettings>): void {
@@ -236,7 +239,7 @@ export class SettingsAccount {
     this.service.saveProfile(this.draft());
     this.submitted.set(false);
     this.toastTone.set('success');
-    this.toast.set('Modifications enregistrées avec succès.');
+    this.toast.set(this.t('settings.account.toastUpdated'));
   }
 
   protected resetDraft(): void {
