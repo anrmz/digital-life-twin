@@ -86,6 +86,8 @@ export const EN_TRANSLATIONS = {
     previous: 'Previous',
     all: 'All',
     reset: 'Reset',
+    yes: 'Yes',
+    no: 'No',
   },
   settings: {
     title: 'Settings',
@@ -1668,20 +1670,54 @@ export const EN_TRANSLATIONS = {
       passwordHint: '8 characters minimum',
     },
     shell: {
-      backHome: '← Back to home',
+      backHome: 'Back to home',
+    },
+    brand: {
+      badge: 'Digital Life Twin',
+      headline: 'Your digital twin, at the service of your days',
+      description:
+        'Digital Life Twin analyses your planning, your habits and your well-being to better organize every day.',
+      stories: [
+        {
+          title: 'Smart planning',
+          description: 'Tasks, events and focus blocks centralized on a single timeline.',
+        },
+        {
+          title: 'Well-being tracking',
+          description: 'Sleep, hydration, mood and stress: your balance at a glance.',
+        },
+        {
+          title: 'Personal AI',
+          description: 'Clear, explained recommendations — never a diagnosis.',
+        },
+      ],
+      stats: [
+        { value: '1', label: 'unified space' },
+        { value: '13', label: 'built-in modules' },
+        { value: '0', label: 'medical diagnosis' },
+      ],
+      disclaimer:
+        'Well-being indicators — not a substitute for professional medical advice.',
+    },
+    social: {
+      label: 'or continue with',
+      google: 'Google',
+      apple: 'Apple',
+      notice: 'Social login will be available in a future version.',
+    },
+    footer: {
+      terms: 'Terms of use',
+      privacy: 'Privacy policy',
+      help: 'Help',
+      copyright: '© {{year}} Digital Life Twin. All rights reserved.',
     },
     login: {
-      shellTitle: 'Find your day again',
-      shellSubtitle:
-        'Log in to find your planning, well-being and insights.',
-      points: [
-        'Your planning and tasks up to date',
-        'Your well-being indicators at a glance',
-        'Your personalized AI insights',
-      ],
-      quote: '“Organizing my day has never been so simple.” — Camille, user',
+      eyebrow: 'Member area',
       title: 'Welcome back 👋',
       subtitle: 'Log in to your Digital Life Twin space.',
+      demoTitle: 'Demo account',
+      demoDescription: 'Credentials pre-filled:',
+      demoFill: 'Use the demo',
       emailLabel: 'Email',
       emailPlaceholder: 'you@example.com',
       passwordLabel: 'Password',
@@ -1693,23 +1729,74 @@ export const EN_TRANSLATIONS = {
       forgotHint:
         'Password reset will be available in a future version.',
       submit: 'Log in',
-      demoLabel: 'Demo:',
       noAccount: 'No account yet?',
       createAccount: 'Create account',
       error: 'Incorrect email or password. Check your credentials and try again.',
     },
     register: {
-      shellTitle: 'Take back control of your days',
-      shellSubtitle:
-        'Create your space and let Digital Life Twin help you organize each day better.',
-      points: [
-        'Your planning and tasks centralized',
-        'Your well-being indicators, without judgment',
-        'Clear, explained AI insights',
-      ],
-      quote: '“Finally an app that helps me, without judging me.” — Thomas, user',
+      eyebrow: 'New account',
       title: 'Create account',
       subtitle: 'Free, no commitment. A few seconds is all it takes.',
+      steps: {
+        label: 'Step',
+        of: 'of',
+        identity: { title: 'Identity', subtitle: 'What is your name?' },
+        account: { title: 'Account', subtitle: 'Your email address' },
+        security: { title: 'Security', subtitle: 'Choose a strong password' },
+        terms: {
+          title: 'Terms',
+          subtitle: 'Read and accept our terms of use',
+        },
+        personalization: {
+          title: 'Personalization',
+          subtitle: 'Adapt the app to your goals',
+        },
+      },
+      confirm: {
+        title: 'Summary',
+        subtitle: 'Review your information before creating your account.',
+        edit: 'Edit',
+      },
+      nav: {
+        back: 'Back',
+        next: 'Continue',
+      },
+      summary: {
+        name: 'Full name',
+        email: 'Email',
+        password: 'Password',
+        sleep: 'Sleep target',
+        water: 'Hydration target',
+        activity: 'Activity target',
+        dailySummary: 'Daily summary',
+      },
+      personalization: {
+        sleepLabel: 'Sleep target',
+        sleepHint: 'per night',
+        waterLabel: 'Hydration target',
+        waterHint: 'per day',
+        activityLabel: 'Activity target',
+        activityHint: 'active minutes per day',
+        summaryLabel: 'Daily summary',
+        summaryHint: 'Receive a summary of your day every evening.',
+        sleepOptions: [
+          { value: '7h', label: '7 h' },
+          { value: '7h30', label: '7 h 30' },
+          { value: '8h', label: '8 h' },
+          { value: '8h30', label: '8 h 30' },
+        ],
+        waterOptions: [
+          { value: '1500', label: '1.5 L' },
+          { value: '2000', label: '2 L' },
+          { value: '2500', label: '2.5 L' },
+          { value: '3000', label: '3 L' },
+        ],
+        activityOptions: [
+          { value: '30', label: '30 min' },
+          { value: '45', label: '45 min' },
+          { value: '60', label: '60 min' },
+        ],
+      },
       firstNameLabel: 'First name',
       firstNamePlaceholder: 'Sarah',
       lastNameLabel: 'Last name',

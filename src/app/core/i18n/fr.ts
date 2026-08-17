@@ -86,6 +86,8 @@ export const FR_TRANSLATIONS = {
     previous: 'Précédent',
     all: 'Tout',
     reset: 'Réinitialiser',
+    yes: 'Oui',
+    no: 'Non',
   },
   settings: {
     title: 'Paramètres',
@@ -1679,20 +1681,55 @@ export const FR_TRANSLATIONS = {
       passwordHint: '8 caractères minimum',
     },
     shell: {
-      backHome: '← Retour à l’accueil',
+      backHome: 'Retour à l’accueil',
+    },
+    brand: {
+      badge: 'Digital Life Twin',
+      headline: 'Votre jumeau numérique, au service de vos journées',
+      description:
+        'Digital Life Twin analyse votre planning, vos habitudes et votre bien-être pour mieux organiser chaque journée.',
+      stories: [
+        {
+          title: 'Planification intelligente',
+          description:
+            'Tâches, événements et plages de travail centralisés sur une seule timeline.',
+        },
+        {
+          title: 'Bien-être suivi',
+          description:
+            'Sommeil, hydratation, humeur et stress : votre équilibre en un coup d’œil.',
+        },
+        {
+          title: 'IA personnalisée',
+          description: 'Des recommandations claires et expliquées, jamais un diagnostic.',
+        },
+      ],
+      stats: [
+        { value: '1', label: 'espace unifié' },
+        { value: '13', label: 'modules intégrés' },
+        { value: '0', label: 'diagnostic médical' },
+      ],
+      disclaimer: 'Indicateurs de bien-être — ne remplace pas un avis médical professionnel.',
+    },
+    social: {
+      label: 'ou continuer avec',
+      google: 'Google',
+      apple: 'Apple',
+      notice: 'La connexion sociale sera disponible dans une prochaine version.',
+    },
+    footer: {
+      terms: 'Conditions d’utilisation',
+      privacy: 'Politique de confidentialité',
+      help: 'Aide',
+      copyright: '© {{year}} Digital Life Twin. Tous droits réservés.',
     },
     login: {
-      shellTitle: 'Retrouvez votre journée',
-      shellSubtitle:
-        'Connectez-vous pour retrouver votre planning, votre bien-être et vos insights.',
-      points: [
-        'Votre planning et vos tâches à jour',
-        'Vos indicateurs de bien-être en un coup d’œil',
-        'Vos insights IA personnalisés',
-      ],
-      quote: '« Organiser ma journée n’a jamais été aussi simple. » — Camille, utilisatrice',
+      eyebrow: 'Espace membre',
       title: 'Bon retour 👋',
       subtitle: 'Connectez-vous à votre espace Digital Life Twin.',
+      demoTitle: 'Compte de démonstration',
+      demoDescription: 'Identifiants pré-remplis :',
+      demoFill: 'Utiliser la démo',
       emailLabel: 'E-mail',
       emailPlaceholder: 'vous@exemple.fr',
       passwordLabel: 'Mot de passe',
@@ -1704,23 +1741,74 @@ export const FR_TRANSLATIONS = {
       forgotHint:
         'La réinitialisation de mot de passe sera disponible dans une prochaine version.',
       submit: 'Se connecter',
-      demoLabel: 'Démo :',
       noAccount: 'Pas encore de compte ?',
       createAccount: 'Créer un compte',
       error: 'E-mail ou mot de passe incorrect. Vérifiez vos identifiants et réessayez.',
     },
     register: {
-      shellTitle: 'Reprenez le contrôle de vos journées',
-      shellSubtitle:
-        'Créez votre espace et laissez Digital Life Twin vous aider à mieux organiser chaque journée.',
-      points: [
-        'Votre planning et vos tâches centralisés',
-        'Vos indicateurs de bien-être, sans jugement',
-        'Des insights IA clairs et expliqués',
-      ],
-      quote: '« Enfin une application qui m’aide, sans me juger. » — Thomas, utilisateur',
+      eyebrow: 'Nouveau compte',
       title: 'Créer un compte',
       subtitle: 'Gratuit, sans engagement. Quelques secondes suffisent.',
+      steps: {
+        label: 'Étape',
+        of: 'sur',
+        identity: { title: 'Identité', subtitle: 'Comment vous appelez-vous ?' },
+        account: { title: 'Compte', subtitle: 'Votre adresse e-mail' },
+        security: { title: 'Sécurité', subtitle: 'Choisissez un mot de passe solide' },
+        terms: {
+          title: 'Conditions',
+          subtitle: 'Lisez et acceptez nos conditions d’utilisation',
+        },
+        personalization: {
+          title: 'Personnalisation',
+          subtitle: 'Adaptez l’application à vos objectifs',
+        },
+      },
+      confirm: {
+        title: 'Récapitulatif',
+        subtitle: 'Vérifiez vos informations avant de créer votre compte.',
+        edit: 'Modifier',
+      },
+      nav: {
+        back: 'Retour',
+        next: 'Continuer',
+      },
+      summary: {
+        name: 'Nom complet',
+        email: 'E-mail',
+        password: 'Mot de passe',
+        sleep: 'Objectif de sommeil',
+        water: 'Objectif d’hydratation',
+        activity: 'Objectif d’activité',
+        dailySummary: 'Résumé quotidien',
+      },
+      personalization: {
+        sleepLabel: 'Objectif de sommeil',
+        sleepHint: 'par nuit',
+        waterLabel: 'Objectif d’hydratation',
+        waterHint: 'par jour',
+        activityLabel: 'Objectif d’activité',
+        activityHint: 'minutes actives par jour',
+        summaryLabel: 'Résumé quotidien',
+        summaryHint: 'Recevez un résumé de votre journée chaque soir.',
+        sleepOptions: [
+          { value: '7h', label: '7 h' },
+          { value: '7h30', label: '7 h 30' },
+          { value: '8h', label: '8 h' },
+          { value: '8h30', label: '8 h 30' },
+        ],
+        waterOptions: [
+          { value: '1500', label: '1,5 L' },
+          { value: '2000', label: '2 L' },
+          { value: '2500', label: '2,5 L' },
+          { value: '3000', label: '3 L' },
+        ],
+        activityOptions: [
+          { value: '30', label: '30 min' },
+          { value: '45', label: '45 min' },
+          { value: '60', label: '60 min' },
+        ],
+      },
       firstNameLabel: 'Prénom',
       firstNamePlaceholder: 'Sarah',
       lastNameLabel: 'Nom',

@@ -1,45 +1,61 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { LucideEye, LucideEyeOff, LucideInfo, LucideLock, LucideMail } from '@lucide/angular';
-import { AuthService } from '../../../core/services/auth/auth.service';
+import {
+  AuthService,
+  DEMO_EMAIL,
+  DEMO_PASSWORD,
+} from '../../../core/services/auth/auth.service';
 import { LanguageService } from '../../../core/services/language.service';
 import { Button } from '../../../shared/ui/button/button';
 import { Checkbox } from '../../../shared/ui/checkbox/checkbox';
 import { Field } from '../../../shared/ui/field/field';
 import { InputDirective } from '../../../shared/directives/field-control/field-control';
 import { AuthShell } from '../components/auth-shell/auth-shell';
+import { AuthPageShell } from '../components/auth-page-shell/auth-page-shell';
+import { AuthHeading } from '../components/auth-heading/auth-heading';
+import { AuthSocialDivider } from '../components/auth-social-divider/auth-social-divider';
+import { AuthSocialButtons } from '../components/auth-social-buttons/auth-social-buttons';
 
 type FormStatus = 'idle' | 'loading' | 'error';
-
-const DEMO_EMAIL = 'sarah.martin@example.com';
-const DEMO_PASSWORD = 'demo123';
 
 @Component({
   selector: 'app-login',
   template: `
-    <app-auth-shell
-      [title]="shellTitle()"
-      [subtitle]="shellSubtitle()"
-      [points]="loginPoints()"
-      [quote]="quote()"
-    >
-      <div>
-        <h1 class="font-display text-h1 tracking-tight text-primary">{{ title() }}</h1>
-        <p class="mt-2 text-body-lg leading-relaxed text-ink-muted">
-          {{ subtitle() }}
-        </p>
+    <app-auth-shell>
+      <app-auth-page-shell>
+        <app-auth-heading [eyebrow]="eyebrow()" [title]="title()" [subtitle]="subtitle()" />
 
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-8 space-y-5" novalidate>
+        <div
+          class="mt-7 flex items-start gap-3 rounded-panel border border-accent/25 bg-teal-50 px-4 py-3"
+          role="status"
+        >
+          <svg lucideInfo class="mt-0.5 h-4 w-4 shrink-0 text-accent-dark" aria-hidden="true"></svg>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-semibold text-accent-dark">{{ demoTitle() }}</p>
+            <p class="mt-0.5 text-xs leading-relaxed text-ink-muted">
+              {{ demoDescription() }}
+              <span class="font-medium text-ink">{{ demoEmail }} / {{ demoPassword }}</span>
+            </p>
+          </div>
+          <button
+            type="button"
+            class="shrink-0 rounded-panel px-2 py-1 text-xs font-semibold text-accent-dark transition-colors duration-200 hover:bg-accent/10"
+            (click)="fillDemo()"
+          >
+            {{ demoFill() }}
+          </button>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-7 space-y-5" novalidate>
           @if (status() === 'error') {
             <div
               class="flex items-start gap-3 rounded-panel border border-danger/30 bg-danger-light px-4 py-3"
               role="alert"
             >
               <svg lucideInfo class="mt-0.5 h-4 w-4 shrink-0 text-danger" aria-hidden="true"></svg>
-              <p class="text-sm leading-relaxed text-danger">
-                {{ error() }}
-              </p>
+              <p class="text-sm leading-relaxed text-danger">{{ error() }}</p>
             </div>
           }
 
@@ -63,7 +79,11 @@ const DEMO_PASSWORD = 'demo123';
             </div>
           </app-field>
 
-          <app-field [label]="passwordLabel()" [id]="'login-password'" [error]="errorFor('password')">
+          <app-field
+            [label]="passwordLabel()"
+            [id]="'login-password'"
+            [error]="errorFor('password')"
+          >
             <div class="relative">
               <svg
                 lucideLock
@@ -127,19 +147,19 @@ const DEMO_PASSWORD = 'demo123';
           </button>
         </form>
 
-        <div class="mt-6 rounded-panel border border-line bg-surface-muted/60 px-4 py-3">
-          <p class="text-xs leading-relaxed text-ink-muted">
-            <span class="font-semibold text-ink">{{ demoLabel() }}</span> {{ demoEmail }} / {{ demoPassword }}
-          </p>
-        </div>
+        <app-auth-social-divider [label]="socialLabel()" class="mt-7" />
+        <app-auth-social-buttons class="mt-5" />
 
         <p class="mt-7 text-center text-sm text-ink-muted">
           {{ noAccount() }}
-          <a routerLink="/register" class="font-semibold text-accent-dark transition-colors hover:text-accent">
+          <a
+            routerLink="/register"
+            class="font-semibold text-accent-dark transition-colors hover:text-accent"
+          >
             {{ createAccount() }}
           </a>
         </p>
-      </div>
+      </app-auth-page-shell>
     </app-auth-shell>
   `,
   imports: [
@@ -150,6 +170,10 @@ const DEMO_PASSWORD = 'demo123';
     Field,
     InputDirective,
     AuthShell,
+    AuthPageShell,
+    AuthHeading,
+    AuthSocialDivider,
+    AuthSocialButtons,
     LucideEye,
     LucideEyeOff,
     LucideInfo,
@@ -166,12 +190,12 @@ export class LoginComponent {
   private readonly tr = <T = string>(key: string): T => this.languageService.translate<T>(key);
   private readonly trSignal = (key: string) => this.languageService.translateSignal(key);
 
-  protected readonly shellTitle = this.trSignal('auth.login.shellTitle');
-  protected readonly shellSubtitle = this.trSignal('auth.login.shellSubtitle');
-  protected readonly loginPoints = computed(() => this.tr<string[]>('auth.login.points'));
-  protected readonly quote = this.trSignal('auth.login.quote');
+  protected readonly eyebrow = this.trSignal('auth.login.eyebrow');
   protected readonly title = this.trSignal('auth.login.title');
   protected readonly subtitle = this.trSignal('auth.login.subtitle');
+  protected readonly demoTitle = this.trSignal('auth.login.demoTitle');
+  protected readonly demoDescription = this.trSignal('auth.login.demoDescription');
+  protected readonly demoFill = this.trSignal('auth.login.demoFill');
 
   protected readonly emailLabel = this.trSignal('auth.login.emailLabel');
   protected readonly emailPlaceholder = this.trSignal('auth.login.emailPlaceholder');
@@ -183,7 +207,7 @@ export class LoginComponent {
   protected readonly forgotPassword = this.trSignal('auth.login.forgotPassword');
   protected readonly forgotHintText = this.trSignal('auth.login.forgotHint');
   protected readonly submit = this.trSignal('auth.login.submit');
-  protected readonly demoLabel = this.trSignal('auth.login.demoLabel');
+  protected readonly socialLabel = this.trSignal('auth.social.label');
   protected readonly noAccount = this.trSignal('auth.login.noAccount');
   protected readonly createAccount = this.trSignal('auth.login.createAccount');
   protected readonly error = this.trSignal('auth.login.error');
@@ -192,8 +216,8 @@ export class LoginComponent {
   protected readonly demoPassword = DEMO_PASSWORD;
 
   protected readonly form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    email: [DEMO_EMAIL, [Validators.required, Validators.email]],
+    password: [DEMO_PASSWORD, [Validators.required, Validators.minLength(6)]],
   });
 
   protected readonly rememberMe = signal(true);
@@ -216,6 +240,11 @@ export class LoginComponent {
       return this.tr('auth.errors.min6');
     }
     return this.tr('auth.errors.invalid');
+  }
+
+  protected fillDemo(): void {
+    this.form.controls.email.setValue(DEMO_EMAIL);
+    this.form.controls.password.setValue(DEMO_PASSWORD);
   }
 
   protected onSubmit(): void {

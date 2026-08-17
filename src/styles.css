@@ -274,6 +274,23 @@
   .animate-glow-pulse {
     animation: dlt-glow-pulse 6s ease-in-out infinite;
   }
+
+  /* Wizard step transitions — direction-aware, mirrored in RTL */
+  .step-forward {
+    animation: dlt-step-forward 0.35s var(--ease-out-expo) both;
+  }
+
+  .step-back {
+    animation: dlt-step-back 0.35s var(--ease-out-expo) both;
+  }
+
+  html[dir='rtl'] .step-forward {
+    animation-name: dlt-step-back;
+  }
+
+  html[dir='rtl'] .step-back {
+    animation-name: dlt-step-forward;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -319,6 +336,28 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes dlt-step-forward {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes dlt-step-back {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 

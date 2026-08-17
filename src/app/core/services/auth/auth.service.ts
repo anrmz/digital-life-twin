@@ -15,8 +15,8 @@ export interface RegisterPayload {
   password: string;
 }
 
-const DEMO_EMAIL = 'sarah.martin@example.com';
-const DEMO_PASSWORD = 'demo123';
+export const DEMO_EMAIL = 'demo@dlt.app';
+export const DEMO_PASSWORD = 'password';
 
 /**
  * Mock authentication layer.

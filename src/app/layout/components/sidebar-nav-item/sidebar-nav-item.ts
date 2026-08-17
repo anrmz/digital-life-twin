@@ -58,12 +58,12 @@ export class SidebarNavItem {
       'group relative flex items-center gap-3 rounded-panel px-3 py-2 text-sm font-medium transition-all duration-200';
     const state = this.active()
       ? 'bg-white/10 text-white'
-      : 'text-navy-200 hover:bg-white/5 hover:text-white';
+      : 'text-white/60 hover:bg-white/5 hover:text-white';
     return `${base} ${state}`;
   });
 
   protected readonly iconClasses = computed(() =>
-    this.active() ? 'text-accent-lighter' : 'text-navy-300 group-hover:text-teal-200',
+    this.active() ? 'text-accent-lighter' : 'text-white/40 group-hover:text-teal-200',
   );
 
   protected onNavigate(): void {

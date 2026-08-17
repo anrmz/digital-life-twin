@@ -7,7 +7,7 @@ import { PublicNav } from './components/public-nav/public-nav';
   selector: 'app-public-layout',
   template: `
     <app-public-nav />
-    <main>
+    <main class="overflow-x-hidden">
       <router-outlet />
     </main>
     <app-public-footer />

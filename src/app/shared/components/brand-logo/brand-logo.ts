@@ -45,9 +45,11 @@ const GAP_SIZE: Record<BrandLogoSize, string> = {
         <span class="truncate font-display font-semibold leading-tight tracking-tight" [class]="nameClass()">
           Digital Life Twin
         </span>
-        <span class="truncate font-medium uppercase" [class]="subtitleClass()">
-          {{ subtitle() }}
-        </span>
+        @if (!subtitleHidden()) {
+          <span class="truncate font-medium uppercase" [class]="subtitleClass()">
+            {{ subtitle() }}
+          </span>
+        }
       </span>
     </a>
   `,
@@ -57,6 +59,7 @@ export class BrandLogo {
   readonly tone = input<BrandLogoTone>('dark');
   readonly size = input<BrandLogoSize>('md');
   readonly link = input<string>('/');
+  readonly subtitleHidden = input(false);
 
   private readonly languageService = inject(LanguageService);
 
