@@ -1831,4 +1831,32 @@ export const FR_TRANSLATIONS = {
       goDashboard: 'Accéder au tableau de bord',
     },
   },
+  search: {
+    label: 'Recherche globale',
+    clear: 'Effacer',
+    cancel: 'Annuler',
+    mobileHint: 'Recherchez des pages, des tâches, des événements et plus.',
+    emptyState: {
+      title: 'Rechercher dans votre espace',
+      hint: 'Pages, tâches, événements, notifications…',
+    },
+    noResults: {
+      title: 'Aucun résultat trouvé',
+      hint: 'Essayez un autre terme de recherche.',
+    },
+    resultCount: '{{count}} résultat(s)',
+    keyboard: {
+      open: 'Ouvrir',
+      close: 'Fermer',
+    },
+    categories: {
+      pages: 'Pages',
+      tasks: 'Tâches',
+      events: 'Événements',
+      planning: 'Planning',
+      notifications: 'Notifications',
+      workouts: 'Sport',
+      meals: 'Repas',
+    },
+  },
 };

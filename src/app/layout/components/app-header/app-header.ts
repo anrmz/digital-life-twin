@@ -1,4 +1,4 @@
-import { Component, computed, inject, Output, EventEmitter } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, Output, EventEmitter, signal, viewChild, HostListener } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import {
   LucideBell,
@@ -8,6 +8,7 @@ import {
   LucideSearch,
   LucideSettings,
   LucideUser,
+  LucideX,
 } from '@lucide/angular';
 import { Avatar } from '../../../shared/ui/avatar/avatar';
 import { Button } from '../../../shared/ui/button/button';
@@ -20,6 +21,8 @@ import {
 import { LanguageSelector } from '../../../shared/components/language-selector/language-selector';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { LanguageService } from '../../../core/services/language.service';
+import { GlobalSearchService } from '../../../core/services/global-search.service';
+import { SearchPanel } from '../search-panel/search-panel';
 
 @Component({
   selector: 'app-header',
@@ -33,6 +36,7 @@ import { LanguageService } from '../../../core/services/language.service';
     DropdownTrigger,
     DropdownItem,
     LanguageSelector,
+    SearchPanel,
     LucideBell,
     LucideChevronDown,
     LucideLogOut,
@@ -40,6 +44,7 @@ import { LanguageService } from '../../../core/services/language.service';
     LucideSearch,
     LucideSettings,
     LucideUser,
+    LucideX,
   ],
   template: `
     <header
@@ -59,24 +64,131 @@ import { LanguageService } from '../../../core/services/language.service';
           <svg lucideMenu class="h-5 w-5" aria-hidden="true"></svg>
         </button>
 
-        <label class="relative hidden min-w-0 flex-1 md:block md:max-w-sm">
-          <svg
-            lucideSearch
-            class="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint"
-            aria-hidden="true"
-          ></svg>
-          <input
-            type="search"
-            [placeholder]="searchPlaceholder()"
-            [attr.aria-label]="searchPlaceholder()"
-            class="h-9 w-full rounded-panel border border-line bg-surface ps-9 pe-12 text-sm text-ink shadow-sm transition-all duration-200 placeholder:text-ink-faint focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/20"
-          />
-          <kbd
-            class="pointer-events-none absolute end-3 top-1/2 hidden -translate-y-1/2 rounded border border-line bg-surface-muted px-1.5 py-0.5 font-sans text-[10px] font-medium text-ink-faint lg:block"
-          >
-            ⌘K
-          </kbd>
-        </label>
+        <!-- Mobile search button -->
+        <button
+          appButton
+          variant="secondary"
+          size="icon"
+          class="shrink-0 md:hidden"
+          (click)="openSearch()"
+          [attr.aria-label]="searchPlaceholder()"
+        >
+          <svg lucideSearch class="h-5 w-5" aria-hidden="true"></svg>
+        </button>
+
+        <!-- Desktop search input + panel -->
+        <div class="relative hidden min-w-0 flex-1 md:block md:max-w-sm" #searchWrapper>
+          <label class="relative block">
+            <svg
+              lucideSearch
+              class="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint"
+              aria-hidden="true"
+            ></svg>
+            <input
+              #searchInput
+              type="search"
+              [placeholder]="searchPlaceholder()"
+              [attr.aria-label]="searchPlaceholder()"
+              class="h-9 w-full rounded-panel border bg-surface ps-9 text-sm text-ink shadow-sm transition-all duration-200 placeholder:text-ink-faint focus:outline-none"
+              [class.border-accent/50]="searchService.isOpen()"
+              [class.ring-2]="searchService.isOpen()"
+              [class.ring-accent/20]="searchService.isOpen()"
+              [class.border-line]="!searchService.isOpen()"
+              [value]="searchService.query()"
+              [attr.aria-expanded]="searchService.isOpen()"
+              [attr.aria-controls]="'search-panel'"
+              [attr.aria-activedescendant]="activeDescendant()"
+              role="combobox"
+              autocomplete="off"
+              (input)="onSearchInput($event)"
+              (focus)="onSearchFocus()"
+              (keydown)="onSearchKeydown($event)"
+              (blur)="onSearchBlur()"
+            />
+            @if (searchService.query()) {
+              <button
+                type="button"
+                class="absolute end-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-ink-faint transition-colors hover:bg-surface-muted hover:text-ink"
+                (mousedown)="onClear($event)"
+                [attr.aria-label]="clearLabel()"
+              >
+                <svg lucideX class="h-3.5 w-3.5" aria-hidden="true"></svg>
+              </button>
+            } @else {
+              <kbd
+                class="pointer-events-none absolute end-3 top-1/2 hidden -translate-y-1/2 rounded border border-line bg-surface-muted px-1.5 py-0.5 font-sans text-[10px] font-medium text-ink-faint lg:block"
+              >
+                ⌘K
+              </kbd>
+            }
+          </label>
+
+          <!-- Search results panel -->
+          @if (searchService.isOpen()) {
+            <div
+              id="search-panel"
+              role="listbox"
+              class="absolute end-0 top-full z-50 mt-2 w-full overflow-hidden rounded-xl border border-line bg-surface shadow-xl"
+            >
+              <app-search-panel (closed)="onSearchClosed()" />
+            </div>
+          }
+        </div>
+
+        <!-- Mobile search overlay -->
+        @if (mobileSearchOpen()) {
+          <div class="fixed inset-0 z-50 flex flex-col bg-background md:hidden">
+            <div class="flex h-[64px] items-center gap-2 border-b border-line px-4">
+              <label class="relative flex min-w-0 flex-1 items-center">
+                <svg
+                  lucideSearch
+                  class="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint"
+                  aria-hidden="true"
+                ></svg>
+                <input
+                  #mobileSearchInput
+                  type="search"
+                  [placeholder]="searchPlaceholder()"
+                  [attr.aria-label]="searchPlaceholder()"
+                  class="h-9 w-full rounded-panel border border-line bg-surface ps-9 text-sm text-ink shadow-sm placeholder:text-ink-faint focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/20"
+                  [value]="searchService.query()"
+                  [attr.aria-expanded]="searchService.isOpen()"
+                  role="combobox"
+                  autocomplete="off"
+                  (input)="onSearchInput($event)"
+                  (keydown)="onSearchKeydown($event)"
+                />
+                @if (searchService.query()) {
+                  <button
+                    type="button"
+                    class="absolute end-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-ink-faint transition-colors hover:bg-surface-muted hover:text-ink"
+                    (mousedown)="onClear($event)"
+                  >
+                    <svg lucideX class="h-3.5 w-3.5" aria-hidden="true"></svg>
+                  </button>
+                }
+              </label>
+              <button
+                appButton
+                variant="ghost"
+                size="sm"
+                (mousedown)="closeMobileSearch($event)"
+                class="shrink-0"
+              >
+                {{ cancelLabel() }}
+              </button>
+            </div>
+            @if (searchService.query()) {
+              <div class="flex-1 overflow-y-auto">
+                <app-search-panel (closed)="closeMobileSearch()" />
+              </div>
+            } @else {
+              <div class="flex-1 px-4 py-8 text-center">
+                <p class="text-sm text-ink-muted">{{ mobileHintLabel() }}</p>
+              </div>
+            }
+          </div>
+        }
 
         <div class="ms-auto flex items-center gap-1.5 sm:gap-2.5">
           <div class="me-1 hidden flex-col items-end xl:flex">
@@ -165,7 +277,15 @@ export class Header {
   private readonly authService = inject(AuthService);
   private readonly today = new Date();
 
+  protected readonly searchService = inject(GlobalSearchService);
   protected readonly languageService = inject(LanguageService);
+
+  protected readonly searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
+  protected readonly mobileSearchInput = viewChild<ElementRef<HTMLInputElement>>('mobileSearchInput');
+  protected readonly searchWrapper = viewChild<ElementRef>('searchWrapper');
+
+  protected readonly mobileSearchOpen = signal(false);
+  protected readonly searchFocused = signal(false);
 
   protected readonly user = this.authService.currentUser;
 
@@ -187,6 +307,9 @@ export class Header {
   protected readonly profileLabel = this.languageService.translateSignal('header.profile');
   protected readonly settingsLabel = this.languageService.translateSignal('header.settings');
   protected readonly logoutLabel = this.languageService.translateSignal('header.logout');
+  protected readonly clearLabel = this.languageService.translateSignal('search.clear');
+  protected readonly cancelLabel = this.languageService.translateSignal('search.cancel');
+  protected readonly mobileHintLabel = this.languageService.translateSignal('search.mobileHint');
 
   protected readonly locale = computed(() =>
     this.languageService.activeLanguage() === 'fr'
@@ -208,6 +331,113 @@ export class Header {
       year: 'numeric',
     }).format(this.today),
   );
+
+  protected readonly activeDescendant = computed(() => {
+    const flat = this.searchService.flatResults();
+    const idx = this.searchService.activeIndex();
+    const item = flat[idx];
+    return item ? `result-${item.id}` : null;
+  });
+
+  constructor() {
+    // Scroll active result into view
+    effect(() => {
+      const idx = this.searchService.activeIndex();
+      const flat = this.searchService.flatResults();
+      if (flat.length === 0) return;
+
+      const el = document.querySelector(`[data-result-id="${flat[idx]?.id}"]`);
+      el?.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onGlobalKeydown(event: KeyboardEvent): void {
+    // Cmd/Ctrl + K → open search
+    if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+      event.preventDefault();
+      this.openSearch();
+      return;
+    }
+  }
+
+  onSearchInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchService.setQuery(value);
+    if (!this.searchService.isOpen()) {
+      this.searchService.open();
+    }
+  }
+
+  onSearchFocus(): void {
+    this.searchFocused.set(true);
+    this.searchService.open();
+  }
+
+  onSearchBlur(): void {
+    // Delay to allow click on results
+    setTimeout(() => this.searchFocused.set(false), 150);
+  }
+
+  onSearchKeydown(event: KeyboardEvent): void {
+    switch (event.key) {
+      case 'Escape':
+        if (this.searchService.query()) {
+          this.searchService.setQuery('');
+        } else {
+          this.searchService.close();
+          this.searchInput()?.nativeElement.blur();
+        }
+        event.preventDefault();
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        this.searchService.moveDown();
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        this.searchService.moveUp();
+        break;
+      case 'Enter':
+        event.preventDefault();
+        this.selectActiveResult();
+        break;
+    }
+  }
+
+  onSearchClosed(): void {
+    this.searchInput()?.nativeElement.blur();
+  }
+
+  onClear(event: Event): void {
+    event.preventDefault();
+    this.searchService.setQuery('');
+    this.searchInput()?.nativeElement.focus();
+  }
+
+  openSearch(): void {
+    this.mobileSearchOpen.set(true);
+    this.searchService.open();
+    // Focus mobile input after render
+    setTimeout(() => {
+      this.mobileSearchInput()?.nativeElement.focus();
+    }, 50);
+  }
+
+  closeMobileSearch(event?: Event): void {
+    event?.preventDefault();
+    this.mobileSearchOpen.set(false);
+    this.searchService.close();
+  }
+
+  private selectActiveResult(): void {
+    const result = this.searchService.getActiveResult();
+    if (result) {
+      this.searchService.close();
+      this.mobileSearchOpen.set(false);
+      void this.router.navigate([result.path]);
+    }
+  }
 
   protected setLanguage(lang: 'fr' | 'en' | 'ar'): void {
     this.languageService.setLanguage(lang);

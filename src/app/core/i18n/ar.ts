@@ -1799,4 +1799,32 @@ export const AR_TRANSLATIONS = {
       goDashboard: 'الانتقال إلى لوحة التحكم',
     },
   },
+  search: {
+    label: 'بحث عام',
+    clear: 'مسح',
+    cancel: 'إلغاء',
+    mobileHint: 'ابحث عن صفحات، مهام، أحداث، والمزيد.',
+    emptyState: {
+      title: 'ابحث في مساحتك',
+      hint: 'صفحات، مهام، أحداث، إشعارات…',
+    },
+    noResults: {
+      title: 'لم يتم العثور على نتائج',
+      hint: 'جرّب مصطلح بحث آخر.',
+    },
+    resultCount: '{{count}} نتيجة (نتائج)',
+    keyboard: {
+      open: 'فتح',
+      close: 'إغلاق',
+    },
+    categories: {
+      pages: 'الصفحات',
+      tasks: 'المهام',
+      events: 'الأحداث',
+      planning: 'التخطيط',
+      notifications: 'الإشعارات',
+      workouts: 'الرياضة',
+      meals: 'الوجبات',
+    },
+  },
 };

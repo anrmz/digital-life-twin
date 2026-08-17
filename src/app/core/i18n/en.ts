@@ -1819,4 +1819,32 @@ export const EN_TRANSLATIONS = {
       goDashboard: 'Go to dashboard',
     },
   },
+  search: {
+    label: 'Global search',
+    clear: 'Clear',
+    cancel: 'Cancel',
+    mobileHint: 'Search pages, tasks, events, and more.',
+    emptyState: {
+      title: 'Search your space',
+      hint: 'Pages, tasks, events, notifications…',
+    },
+    noResults: {
+      title: 'No results found',
+      hint: 'Try a different search term.',
+    },
+    resultCount: '{{count}} result(s)',
+    keyboard: {
+      open: 'Open',
+      close: 'Close',
+    },
+    categories: {
+      pages: 'Pages',
+      tasks: 'Tasks',
+      events: 'Events',
+      planning: 'Planning',
+      notifications: 'Notifications',
+      workouts: 'Sport',
+      meals: 'Meals',
+    },
+  },
 };
