@@ -57,16 +57,25 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
   template: `
     <!-- ================= Hero ================= -->
     <section
-      class="relative flex min-h-[100svh] items-center overflow-hidden bg-primary-darker text-white"
+      class="relative flex min-h-[100svh] items-center overflow-hidden bg-cover bg-center bg-no-repeat text-white max-md:bg-[center_30%]"
+      [style.backgroundImage]="'url(/brand/hero-section.jpg)'"
       aria-labelledby="hero-title"
     >
-      <div class="absolute inset-0 bg-grid-light opacity-50" aria-hidden="true"></div>
       <div
-        class="animate-glow-pulse pointer-events-none absolute -left-44 -top-40 h-[34rem] w-[34rem] rounded-full bg-accent/25 blur-[130px]"
+        class="absolute inset-0 bg-primary-darker/85"
         aria-hidden="true"
       ></div>
       <div
-        class="animate-glow-pulse pointer-events-none absolute -bottom-48 -right-40 h-[32rem] w-[32rem] rounded-full bg-primary-light/45 blur-[130px]"
+        class="absolute inset-0 bg-gradient-to-r from-primary-darker via-primary-darker/70 to-transparent max-md:via-primary-darker/80 max-md:to-primary-darker/30"
+        aria-hidden="true"
+      ></div>
+      <div class="absolute inset-0 bg-grid-light opacity-30" aria-hidden="true"></div>
+      <div
+        class="animate-glow-pulse pointer-events-none absolute -left-44 -top-40 h-[34rem] w-[34rem] rounded-full bg-accent/20 blur-[130px]"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="animate-glow-pulse pointer-events-none absolute -bottom-48 -right-40 h-[32rem] w-[32rem] rounded-full bg-primary-light/40 blur-[130px]"
         style="animation-delay: -3s"
         aria-hidden="true"
       ></div>
@@ -74,7 +83,7 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
         appMouseGlow
         class="pointer-events-none absolute inset-0"
         [style.background]="
-          'radial-gradient(620px circle at var(--glow-x, 50%) var(--glow-y, 40%), rgb(42 157 157 / 0.16), transparent 65%)'
+          'radial-gradient(620px circle at var(--glow-x, 50%) var(--glow-y, 40%), rgb(42 157 157 / 0.12), transparent 65%)'
         "
         aria-hidden="true"
       ></div>
