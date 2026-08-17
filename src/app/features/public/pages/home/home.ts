@@ -85,7 +85,7 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
       ></div>
 
       <div
-        class="relative mx-auto grid w-full max-w-7xl gap-10 px-4 pb-12 pt-28 sm:px-6 sm:pb-16 sm:pt-32 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-12 lg:px-8 lg:pb-16 lg:pt-36"
+        class="relative mx-auto grid w-full max-w-7xl gap-8 px-5 pb-10 pt-24 sm:px-6 sm:gap-10 sm:pb-16 sm:pt-28 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-12 lg:px-8 lg:pb-16 lg:pt-36"
       >
         <div>
           <span
@@ -97,21 +97,21 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
 
           <h1
             id="hero-title"
-            class="mt-5 font-display text-display leading-[1.05] tracking-tight text-white"
+            class="mt-5 font-display text-[2.25rem] leading-[1.08] tracking-tight text-white sm:text-display"
           >
             {{ heroTitleA() }}
             <span class="text-gradient-light">{{ heroTitleB() }}</span>
           </h1>
 
-          <p class="mt-5 max-w-xl text-body-lg leading-relaxed text-white/70">
+          <p class="mt-4 max-w-md text-[15px] leading-[1.65] text-white/70 sm:mt-5 sm:max-w-xl sm:text-body-lg sm:leading-relaxed">
             {{ heroDescription() }}
           </p>
 
-          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div class="mt-8 flex max-w-[340px] flex-col gap-3 sm:mt-10 sm:max-w-none sm:flex-row">
             <a
               appMagnetic
               routerLink="/register"
-              class="group inline-flex h-12 items-center justify-center gap-2 rounded-panel bg-accent-dark px-6 text-sm font-semibold text-white shadow-glow transition-all duration-200 hover:bg-accent-darker active:scale-[0.98]"
+              class="group inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-xl bg-accent-dark px-6 text-[15px] font-semibold text-white shadow-glow transition-all duration-200 hover:bg-accent-darker active:scale-[0.98] sm:h-12 sm:w-auto"
             >
               {{ heroPrimaryCta() }}
               <svg
@@ -122,13 +122,13 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
             </a>
             <a
               routerLink="/features"
-              class="inline-flex h-12 items-center justify-center gap-2 rounded-panel border border-white/15 bg-white/5 px-6 text-sm font-semibold text-white backdrop-blur transition-all duration-200 hover:bg-white/10"
+              class="inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 text-[15px] font-semibold text-white backdrop-blur transition-all duration-200 hover:bg-white/10 sm:h-12 sm:w-auto"
             >
               {{ heroSecondaryCta() }}
             </a>
           </div>
 
-          <div class="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t border-white/10 pt-6">
+          <div class="mt-8 grid max-w-md grid-cols-3 gap-3 border-t border-white/10 pt-5 sm:mt-10 sm:gap-4 sm:pt-6">
             @for (value of animatedStats(); track $index) {
               <div>
                 <p class="font-display text-2xl font-semibold tracking-tight text-white tabular-nums">
@@ -222,12 +222,12 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
         </div>
 
         <!-- Mobile preview (compact) -->
-        <div class="relative mx-auto w-full max-w-sm lg:hidden" aria-hidden="true">
+        <div class="relative mx-auto w-full max-w-[320px] sm:max-w-sm lg:hidden" aria-hidden="true">
           <div
             class="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-accent/20 via-transparent to-primary/30 blur-2xl"
           ></div>
           <div
-            class="animate-float relative rounded-2xl border border-white/10 bg-[#0e2236]/90 p-3 shadow-popover backdrop-blur-sm"
+            class="animate-float relative rounded-2xl border border-white/10 bg-[#0e2236]/90 p-3 shadow-popover backdrop-blur-sm sm:p-4"
           >
             <div class="flex items-center gap-1.5 px-2 pb-2 pt-1">
               <span class="h-2 w-2 rounded-full bg-white/15"></span>
