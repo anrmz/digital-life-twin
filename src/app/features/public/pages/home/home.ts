@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal, afterNextRender, DestroyRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   LucideArrowRight,
@@ -129,12 +129,12 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
           </div>
 
           <div class="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t border-white/10 pt-6">
-            @for (stat of stats(); track stat.label) {
+            @for (value of animatedStats(); track $index) {
               <div>
-                <p class="font-display text-2xl font-semibold tracking-tight text-white">
-                  {{ stat.value }}
+                <p class="font-display text-2xl font-semibold tracking-tight text-white tabular-nums">
+                  {{ value }}
                 </p>
-                <p class="mt-1 text-xs leading-relaxed text-white/65">{{ stat.label }}</p>
+                <p class="mt-1 text-xs leading-relaxed text-white/65">{{ stats()[$index].label }}</p>
               </div>
             }
           </div>
@@ -159,7 +159,7 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
                 <p class="text-[10px] font-medium uppercase tracking-wider text-white/65">
                   {{ previewProductivity() }}
                 </p>
-                <p class="mt-2 font-display text-2xl font-semibold text-white">78%</p>
+                <p class="mt-2 font-display text-2xl font-semibold text-white tabular-nums">{{ animatedProductivity() }}%</p>
                 <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
                   <div class="h-full w-[78%] rounded-full bg-accent"></div>
                 </div>
@@ -168,8 +168,8 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
                 <p class="text-[10px] font-medium uppercase tracking-wider text-white/65">{{
                   previewTasks()
                 }}</p>
-                <p class="mt-2 font-display text-2xl font-semibold text-white">
-                  6<span class="text-sm font-normal text-white/65">/8</span>
+                <p class="mt-2 font-display text-2xl font-semibold text-white tabular-nums">
+                  {{ animatedTasks() }}<span class="text-sm font-normal text-white/65">/8</span>
                 </p>
                 <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
                   <div class="h-full w-[75%] rounded-full bg-teal-300"></div>
@@ -179,8 +179,8 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
                 <p class="text-[10px] font-medium uppercase tracking-wider text-white/65">
                   {{ previewHydration() }}
                 </p>
-                <p class="mt-2 font-display text-2xl font-semibold text-white">
-                  1,7<span class="text-sm font-normal text-white/65">L</span>
+                <p class="mt-2 font-display text-2xl font-semibold text-white tabular-nums">
+                  {{ formattedHydration() }}<span class="text-sm font-normal text-white/65">L</span>
                 </p>
                 <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
                   <div class="h-full w-[68%] rounded-full bg-sky-300"></div>
@@ -240,7 +240,7 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
                 <p class="text-[9px] font-medium uppercase tracking-wider text-white/65">
                   {{ previewProductivity() }}
                 </p>
-                <p class="mt-1 font-display text-xl font-semibold text-white">78%</p>
+                <p class="mt-1 font-display text-xl font-semibold text-white tabular-nums">{{ animatedProductivity() }}%</p>
                 <div class="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
                   <div class="h-full w-[78%] rounded-full bg-accent"></div>
                 </div>
@@ -249,8 +249,8 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
                 <p class="text-[9px] font-medium uppercase tracking-wider text-white/65">{{
                   previewTasks()
                 }}</p>
-                <p class="mt-1 font-display text-xl font-semibold text-white">
-                  6<span class="text-xs font-normal text-white/65">/8</span>
+                <p class="mt-1 font-display text-xl font-semibold text-white tabular-nums">
+                  {{ animatedTasks() }}<span class="text-xs font-normal text-white/65">/8</span>
                 </p>
                 <div class="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
                   <div class="h-full w-[75%] rounded-full bg-teal-300"></div>
@@ -260,8 +260,8 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
                 <p class="text-[9px] font-medium uppercase tracking-wider text-white/65">
                   {{ previewHydration() }}
                 </p>
-                <p class="mt-1 font-display text-xl font-semibold text-white">
-                  1,7<span class="text-xs font-normal text-white/65">L</span>
+                <p class="mt-1 font-display text-xl font-semibold text-white tabular-nums">
+                  {{ formattedHydration() }}<span class="text-xs font-normal text-white/65">L</span>
                 </p>
                 <div class="mt-2 h-1 overflow-hidden rounded-full bg-white/10">
                   <div class="h-full w-[68%] rounded-full bg-sky-300"></div>
@@ -677,6 +677,77 @@ export class HomeComponent {
     { value: '13', label: this.tr('public.home.hero.stats.modules') },
     { value: '0', label: this.tr('public.home.hero.stats.diagnosis') },
   ]);
+
+  /* ----------------------------- Count-up animation ----------------------------- */
+  private static readonly STAT_TARGETS = [1, 13, 0];
+  private static readonly PREVIEW_PRODUCTIVITY = 78;
+  private static readonly PREVIEW_TASKS = 6;
+  private static readonly PREVIEW_HYDRATION = 1.7;
+  private static readonly ANIMATION_DURATION = 1400;
+
+  protected readonly animatedStats = signal<number[]>([0, 0, 0]);
+  protected readonly animatedProductivity = signal(0);
+  protected readonly animatedTasks = signal(0);
+  protected readonly animatedHydration = signal(0);
+
+  protected readonly formattedHydration = computed(() => {
+    const v = this.animatedHydration();
+    return v < 0.05 ? '0' : v.toFixed(1).replace('.', ',');
+  });
+
+  private animationStarted = false;
+  private readonly destroyRef = inject(DestroyRef);
+
+  constructor() {
+    afterNextRender(() => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            this.startCountUpAnimation();
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.2 },
+      );
+
+      const heroSection = document.querySelector('[aria-labelledby="hero-title"]');
+      if (heroSection) observer.observe(heroSection);
+
+      this.destroyRef.onDestroy(() => observer.disconnect());
+    });
+  }
+
+  private startCountUpAnimation(): void {
+    if (this.animationStarted) return;
+    this.animationStarted = true;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+      this.animatedStats.set([...HomeComponent.STAT_TARGETS]);
+      this.animatedProductivity.set(HomeComponent.PREVIEW_PRODUCTIVITY);
+      this.animatedTasks.set(HomeComponent.PREVIEW_TASKS);
+      this.animatedHydration.set(HomeComponent.PREVIEW_HYDRATION);
+      return;
+    }
+
+    const duration = HomeComponent.ANIMATION_DURATION;
+    const start = performance.now();
+
+    const step = (now: number): void => {
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+
+      this.animatedStats.set(HomeComponent.STAT_TARGETS.map((v) => Math.round(ease * v)));
+      this.animatedProductivity.set(Math.round(ease * HomeComponent.PREVIEW_PRODUCTIVITY));
+      this.animatedTasks.set(Math.round(ease * HomeComponent.PREVIEW_TASKS));
+      this.animatedHydration.set(parseFloat((ease * HomeComponent.PREVIEW_HYDRATION).toFixed(1)));
+
+      if (t < 1) requestAnimationFrame(step);
+    };
+
+    requestAnimationFrame(step);
+  }
 
   protected readonly previewProductivity = this.trSignal('public.home.preview.productivity');
   protected readonly previewTasks = this.trSignal('public.home.preview.tasks');

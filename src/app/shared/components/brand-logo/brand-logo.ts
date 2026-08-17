@@ -7,14 +7,14 @@ type BrandLogoTone = 'light' | 'dark';
 
 const TILE_SIZE: Record<BrandLogoSize, string> = {
   sm: 'h-8 w-8',
-  md: 'h-9 w-9',
-  lg: 'h-10 w-10',
+  md: 'h-10 w-10',
+  lg: 'h-11 w-11',
 };
 
 const NAME_SIZE: Record<BrandLogoSize, string> = {
   sm: 'text-sm',
-  md: 'text-[15px]',
-  lg: 'text-base',
+  md: 'text-base',
+  lg: 'text-lg',
 };
 
 const SUBTITLE_SIZE: Record<BrandLogoSize, string> = {

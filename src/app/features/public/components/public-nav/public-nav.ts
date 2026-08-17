@@ -32,7 +32,7 @@ const LINKS: PublicLink[] = [
     >
       <div class="mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:h-[72px] lg:px-8">
         <div class="grid w-full grid-cols-[auto_1fr_auto] items-center gap-4 lg:gap-6">
-          <app-brand-logo tone="light" size="sm" [subtitleHidden]="true" />
+          <app-brand-logo tone="light" size="md" [subtitleHidden]="true" />
 
           <nav class="hidden items-center justify-center gap-1 lg:flex" [attr.aria-label]="primaryNavLabel()">
             @for (link of links(); track link.path) {
