@@ -118,7 +118,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 appInput
                 type="email"
                 autocomplete="email"
-                placeholder="prenom.nom@exemple.com"
+                [placeholder]="t('settings.account.emailPlaceholder')"
                 [appInputInvalid]="!!emailError()"
                 [ngModel]="draft().email"
                 name="email"

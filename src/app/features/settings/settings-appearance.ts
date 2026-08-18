@@ -126,8 +126,8 @@ export class SettingsAppearance {
   ]);
 
   protected readonly accentOptions = computed(() => [
-    { value: 'teal' as AccentPreference, label: 'Teal', description: this.languageService.translate('settings.appearance.tealDesc'), icon: LucidePalette },
-    { value: 'navy' as AccentPreference, label: 'Navy', description: this.languageService.translate('settings.appearance.navyDesc'), icon: LucidePalette },
+    { value: 'teal' as AccentPreference, label: this.languageService.translate('settings.appearance.tealLabel'), description: this.languageService.translate('settings.appearance.tealDesc'), icon: LucidePalette },
+    { value: 'navy' as AccentPreference, label: this.languageService.translate('settings.appearance.navyLabel'), description: this.languageService.translate('settings.appearance.navyDesc'), icon: LucidePalette },
   ]);
 
   private readonly isDark = computed(() => this.appliedTheme() === 'dark');

@@ -52,7 +52,7 @@ const CATEGORY_CHIP: Record<Task['category'], string> = {
       [class.ring-accent/20]="selected()"
       role="button"
       tabindex="0"
-      [attr.aria-label]="t('tasksExtended.detailOpenAria') + task().title"
+      [attr.aria-label]="t('tasksExtended.detailOpenAria') + title()"
       (click)="open.emit(task())"
       (keydown.enter)="open.emit(task())"
       (keydown.space)="open.emit(task()); $event.preventDefault()"
@@ -82,7 +82,7 @@ const CATEGORY_CHIP: Record<Task['category'], string> = {
             [class.line-through]="isDone()"
             [class.text-ink-muted]="isDone()"
           >
-            {{ task().title }}
+            {{ title() }}
           </p>
           <app-badge [variant]="statusInfo().variant" [dot]="statusInfo().dot">
             {{ statusInfo().label }}
@@ -151,6 +151,7 @@ export class TaskItem {
     return this.languageService.translate(PRIORITY_KEYS[value]);
   }
 
+  protected readonly title = computed(() => this.languageService.translate(this.task().title));
   protected readonly isDone = computed(() => this.task().status === 'done');
   protected readonly overdue = computed(() => isOverdue(this.task()));
   protected readonly categoryIcon = computed(() => CATEGORY_ICONS[this.task().category]);

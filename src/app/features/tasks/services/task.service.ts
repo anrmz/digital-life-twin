@@ -46,7 +46,7 @@ export class TaskService {
         return false;
       }
       if (query) {
-        const haystack = `${task.title} ${task.description} ${this.languageService.translate(
+        const haystack = `${this.languageService.translate(task.title)} ${this.languageService.translate(task.description)} ${this.languageService.translate(
           CATEGORY_KEYS[task.category],
         )}`.toLowerCase();
         if (!haystack.includes(query)) {
@@ -145,7 +145,7 @@ export class TaskService {
       ...tasks,
       {
         ...task,
-        activity: [{ id: `a-${Date.now()}`, label: 'Tâche créée aujourd’hui' }, ...task.activity],
+        activity: [{ id: `a-${Date.now()}`, label: this.languageService.translate('mock.activity.createdToday') }, ...task.activity],
         createdAt: todayISO(),
       },
     ]);
@@ -158,7 +158,7 @@ export class TaskService {
         item.id === task.id
           ? {
               ...task,
-              activity: [{ id: `a-${Date.now()}`, label: 'Tâche modifiée aujourd’hui' }, ...task.activity],
+              activity: [{ id: `a-${Date.now()}`, label: this.languageService.translate('mock.activity.modifiedToday') }, ...task.activity],
             }
           : item,
       ),

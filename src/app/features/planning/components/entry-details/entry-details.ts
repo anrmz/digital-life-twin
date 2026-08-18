@@ -52,7 +52,7 @@ import { PlanningService } from '../../services/planning.service';
     LucideTrash2,
   ],
   template: `
-    <div class="fixed inset-0 z-40" role="dialog" aria-modal="true" [attr.aria-label]="entry()?.title">
+    <div class="fixed inset-0 z-40" role="dialog" aria-modal="true" [attr.aria-label]="entryTitle(entry())">
       <div class="absolute inset-0 bg-navy-900/40 backdrop-blur-[2px]" (click)="closed.emit()"></div>
       <aside
         class="details-panel absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l border-line bg-background shadow-drawer"
@@ -68,7 +68,7 @@ import { PlanningService } from '../../services/planning.service';
               }
             </div>
             <h3 class="mt-1.5 font-display text-lg font-semibold tracking-tight text-primary">
-              {{ entry()?.title }}
+              {{ entryTitle(entry()) }}
             </h3>
           </div>
           <button
@@ -86,7 +86,7 @@ import { PlanningService } from '../../services/planning.service';
         <div class="flex-1 overflow-y-auto px-5 py-4">
           @if (entry(); as entry) {
             @if (entry.description) {
-              <p class="text-sm leading-relaxed text-ink-muted">{{ entry.description }}</p>
+              <p class="text-sm leading-relaxed text-ink-muted">{{ entryDesc(entry) }}</p>
             }
 
             <dl class="mt-5 space-y-3 text-sm">
@@ -108,7 +108,7 @@ import { PlanningService } from '../../services/planning.service';
                   <dt class="text-xs font-semibold text-ink-muted">{{ t('eventDetails.time') }}</dt>
                   <dd class="font-medium text-primary">
                     {{ entry.start }} – {{ entry.end }}
-                    <span class="text-ink-faint">· {{ minutesToLabel(entry.duration) }}</span>
+                    <span class="text-ink-faint">· {{ minutesLabel(entry.duration) }}</span>
                   </dd>
                 </div>
               </div>
@@ -144,7 +144,7 @@ import { PlanningService } from '../../services/planning.service';
                   </span>
                   <div>
                     <dt class="text-xs font-semibold text-ink-muted">{{ t('eventDetails.location') }}</dt>
-                    <dd class="font-medium text-primary">{{ entry.location }}</dd>
+                    <dd class="font-medium text-primary">{{ entryLocation(entry) }}</dd>
                   </div>
                 </div>
               }
@@ -156,7 +156,7 @@ import { PlanningService } from '../../services/planning.service';
                   </span>
                   <div>
                     <dt class="text-xs font-semibold text-ink-muted">{{ t('eventDetails.participants') }}</dt>
-                    <dd class="font-medium text-primary">{{ entry.participants.join(', ') }}</dd>
+                    <dd class="font-medium text-primary">{{ entry.participants.map(p => participantName(p)).join(', ') }}</dd>
                   </div>
                 </div>
               }
@@ -233,6 +233,26 @@ export class EntryDetails {
 
   protected priorityLabel(value: PlanningEntry['priority']): string {
     return value ? this.languageService.translate(PRIORITY_KEYS[value]) : '';
+  }
+
+  protected entryTitle(entry: PlanningEntry | null): string {
+    return entry ? this.languageService.translate(entry.title) : '';
+  }
+
+  protected entryDesc(entry: PlanningEntry): string {
+    return entry.description ? this.languageService.translate(entry.description) : '';
+  }
+
+  protected entryLocation(entry: PlanningEntry): string {
+    return entry.location ? this.languageService.translate(entry.location) : '';
+  }
+
+  protected participantName(name: string): string {
+    return this.languageService.translate(name);
+  }
+
+  protected minutesLabel(minutes: number): string {
+    return minutesToLabel(minutes, (key) => this.languageService.translate(key));
   }
 
   @HostListener('document:keydown.escape')

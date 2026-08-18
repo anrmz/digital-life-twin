@@ -90,7 +90,7 @@ export function dayKey(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-export function formatKcal(n: number, locale = 'fr-FR'): string {
+export function formatKcal(n: number, locale = 'fr'): string {
   return n.toLocaleString(locale);
 }
 
@@ -98,7 +98,7 @@ export function formatGrams(n: number): string {
   return `${n} g`;
 }
 
-export function formatLiters(ml: number, locale = 'fr-FR'): string {
+export function formatLiters(ml: number, locale = 'fr'): string {
   return `${(ml / 1000).toLocaleString(locale, { maximumFractionDigits: 2 })} L`;
 }
 
@@ -106,33 +106,33 @@ export const MOCK_MEALS: Meal[] = [
   {
     id: 'meal-breakfast',
     type: 'breakfast',
-    name: 'Omelette + pain complet + fruit',
+    name: 'mock.nutrition.0.name',
     time: '08:00',
-    foods: ['Omelette aux œufs', 'Pain complet', 'Banane'],
+    foods: ['mock.nutrition.food.omelette', 'mock.nutrition.food.painComplet', 'mock.nutrition.food.banane'],
     calories: 420,
     protein: 20,
     carbs: 45,
     fat: 17,
-    notes: 'Petit-déjeuner équilibré, pris à la maison.',
+    notes: 'mock.nutrition.0.notes',
   },
   {
     id: 'meal-lunch',
     type: 'lunch',
-    name: 'Poulet grillé + riz + légumes',
+    name: 'mock.nutrition.1.name',
     time: '12:45',
-    foods: ['Poulet grillé', 'Riz complet', 'Légumes vapeur'],
+    foods: ['mock.nutrition.food.pouletGrille', 'mock.nutrition.food.rizComplet', 'mock.nutrition.food.legumes'],
     calories: 620,
     protein: 38,
     carbs: 78,
     fat: 14,
-    notes: 'Déjeuner pris au restaurant universitaire.',
+    notes: 'mock.nutrition.1.notes',
   },
   {
     id: 'meal-snack',
     type: 'snack',
-    name: 'Yaourt + amandes',
+    name: 'mock.nutrition.2.name',
     time: '16:00',
-    foods: ['Yaourt grec', 'Amandes'],
+    foods: ['mock.nutrition.food.yaourtGrec', 'mock.nutrition.food.amandes'],
     calories: 240,
     protein: 12,
     carbs: 15,
@@ -141,14 +141,14 @@ export const MOCK_MEALS: Meal[] = [
   {
     id: 'meal-dinner',
     type: 'dinner',
-    name: 'Saumon + salade + pommes de terre',
+    name: 'mock.nutrition.3.name',
     time: '20:00',
-    foods: ['Saumon', 'Salade verte', 'Pommes de terre'],
+    foods: ['mock.nutrition.food.saumon', 'mock.nutrition.food.salade', 'mock.nutrition.food.pommesDeTerre'],
     calories: 400,
     protein: 12,
     carbs: 72,
     fat: 13,
-    notes: 'Dîner léger et riche en oméga-3.',
+    notes: 'mock.nutrition.3.notes',
   },
 ];
 
@@ -180,12 +180,12 @@ export const MOCK_30_DAYS: DayNutrition[] = Array.from({ length: 30 }, (_, i) =>
 });
 
 export const MOCK_FOODS: FoodItem[] = [
-  { id: 'f1', name: 'Poulet grillé', calories: 250, protein: 30 },
-  { id: 'f2', name: 'Riz complet', calories: 180, protein: 4 },
-  { id: 'f3', name: 'Banane', calories: 105, protein: 1 },
-  { id: 'f4', name: 'Yaourt grec', calories: 120, protein: 10 },
-  { id: 'f5', name: 'Amandes', calories: 160, protein: 6 },
-  { id: 'f6', name: 'Saumon', calories: 210, protein: 20 },
-  { id: 'f7', name: 'Pain complet', calories: 140, protein: 6 },
-  { id: 'f8', name: 'Omelette aux œufs', calories: 180, protein: 12 },
+  { id: 'f1', name: 'mock.nutrition.food.pouletGrille', calories: 250, protein: 30 },
+  { id: 'f2', name: 'mock.nutrition.food.rizComplet', calories: 180, protein: 4 },
+  { id: 'f3', name: 'mock.nutrition.food.banane', calories: 105, protein: 1 },
+  { id: 'f4', name: 'mock.nutrition.food.yaourtGrec', calories: 120, protein: 10 },
+  { id: 'f5', name: 'mock.nutrition.food.amandes', calories: 160, protein: 6 },
+  { id: 'f6', name: 'mock.nutrition.food.saumon', calories: 210, protein: 20 },
+  { id: 'f7', name: 'mock.nutrition.food.painComplet', calories: 140, protein: 6 },
+  { id: 'f8', name: 'mock.nutrition.food.omelette', calories: 180, protein: 12 },
 ];

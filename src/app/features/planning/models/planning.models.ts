@@ -84,44 +84,53 @@ export function toTime(minutes: number): PlanningTime {
   return { hour: Math.floor(minutes / 60) % 24, minute: minutes % 60 };
 }
 
-export function formatTime(time: string): string {
-  return `${pad2(toMinutes(time) / 60 | 0)}h${pad2(toMinutes(time) % 60)}`;
+export function formatTime(time: string, locale = 'fr'): string {
+  const [hour = 0, minute = 0] = time.split(':').map(Number);
+  const d = new Date(2000, 0, 1, hour, minute);
+  return new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(d);
 }
 
-export function formatTimeFR(time: PlanningTime): string {
-  return `${time.hour}h${pad2(time.minute)}`;
+export function formatTimeLocale(time: PlanningTime, locale = 'fr'): string {
+  const d = new Date(2000, 0, 1, time.hour, time.minute);
+  return new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(d);
 }
 
 export function durationOf(entry: PlanningEntry): number {
   return Math.max(1, Math.round((toMinutes(entry.end) - toMinutes(entry.start)) / 5) * 5);
 }
 
-export function minutesToLabel(minutes: number): string {
+type TranslateFn = (key: string) => string;
+
+export function minutesToLabel(minutes: number, t?: TranslateFn): string {
   if (minutes <= 0) {
-    return '0 min';
+    return `0 ${t ? t('common.units.minuteShort') : 'min'}`;
   }
   if (minutes < 60) {
-    return `${minutes} min`;
+    return `${minutes} ${t ? t('common.units.minuteShort') : 'min'}`;
   }
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
-  return rest === 0 ? `${hours} h` : `${hours} h ${rest}`;
+  const h = t ? t('common.units.hourShort') : 'h';
+  const m = t ? t('common.units.minuteShort') : 'min';
+  return rest === 0 ? `${hours} ${h}` : `${hours} ${h} ${rest} ${m}`;
 }
 
-export function entryDurationLabel(entry: PlanningEntry): string {
-  return minutesToLabel(entry.duration);
+export function entryDurationLabel(entry: PlanningEntry, t?: TranslateFn): string {
+  return minutesToLabel(entry.duration, t);
 }
 
-export function formatMinutesFR(minutes: number): string {
+export function formatMinutesLocale(minutes: number, t?: TranslateFn): string {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
+  const hUnit = t ? t('common.units.hourShort') : 'h';
+  const mUnit = t ? t('common.units.minuteShort') : 'min';
   if (h === 0) {
-    return `${m} min`;
+    return `${m} ${mUnit}`;
   }
   if (m === 0) {
-    return `${h} h`;
+    return `${h} ${hUnit}`;
   }
-  return `${h} h ${m}`;
+  return `${h} ${hUnit} ${m} ${mUnit}`;
 }
 
 export function nowMinutes(): number {
@@ -176,7 +185,7 @@ export function weekDates(iso: string): string[] {
   });
 }
 
-export function weekdayLabel(iso: string, locale = 'fr-FR'): string {
+export function weekdayLabel(iso: string, locale = 'fr'): string {
   const date = parseISO(iso);
   const label = new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date);
   return `${label[0].toUpperCase()}${label.slice(1)}`;
@@ -186,18 +195,18 @@ export function dayNumber(iso: string): string {
   return String(parseISO(iso).getDate());
 }
 
-export function formatWeekRange(isos: string[], locale = 'fr-FR'): string {
+export function formatWeekRange(isos: string[], locale = 'fr'): string {
   const first = formatDayMonth(isos[0], locale);
   const last = formatDayMonth(isos[isos.length - 1], locale);
   return `${first} – ${last}`;
 }
 
-export function formatDayMonth(iso: string, locale = 'fr-FR'): string {
+export function formatDayMonth(iso: string, locale = 'fr'): string {
   const date = parseISO(iso);
   return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' }).format(date);
 }
 
-export function formatLongDate(iso: string, locale = 'fr-FR'): string {
+export function formatLongDate(iso: string, locale = 'fr'): string {
   const date = parseISO(iso);
   return new Intl.DateTimeFormat(locale, {
     weekday: 'long',
@@ -301,8 +310,8 @@ export const PLANNING_SAMPLE_ENTRIES: PlanningEntry[] = [
   {
     id: 'e-01',
     type: 'task',
-    title: 'Révision algorithmique — graphes et Dijkstra',
-    description: 'Revoir le chapitre 5, refaire les 3 exercices du TD et les annales de 2023.',
+    title: 'mock.planning.0.title',
+    description: 'mock.planning.0.desc',
     category: 'work',
     date: '2026-08-12',
     start: '09:00',
@@ -315,21 +324,21 @@ export const PLANNING_SAMPLE_ENTRIES: PlanningEntry[] = [
   {
     id: 'e-02',
     type: 'event',
-    title: 'Cours — Bases de données avancées',
-    description: 'Amphithéâtre A, semestre de rattrapage. Apportez vos ordinateurs pour les TP.',
+    title: 'mock.planning.1.title',
+    description: 'mock.planning.1.desc',
     category: 'work',
     date: '2026-08-12',
     start: '10:45',
     end: '12:15',
     duration: 90,
-    location: 'Amphithéâtre A, Université',
-    participants: ['Groupe 3A', 'Dr. Benali'],
+    location: 'mock.planning.1.location',
+    participants: ['mock.participants.groupe3a', 'mock.participants.drBenali'],
     tone: 'accent',
   },
   {
     id: 'e-03',
     type: 'break',
-    title: 'Déjeuner',
+    title: 'mock.planning.2.title',
     category: 'meals',
     date: '2026-08-12',
     start: '12:30',
@@ -340,20 +349,20 @@ export const PLANNING_SAMPLE_ENTRIES: PlanningEntry[] = [
   {
     id: 'e-04',
     type: 'sport',
-    title: 'Séance cardio + musculation',
-    description: '30 min de course légère puis haut du corps.',
+    title: 'mock.planning.3.title',
+    description: 'mock.planning.3.desc',
     category: 'sport',
     date: '2026-08-12',
     start: '18:00',
     end: '19:00',
     duration: 60,
-    location: 'Salle de sport',
+    location: 'mock.planning.3.location',
     tone: 'danger',
   },
   {
     id: 'e-05',
     type: 'free',
-    title: 'Soirée libre',
+    title: 'mock.planning.4.title',
     category: 'free',
     date: '2026-08-12',
     start: '19:30',
@@ -364,8 +373,8 @@ export const PLANNING_SAMPLE_ENTRIES: PlanningEntry[] = [
   {
     id: 'e-06',
     type: 'task',
-    title: 'Préparer le rapport de stage',
-    description: 'Rédiger la partie 3 et relire le rapport complet.',
+    title: 'mock.planning.5.title',
+    description: 'mock.planning.5.desc',
     category: 'work',
     date: '2026-08-11',
     start: '14:00',
@@ -378,19 +387,19 @@ export const PLANNING_SAMPLE_ENTRIES: PlanningEntry[] = [
   {
     id: 'e-07',
     type: 'event',
-    title: 'Dentiste',
+    title: 'mock.planning.6.title',
     category: 'personal',
     date: '2026-08-11',
     start: '10:00',
     end: '10:45',
     duration: 45,
-    location: 'Cabinet dentaire',
+    location: 'mock.planning.6.location',
     tone: 'accent',
   },
   {
     id: 'e-08',
     type: 'free',
-    title: 'Temps libre',
+    title: 'mock.planning.7.title',
     category: 'free',
     date: '2026-08-11',
     start: '17:00',
@@ -401,7 +410,7 @@ export const PLANNING_SAMPLE_ENTRIES: PlanningEntry[] = [
   {
     id: 'e-09',
     type: 'task',
-    title: 'Faire les courses',
+    title: 'mock.planning.8.title',
     category: 'personal',
     date: '2026-08-13',
     start: '17:30',
@@ -414,35 +423,35 @@ export const PLANNING_SAMPLE_ENTRIES: PlanningEntry[] = [
   {
     id: 'e-10',
     type: 'event',
-    title: 'Réunion de projet PFA',
-    description: 'Point d\'avancement hebdomadaire avec le tuteur.',
+    title: 'mock.planning.9.title',
+    description: 'mock.planning.9.desc',
     category: 'work',
     date: '2026-08-13',
     start: '11:00',
     end: '12:00',
     duration: 60,
-    location: 'Salle 204',
-    participants: ['Tuteur', 'Groupe PFA'],
+    location: 'mock.planning.9.location',
+    participants: ['mock.participants.tuteur', 'mock.participants.groupePFA'],
     recurrence: 'weekly',
     tone: 'accent',
   },
   {
     id: 'e-11',
     type: 'sport',
-    title: 'Foot en équipe',
+    title: 'mock.planning.10.title',
     category: 'sport',
     date: '2026-08-13',
     start: '19:00',
     end: '20:30',
     duration: 90,
-    location: 'Terrain municipal',
-    participants: ['Équipe 2'],
+    location: 'mock.planning.10.location',
+    participants: ['mock.participants.equipe2'],
     tone: 'danger',
   },
   {
     id: 'e-12',
     type: 'task',
-    title: 'Lecture — chapitre 4 de réseaux',
+    title: 'mock.planning.11.title',
     category: 'work',
     date: '2026-08-14',
     start: '09:00',
@@ -455,19 +464,19 @@ export const PLANNING_SAMPLE_ENTRIES: PlanningEntry[] = [
   {
     id: 'e-13',
     type: 'event',
-    title: 'Consultation médicale',
+    title: 'mock.planning.12.title',
     category: 'personal',
     date: '2026-08-14',
     start: '15:00',
     end: '15:30',
     duration: 30,
-    location: 'Centre de santé',
+    location: 'mock.planning.12.location',
     tone: 'accent',
   },
   {
     id: 'e-14',
     type: 'break',
-    title: 'Pause café',
+    title: 'mock.planning.13.title',
     category: 'meals',
     date: '2026-08-15',
     start: '16:00',

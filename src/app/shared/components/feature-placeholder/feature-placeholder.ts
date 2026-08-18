@@ -2,6 +2,7 @@ import {
   Component,
   AfterViewInit,
   ElementRef,
+  inject,
   input,
   viewChildren,
 } from '@angular/core';
@@ -13,6 +14,7 @@ import {
 import { Badge } from '../../ui/badge/badge';
 import { PageHeader } from '../../ui/page-header/page-header';
 import { Skeleton } from '../../ui/skeleton/skeleton';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-feature-placeholder',
@@ -41,7 +43,7 @@ import { Skeleton } from '../../ui/skeleton/skeleton';
               {{ description() }}
             </p>
           </div>
-          <app-badge variant="accent" [dot]="true">Disponible dans une phase ultérieure</app-badge>
+          <app-badge variant="accent" [dot]="true">{{ badgeText() }}</app-badge>
         </div>
 
         <div class="mt-10 grid gap-3 sm:grid-cols-3">
@@ -67,6 +69,9 @@ export class FeaturePlaceholder implements AfterViewInit {
   readonly icon = input.required<LucideIcon>();
   readonly title = input.required<string>();
   readonly description = input.required<string>();
+
+  private readonly languageService = inject(LanguageService);
+  protected readonly badgeText = this.languageService.translateSignal('common.comingSoon');
 
   private readonly items = viewChildren<ElementRef<HTMLElement>>('.ph-item');
 

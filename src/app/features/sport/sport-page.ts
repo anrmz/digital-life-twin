@@ -214,7 +214,7 @@ type TypeOption = { value: WorkoutType; label: string };
                   <span class="text-[11px] tabular-nums text-ink-faint">{{ workout.date }}</span>
                 </span>
                 <span class="mt-0.5 block truncate text-sm font-semibold text-primary">
-                  {{ workout.title }}
+                  {{ t(workout.title) }}
                 </span>
                 <span class="mt-0.5 block truncate text-xs text-ink-muted">
                   {{ formatDuration(workout.duration) }}
@@ -347,6 +347,10 @@ export class SportPage implements AfterViewInit {
     return this.languageService.translate('sport.percentReached', {
       percent: String(percent),
     });
+  }
+
+  protected t(key: string): string {
+    return this.languageService.translate(key);
   }
 
   protected readonly formOpen = signal(false);

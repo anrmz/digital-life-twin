@@ -14,8 +14,8 @@ import { PlanningService } from '../../services/planning.service';
     <section class="rounded-card border border-line bg-surface shadow-card">
       <header class="flex items-center justify-between gap-3 px-5 pt-4">
         <div>
-          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">Vue d'ensemble</p>
-          <h2 class="mt-0.5 font-display text-lg font-semibold tracking-tight text-primary">Semaine</h2>
+           <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted">{{ overview() }}</p>
+          <h2 class="mt-0.5 font-display text-lg font-semibold tracking-tight text-primary">{{ weekTitle() }}</h2>
         </div>
         <span class="text-xs font-medium text-ink-muted">{{ rangeLabel() }}</span>
       </header>
@@ -36,7 +36,7 @@ import { PlanningService } from '../../services/planning.service';
             [class.bg-surface]="iso !== selectedDate() && iso !== today()"
             [class.text-ink-muted]="iso !== selectedDate() && iso !== today()"
             [class.hover:border-navy-300]="iso !== selectedDate() && iso !== today()"
-            [attr.aria-label]="'Voir le ' + iso"
+            [attr.aria-label]="t('planningExtended.viewDay', { date: iso })"
             [attr.aria-pressed]="iso === selectedDate()"
             (click)="service.selectDate(iso)"
           >
@@ -72,6 +72,10 @@ import { PlanningService } from '../../services/planning.service';
 export class PlanningWeek {
   protected readonly service = inject(PlanningService);
   private readonly languageService = inject(LanguageService);
+  protected readonly t = (key: string, vars?: Record<string, string>) =>
+    this.languageService.translate<string>(key, vars);
+  protected readonly overview = this.languageService.translateSignal('planningExtended.overview');
+  protected readonly weekTitle = this.languageService.translateSignal('planningExtended.week');
   protected readonly selectedDate = computed(() => this.service.selectedDate());
   protected readonly rangeLabel = computed(() =>
     formatWeekRange(this.service.week(), this.languageService.getLocale()),

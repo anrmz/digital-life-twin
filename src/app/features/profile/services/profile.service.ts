@@ -55,8 +55,8 @@ export class ProfileService {
     lastName: this.auth.currentUser()?.lastName ?? 'Martin',
     email: this.auth.currentUser()?.email ?? 'sarah.martin@example.com',
     timezone: 'Europe/Paris (UTC+1)',
-    language: 'Français',
-    bio: 'Étudiante en dernière année d’ingénierie. Passionnée par la productivité, le bien-être et la technologie.',
+    language: 'fr',
+    bio: 'mock.profile.bio',
   };
 
   readonly state = signal<ProfileState>(read(STORAGE_KEY, this.defaults));

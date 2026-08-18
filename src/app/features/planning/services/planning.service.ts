@@ -45,23 +45,11 @@ export class PlanningService {
 
   readonly weekRangeLabel = computed(() => {
     const [first, last] = this.week();
-    const months = [
-      'janvier',
-      'février',
-      'mars',
-      'avril',
-      'mai',
-      'juin',
-      'juillet',
-      'août',
-      'septembre',
-      'octobre',
-      'novembre',
-      'décembre',
-    ];
+    const locale = this.languageService.getLocale();
+    const fmt = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' });
     const f = new Date(`${first}T00:00:00`);
     const l = new Date(`${last}T00:00:00`);
-    return `${f.getDate()} ${months[f.getMonth()]} – ${l.getDate()} ${months[l.getMonth()]}`;
+    return `${fmt.format(f)} – ${fmt.format(l)}`;
   });
 
   readonly summary = computed<DaySummary>(() => {
@@ -211,11 +199,12 @@ export class PlanningService {
   private planSchedule(): PlanningEntry[] {
     const date = this.selectedDate();
     const existing = this.entriesFor(date).filter((entry) => entry.type !== 'free');
+    const t = (key: string) => this.languageService.translate<string>(key);
     const blocks: PlanningEntry[] = [
       {
         id: `plan-${date}-1`,
         type: 'task',
-        title: 'Révision — cours du matin',
+        title: t('mock.planSchedule.review'),
         category: 'work',
         date,
         start: '09:00',
@@ -228,7 +217,7 @@ export class PlanningService {
       {
         id: `plan-${date}-2`,
         type: 'event',
-        title: 'Cours magistral',
+        title: t('mock.planSchedule.lecture'),
         category: 'work',
         date,
         start: '10:45',
@@ -239,7 +228,7 @@ export class PlanningService {
       {
         id: `plan-${date}-3`,
         type: 'break',
-        title: 'Déjeuner',
+        title: t('mock.planSchedule.lunch'),
         category: 'meals',
         date,
         start: '12:30',
@@ -250,7 +239,7 @@ export class PlanningService {
       {
         id: `plan-${date}-4`,
         type: 'task',
-        title: 'Travail pratique',
+        title: t('mock.planSchedule.practicalWork'),
         category: 'work',
         date,
         start: '14:00',
@@ -263,7 +252,7 @@ export class PlanningService {
       {
         id: `plan-${date}-5`,
         type: 'sport',
-        title: 'Séance de sport',
+        title: t('mock.planSchedule.workout'),
         category: 'sport',
         date,
         start: '18:00',
@@ -274,7 +263,7 @@ export class PlanningService {
       {
         id: `plan-${date}-6`,
         type: 'free',
-        title: 'Soirée libre',
+        title: t('mock.planSchedule.freeEvening'),
         category: 'free',
         date,
         start: '19:30',

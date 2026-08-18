@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   LucideActivity,
@@ -30,11 +30,11 @@ import { LanguageService } from '../../core/services/language.service';
 
 const LANGUAGES = ['Français', 'English', 'العربية'];
 const TIMEZONES = [
-  'Europe/Paris (UTC+1)',
-  'Europe/London (UTC+0)',
-  'America/New_York (UTC-5)',
-  'Asia/Tokyo (UTC+9)',
-  'Africa/Casablanca (UTC+1)',
+  'Europe/Paris',
+  'Europe/London',
+  'America/New_York',
+  'Asia/Tokyo',
+  'Africa/Casablanca',
 ];
 
 @Component({
@@ -193,7 +193,7 @@ const TIMEZONES = [
             </dl>
             <div class="mt-5 rounded-panel border border-line bg-surface-muted/50 p-4">
               <p class="text-xs font-semibold uppercase tracking-wide text-ink-muted">{{ t('profile.about') }}</p>
-              <p class="mt-1.5 text-sm leading-relaxed text-ink">{{ state().bio }}</p>
+              <p class="mt-1.5 text-sm leading-relaxed text-ink">{{ bioText() }}</p>
             </div>
           </section>
 
@@ -401,6 +401,8 @@ export class ProfilePage implements AfterViewInit {
   protected readonly GRID_2 = GRID_2;
   protected readonly ACTIONS = ACTIONS;
   protected readonly ERROR_TEXT = ERROR_TEXT;
+
+  protected readonly bioText = computed(() => this.languageService.translate(this.service.state().bio));
 
   protected readonly editOpen = signal(false);
   protected readonly draft = signal<ProfileState>(this.service.state());

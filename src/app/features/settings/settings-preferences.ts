@@ -21,8 +21,8 @@ interface DateFormatOption {
   description: string;
 }
 
-function longDate(date: Date): string {
-  return new Intl.DateTimeFormat('fr-FR', {
+function longDate(date: Date, locale = 'fr-FR'): string {
+  return new Intl.DateTimeFormat(locale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -75,7 +75,7 @@ function isoDate(date: Date): string {
             {{ timezoneLabel() }}
           </h3>
           <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            @for (option of timezones; track option.value) {
+            @for (option of timezones(); track option.value) {
               <app-settings-option
                 group="st-timezone"
                 [value]="option.value"
@@ -113,7 +113,7 @@ function isoDate(date: Date): string {
             {{ weekStartLabel() }}
           </h3>
           <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-@for (option of weekStarts; track option.value) {
+@for (option of weekStarts(); track option.value) {
             <app-settings-option
               group="st-week-start"
               [value]="option.value"
@@ -160,37 +160,39 @@ export class SettingsPreferences {
   protected readonly LucideCalendarDays = LucideCalendarDays;
   protected readonly LucideFlag = LucideFlag;
 
-  protected readonly languages: { value: LanguageCode; label: string }[] = [
-    { value: 'fr', label: 'Français' },
-    { value: 'en', label: 'English' },
-    { value: 'ar', label: 'العربية' },
-  ];
+  protected readonly languages: { value: LanguageCode; label: string }[] =
+    this.languageService.languageOptions.map((l) => ({ value: l.code, label: l.name }));
 
-  protected readonly timezones: { value: TimezoneCode; label: string; description: string }[] = [
+  protected readonly timezones = computed<{ value: TimezoneCode; label: string; description: string }[]>(() => [
     { value: 'Europe/Paris', label: 'Europe/Paris', description: 'UTC+1' },
     { value: 'Africa/Casablanca', label: 'Africa/Casablanca', description: 'UTC+1' },
-    { value: 'UTC', label: 'UTC', description: 'Temps universel' },
-  ];
+    { value: 'UTC', label: 'UTC', description: this.languageService.translate('settings.preferences.utcDescription') },
+  ]);
 
-  protected readonly weekStarts: { value: WeekStart; label: string }[] = [
-    { value: 'monday', label: 'Lundi' },
-    { value: 'sunday', label: 'Dimanche' },
-  ];
+  protected readonly weekStarts = computed<{ value: WeekStart; label: string }[]>(() => [
+    { value: 'monday', label: this.languageService.translate('settings.preferences.monday') },
+    { value: 'sunday', label: this.languageService.translate('settings.preferences.sunday') },
+  ]);
 
   protected readonly dateFormats = computed<DateFormatOption[]>(() => {
     const now = new Date();
+    const locale = this.languageService.getLocale();
     return [
-      { value: 'long', label: 'Complet', description: longDate(now) },
-      { value: 'short', label: 'Court', description: shortDate(now) },
+      { value: 'long', label: this.languageService.translate('settings.preferences.dateFormatLong'), description: longDate(now, locale) },
+      { value: 'short', label: this.languageService.translate('settings.preferences.dateFormatShort'), description: shortDate(now) },
       { value: 'iso', label: 'ISO', description: isoDate(now) },
     ];
   });
 
   protected readonly weekPreview = computed<{ label: string }[]>(() => {
-    const monday = ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'];
-    const sunday = ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'];
-    const labels = this.prefs().weekStart === 'monday' ? monday : sunday;
-    return labels.map((label) => ({ label }));
+    const locale = this.languageService.getLocale();
+    const startDay = this.prefs().weekStart === 'monday' ? 1 : 0;
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - date.getDay() + startDay + i);
+      const label = new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date);
+      return { label: label.charAt(0).toUpperCase() + label.slice(1) };
+    });
   });
 
   protected onLanguageChange(value: string): void {

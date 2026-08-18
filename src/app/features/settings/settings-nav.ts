@@ -38,7 +38,7 @@ const NAV_ITEMS: SettingsNavItem[] = [
   selector: 'app-settings-nav',
   imports: [LucideDynamicIcon],
   template: `
-    <nav aria-label="Sections des paramètres">
+    <nav [attr.aria-label]="settingsNavAria()">
       <!-- Mobile : navigation horizontale -->
       <div class="no-scrollbar -mx-4 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:hidden">
         <div class="flex gap-2 pb-1">
@@ -103,6 +103,7 @@ export class SettingsNav {
   readonly selected = output<SettingsSectionId>();
 
   private readonly languageService = inject(LanguageService);
+  protected readonly settingsNavAria = this.languageService.translateSignal('settings.nav.ariaLabel');
 
   protected readonly items = computed(() =>
     NAV_ITEMS.map((item) => ({

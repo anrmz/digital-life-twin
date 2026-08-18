@@ -7,7 +7,7 @@ import {
 } from '@lucide/angular';
 import gsap from 'gsap';
 import { LanguageService } from '../../../../core/services/language.service';
-import { formatMinutesFR } from '../../models/planning.models';
+import { formatMinutesLocale } from '../../models/planning.models';
 import { PlanningService } from '../../services/planning.service';
 
 type LoadTone = {
@@ -123,7 +123,7 @@ export class PlanningSummary implements AfterViewInit {
   protected readonly toneLabel = computed(() =>
     this.languageService.translate(this.tone().labelKey),
   );
-  protected readonly freeLabel = computed(() => formatMinutesFR(this.summary().freeMinutes));
+  protected readonly freeLabel = computed(() => formatMinutesLocale(this.summary().freeMinutes, (key) => this.languageService.translate(key)));
 
   constructor() {
     effect(() => {

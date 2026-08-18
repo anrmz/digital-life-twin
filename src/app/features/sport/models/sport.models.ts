@@ -75,16 +75,18 @@ export function offsetDays(days: number): Date {
   return date;
 }
 
-export function formatDuration(minutes: number): string {
+export function formatDuration(minutes: number, t?: (key: string) => string): string {
   if (minutes < 60) {
-    return `${minutes} min`;
+    return `${minutes} ${t ? t('common.units.minuteShort') : 'min'}`;
   }
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
-  return rest === 0 ? `${hours} h` : `${hours} h ${rest}`;
+  const h = t ? t('common.units.hourShort') : 'h';
+  const m = t ? t('common.units.minuteShort') : 'min';
+  return rest === 0 ? `${hours} ${h}` : `${hours} ${h} ${rest} ${m}`;
 }
 
-export function formatDistance(km: number, locale = 'fr-FR'): string {
+export function formatDistance(km: number, locale = 'fr'): string {
   return km === 0 ? '—' : `${km.toLocaleString(locale, { maximumFractionDigits: 1 })} km`;
 }
 
@@ -92,19 +94,19 @@ export const MOCK_WORKOUTS: Workout[] = [
   {
     id: 'w-01',
     type: 'running',
-    title: 'Footing du matin',
+    title: 'mock.sport.0.title',
     date: toISODate(offsetDays(0)),
     startTime: '07:30',
     duration: 30,
     distance: 4.5,
     calories: 320,
     intensity: 'medium',
-    notes: 'Sensation bonne, rythme régulier.',
+    notes: 'mock.sport.0.notes',
   },
   {
     id: 'w-02',
     type: 'walking',
-    title: 'Marche de midi',
+    title: 'mock.sport.1.title',
     date: toISODate(offsetDays(0)),
     startTime: '12:30',
     duration: 25,
@@ -116,19 +118,19 @@ export const MOCK_WORKOUTS: Workout[] = [
   {
     id: 'w-03',
     type: 'gym',
-    title: 'Musculation',
+    title: 'mock.sport.2.title',
     date: toISODate(offsetDays(-1)),
     startTime: '18:00',
     duration: 60,
     distance: 0,
     calories: 280,
     intensity: 'high',
-    notes: 'Haut du corps : épaules, dos, bras.',
+    notes: 'mock.sport.2.notes',
   },
   {
     id: 'w-04',
     type: 'cycling',
-    title: 'Sortie vélo',
+    title: 'mock.sport.3.title',
     date: toISODate(offsetDays(-2)),
     startTime: '17:00',
     duration: 75,
@@ -140,19 +142,19 @@ export const MOCK_WORKOUTS: Workout[] = [
   {
     id: 'w-05',
     type: 'stretching',
-    title: 'Étirements du soir',
+    title: 'mock.sport.4.title',
     date: toISODate(offsetDays(-3)),
     startTime: '21:00',
     duration: 20,
     distance: 0,
     calories: 40,
     intensity: 'low',
-    notes: 'Séance de récupération légère.',
+    notes: 'mock.sport.4.notes',
   },
   {
     id: 'w-06',
     type: 'running',
-    title: 'Course fractionnée',
+    title: 'mock.sport.5.title',
     date: toISODate(offsetDays(-4)),
     startTime: '07:00',
     duration: 40,
@@ -164,7 +166,7 @@ export const MOCK_WORKOUTS: Workout[] = [
   {
     id: 'w-07',
     type: 'walking',
-    title: 'Balade en ville',
+    title: 'mock.sport.6.title',
     date: toISODate(offsetDays(-5)),
     startTime: '19:00',
     duration: 45,
@@ -176,13 +178,13 @@ export const MOCK_WORKOUTS: Workout[] = [
   {
     id: 'w-08',
     type: 'gym',
-    title: 'Musculation',
+    title: 'mock.sport.7.title',
     date: toISODate(offsetDays(-6)),
     startTime: '18:30',
     duration: 50,
     distance: 0,
     calories: 240,
     intensity: 'medium',
-    notes: 'Bas du corps : jambes, abdos.',
+    notes: 'mock.sport.7.notes',
   },
 ];

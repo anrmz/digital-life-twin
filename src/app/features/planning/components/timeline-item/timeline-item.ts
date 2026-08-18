@@ -41,7 +41,7 @@ const STATUS_VARIANT: Record<TaskStatus, BadgeVariant> = {
       class="group relative flex gap-3 sm:gap-4"
       role="button"
       tabindex="0"
-      [attr.aria-label]="t('planningExtended.detailOpenAria') + entry().title"
+      [attr.aria-label]="t('planningExtended.detailOpenAria') + entryTitle(entry())"
       (click)="open.emit(entry())"
       (keydown.enter)="open.emit(entry())"
       (keydown.space)="open.emit(entry()); $event.preventDefault()"
@@ -77,7 +77,7 @@ const STATUS_VARIANT: Record<TaskStatus, BadgeVariant> = {
                   [class.line-through]="isDone()"
                   [class.text-ink-muted]="isDone()"
                 >
-                  {{ entry().title }}
+                  {{ entryTitle(entry()) }}
                 </p>
                 <div class="flex shrink-0 items-center gap-1">
                   @if (entry().type === 'task') {
@@ -102,7 +102,7 @@ const STATUS_VARIANT: Record<TaskStatus, BadgeVariant> = {
                     <button
                       type="button"
                       class="flex h-7 w-7 items-center justify-center rounded-panel text-ink-faint transition-colors hover:bg-surface-muted hover:text-primary"
-                      [attr.aria-label]="t('planningExtended.editAria') + entry().title"
+                      [attr.aria-label]="t('planningExtended.editAria') + entryTitle(entry())"
                       (click)="edit.emit(entry()); $event.stopPropagation()"
                     >
                       <svg lucidePencil class="h-3.5 w-3.5" aria-hidden="true"></svg>
@@ -112,7 +112,7 @@ const STATUS_VARIANT: Record<TaskStatus, BadgeVariant> = {
               </div>
 
               @if (entry().description) {
-                <p class="mt-0.5 text-xs leading-relaxed text-ink-muted">{{ entry().description }}</p>
+                <p class="mt-0.5 text-xs leading-relaxed text-ink-muted">{{ entryDesc(entry()) }}</p>
               }
 
               <div class="mt-2 flex flex-wrap items-center gap-1.5">
@@ -129,7 +129,7 @@ const STATUS_VARIANT: Record<TaskStatus, BadgeVariant> = {
                 @if (entry().type === 'event' && entry().location) {
                   <span class="inline-flex items-center gap-1 text-[11px] text-ink-faint">
                     <svg lucideMapPin class="h-3 w-3" aria-hidden="true"></svg>
-                    {{ entry().location }}
+                    {{ entryLocation(entry()) }}
                   </span>
                 }
                 @if (entry().type === 'event' && participantCount() > 0) {
@@ -165,7 +165,7 @@ export class TimelineItem {
   protected readonly STATUS_KEYS = STATUS_KEYS;
 
   protected readonly visual = computed(() => getEntryVisual(this.entry().type, (key) => this.languageService.translate(key)));
-  protected readonly duration = computed(() => entryDurationLabel(this.entry()));
+  protected readonly duration = computed(() => entryDurationLabel(this.entry(), (key) => this.languageService.translate(key)));
   protected readonly isDone = computed(() => this.entry().status === 'done');
   protected readonly canEdit = computed(() => this.entry().type !== 'free');
   protected readonly participantCount = computed(
@@ -182,5 +182,17 @@ export class TimelineItem {
 
   protected statusLabel(value: TaskStatus): string {
     return this.languageService.translate(STATUS_KEYS[value]);
+  }
+
+  protected entryTitle(entry: PlanningEntry): string {
+    return this.languageService.translate(entry.title);
+  }
+
+  protected entryDesc(entry: PlanningEntry): string {
+    return entry.description ? this.languageService.translate(entry.description) : '';
+  }
+
+  protected entryLocation(entry: PlanningEntry): string {
+    return entry.location ? this.languageService.translate(entry.location) : '';
   }
 }

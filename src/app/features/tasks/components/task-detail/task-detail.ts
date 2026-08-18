@@ -32,7 +32,9 @@ import {
   dueLabel,
   durationLabel,
   isOverdue,
+  type Subtask,
   type Task,
+  type TaskActivity,
 } from '../../models/task.models';
 import { TaskService } from '../../services/task.service';
 
@@ -68,7 +70,7 @@ import { TaskService } from '../../services/task.service';
                 <app-badge variant="outline">{{ categoryLabel(task.category) }}</app-badge>
               </div>
               <h3 class="mt-1.5 font-display text-lg font-semibold tracking-tight text-primary">
-                {{ task.title }}
+                {{ title() }}
               </h3>
             </div>
             <button
@@ -85,7 +87,7 @@ import { TaskService } from '../../services/task.service';
 
           <div class="flex-1 overflow-y-auto px-5 py-4">
             @if (task.description) {
-              <p class="text-sm leading-relaxed text-ink-muted">{{ task.description }}</p>
+              <p class="text-sm leading-relaxed text-ink-muted">{{ description() }}</p>
             }
 
             <dl class="mt-5 grid grid-cols-2 gap-2">
@@ -184,7 +186,7 @@ import { TaskService } from '../../services/task.service';
                         [class.text-white]="subtask.done"
                         [class.border-line-strong]="!subtask.done"
                         [class.text-transparent]="!subtask.done"
-                        [attr.aria-label]="(subtask.done ? t('tasksDetail.subtaskUndoneAria') : t('tasksDetail.subtaskDoneAria')) + subtask.title"
+                        [attr.aria-label]="(subtask.done ? t('tasksDetail.subtaskUndoneAria') : t('tasksDetail.subtaskDoneAria')) + subtaskTitle(subtask)"
                         (click)="service.toggleSubtask(task.id, subtask.id)"
                       >
                         <svg lucideCheck class="h-3 w-3" stroke-width="3" aria-hidden="true"></svg>
@@ -194,12 +196,12 @@ import { TaskService } from '../../services/task.service';
                         [class.line-through]="subtask.done"
                         [class.text-ink-faint]="subtask.done"
                       >
-                        {{ subtask.title }}
+                        {{ subtaskTitle(subtask) }}
                       </span>
                       <button
                         type="button"
                         class="flex h-6 w-6 shrink-0 items-center justify-center rounded-panel text-ink-faint opacity-0 transition-all hover:bg-danger-light hover:text-danger group-hover:opacity-100"
-                        [attr.aria-label]="t('tasksDetail.subtaskDeleteAria') + subtask.title"
+                        [attr.aria-label]="t('tasksDetail.subtaskDeleteAria') + subtaskTitle(subtask)"
                         (click)="service.removeSubtask(task.id, subtask.id)"
                       >
                         <svg lucideX class="h-3.5 w-3.5" aria-hidden="true"></svg>
@@ -248,7 +250,7 @@ import { TaskService } from '../../services/task.service';
                       <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-accent/60"></span>
                       <span>
                         <svg lucideClock class="mr-1.5 inline h-3 w-3 text-ink-faint" aria-hidden="true"></svg>
-                        {{ item.label }}
+                         {{ activityLabel(item) }}
                       </span>
                     </li>
                   }
@@ -314,6 +316,17 @@ export class TaskDetail {
   protected readonly PRIORITY_KEYS = PRIORITY_KEYS;
   protected readonly STATUS_KEYS = STATUS_KEYS;
   protected readonly durationLabel = durationLabel;
+
+  protected readonly title = computed(() => this.languageService.translate(this.task()?.title ?? ''));
+  protected readonly description = computed(() => this.languageService.translate(this.task()?.description ?? ''));
+
+  protected subtaskTitle(sub: Subtask): string {
+    return this.languageService.translate(sub.title);
+  }
+
+  protected activityLabel(item: TaskActivity): string {
+    return this.languageService.translate(item.label);
+  }
 
   protected dueLabel(iso: string): string {
     return dueLabel(iso, this.languageService.getLocale(), (key) => this.languageService.translate(key));

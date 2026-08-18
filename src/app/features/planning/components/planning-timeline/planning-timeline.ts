@@ -14,7 +14,7 @@ import gsap from 'gsap';
 import { LanguageService } from '../../../../core/services/language.service';
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 import {
-  formatTimeFR,
+  formatTimeLocale,
   nowMinutes,
   toMinutes,
   toTime,
@@ -144,7 +144,7 @@ export class PlanningTimeline {
   );
 
   protected readonly nowLabel = computed(() =>
-    formatTimeFR(toTime(this.nowMinutesSignal())),
+    formatTimeLocale(toTime(this.nowMinutesSignal()), this.languageService.getLocale()),
   );
 
   protected readonly dividerIndex = computed(() => {

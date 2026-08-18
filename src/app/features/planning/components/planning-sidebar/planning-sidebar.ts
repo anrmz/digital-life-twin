@@ -11,7 +11,7 @@ import {
 import { LanguageService } from '../../../../core/services/language.service';
 import { Button } from '../../../../shared/ui/button/button';
 import {
-  formatMinutesFR,
+  formatMinutesLocale,
   type PlanningCategory,
 } from '../../models/planning.models';
 import { PlanningService } from '../../services/planning.service';
@@ -72,7 +72,7 @@ import type { LucideIcon } from '@lucide/angular';
               {{ freeTime() }}
             </dt>
             <dd class="font-semibold tabular-nums text-primary">
-              {{ formatMinutesFR(summary().freeMinutes) }}
+              {{ formatMinutesLabel(summary().freeMinutes) }}
             </dd>
           </div>
         </dl>
@@ -102,7 +102,7 @@ import type { LucideIcon } from '@lucide/angular';
                   <svg [lucideIcon]="categoryIcon(cat.category)" class="h-3.5 w-3.5" aria-hidden="true"></svg>
                   {{ categoryLabel(cat.category) }}
                 </span>
-                <span class="font-medium tabular-nums text-ink">{{ formatMinutesFR(cat.minutes) }}</span>
+                <span class="font-medium tabular-nums text-ink">{{ formatMinutesLabel(cat.minutes) }}</span>
               </div>
               <div class="h-1 overflow-hidden rounded-full bg-surface-muted">
                 <div class="h-full rounded-full" [class]="barTone(cat.category)" [style.width]="barWidth(cat.minutes) + '%'"></div>
@@ -152,7 +152,9 @@ export class PlanningSidebar {
     return max > 0 ? max : 1;
   });
 
-  protected formatMinutesFR = formatMinutesFR;
+  protected formatMinutesLabel(minutes: number): string {
+    return formatMinutesLocale(minutes, (key) => this.languageService.translate(key));
+  }
 
   protected categoryIcon(category: PlanningCategory): LucideIcon {
     return this.service.categoryIcon(category);
