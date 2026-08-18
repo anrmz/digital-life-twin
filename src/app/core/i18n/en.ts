@@ -88,6 +88,10 @@ export const EN_TRANSLATIONS = {
     reset: 'Reset',
     yes: 'Yes',
     no: 'No',
+    units: {
+      minuteShort: 'min',
+      hourShort: 'h',
+    },
   },
   settings: {
     title: 'Settings',

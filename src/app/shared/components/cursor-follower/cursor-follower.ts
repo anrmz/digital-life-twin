@@ -7,7 +7,6 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import gsap from 'gsap';
 
 const INTERACTIVE_SELECTOR =
   'a, button, [role="button"], input, select, textarea, label, summary, [data-cursor]';
@@ -15,7 +14,7 @@ const INTERACTIVE_SELECTOR =
 /**
  * Premium cursor-following ring driven by GSAP quickTo.
  * Disabled automatically on touch devices and with prefers-reduced-motion.
- * The native cursor is left untouched.
+ * GSAP is dynamically imported only when the feature is active.
  */
 @Component({
   selector: 'app-cursor-follower',
@@ -56,6 +55,7 @@ export class CursorFollower implements AfterViewInit, OnDestroy {
   private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly ring = viewChild<ElementRef<HTMLElement>>('ring');
 
+  private gsap: typeof import('gsap')['default'] | null = null;
   private xTo: ((value: number) => void) | null = null;
   private yTo: ((value: number) => void) | null = null;
   private hovered = false;
@@ -88,17 +88,23 @@ export class CursorFollower implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    const ring = this.ring()?.nativeElement;
-    if (!ring || !this.enabled()) {
+    if (!this.enabled()) {
       return;
     }
-    gsap.set(ring, { x: -100, y: -100 });
-    this.xTo = gsap.quickTo(ring, 'x', { duration: 0.5, ease: 'power3' });
-    this.yTo = gsap.quickTo(ring, 'y', { duration: 0.5, ease: 'power3' });
+    const ring = this.ring()?.nativeElement;
+    if (!ring) {
+      return;
+    }
+    import('gsap').then((gsapModule) => {
+      this.gsap = gsapModule.default;
+      this.gsap.set(ring, { x: -100, y: -100 });
+      this.xTo = this.gsap.quickTo(ring, 'x', { duration: 0.5, ease: 'power3' });
+      this.yTo = this.gsap.quickTo(ring, 'y', { duration: 0.5, ease: 'power3' });
 
-    window.addEventListener('pointermove', this.onPointerMove, { passive: true });
-    window.addEventListener('pointerleave', this.onPointerLeave);
-    document.addEventListener('visibilitychange', this.onVisibilityChange);
+      window.addEventListener('pointermove', this.onPointerMove, { passive: true });
+      window.addEventListener('pointerleave', this.onPointerLeave);
+      document.addEventListener('visibilitychange', this.onVisibilityChange);
+    });
   }
 
   private setHover(value: boolean): void {
@@ -107,10 +113,10 @@ export class CursorFollower implements AfterViewInit, OnDestroy {
     }
     this.hovered = value;
     const ring = this.ring()?.nativeElement;
-    if (!ring || !this.enabled()) {
+    if (!ring || !this.gsap) {
       return;
     }
-    gsap.to(ring, {
+    this.gsap.to(ring, {
       opacity: value ? 0.9 : 0.35,
       scale: value ? 1.6 : 1,
       duration: 0.35,
@@ -124,8 +130,8 @@ export class CursorFollower implements AfterViewInit, OnDestroy {
     window.removeEventListener('pointerleave', this.onPointerLeave);
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
     const ring = this.ring()?.nativeElement;
-    if (ring) {
-      gsap.killTweensOf(ring);
+    if (ring && this.gsap) {
+      this.gsap.killTweensOf(ring);
     }
   }
 }

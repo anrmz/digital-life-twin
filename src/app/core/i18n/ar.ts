@@ -88,6 +88,10 @@ export const AR_TRANSLATIONS = {
     reset: 'إعادة التعيين',
     yes: 'نعم',
     no: 'لا',
+    units: {
+      minuteShort: 'د',
+      hourShort: 'س',
+    },
   },
   settings: {
     title: 'الإعدادات',

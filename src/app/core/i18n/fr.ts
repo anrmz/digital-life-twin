@@ -88,6 +88,10 @@ export const FR_TRANSLATIONS = {
     reset: 'Réinitialiser',
     yes: 'Oui',
     no: 'Non',
+    units: {
+      minuteShort: 'min',
+      hourShort: 'h',
+    },
   },
   settings: {
     title: 'Paramètres',
