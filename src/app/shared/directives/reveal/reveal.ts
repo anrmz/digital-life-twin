@@ -6,12 +6,12 @@ import {
   inject,
   input,
 } from '@angular/core';
-import gsap from 'gsap';
 
 /**
  * Scroll-triggered reveal using GSAP + IntersectionObserver.
  * Apply on a section/card to reveal it on scroll; pass `revealStagger`
  * (a CSS selector) to stagger its direct children instead.
+ * GSAP is dynamically imported only on capable devices.
  */
 @Directive({
   selector: '[appReveal]',
@@ -44,28 +44,34 @@ export class Reveal implements AfterViewInit {
       return;
     }
 
-    gsap.set(targets, { y: this.distance() });
+    const distance = this.distance();
+    const delayMs = this.delay();
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) {
-            continue;
+    import('gsap').then((gsapModule) => {
+      const gsap = gsapModule.default;
+      gsap.set(targets, { y: distance });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) {
+              continue;
+            }
+            observer.disconnect();
+            gsap.to(targets, {
+              y: 0,
+              duration: 0.7,
+              ease: 'power2.out',
+              stagger: selector ? 0.08 : 0,
+              delay: delayMs / 1000,
+              clearProps: 'transform',
+            });
           }
-          observer.disconnect();
-          gsap.to(targets, {
-            y: 0,
-            duration: 0.7,
-            ease: 'power2.out',
-            stagger: selector ? 0.08 : 0,
-            delay: this.delay() / 1000,
-            clearProps: 'transform',
-          });
-        }
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
-    );
-    observer.observe(this.host.nativeElement);
-    this.destroyRef.onDestroy(() => observer.disconnect());
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+      );
+      observer.observe(this.host.nativeElement);
+      this.destroyRef.onDestroy(() => observer.disconnect());
+    });
   }
 }

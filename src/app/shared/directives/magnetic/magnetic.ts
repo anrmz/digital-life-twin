@@ -1,9 +1,9 @@
 import { AfterViewInit, Directive, ElementRef, OnDestroy, inject, input } from '@angular/core';
-import gsap from 'gsap';
 
 /**
  * Very subtle magnetic pull toward the pointer. Only active on fine pointers
  * with motion enabled. Keep the strength low for a premium feel.
+ * GSAP is dynamically imported only on capable devices.
  */
 @Directive({
   selector: '[appMagnetic]',
@@ -17,6 +17,7 @@ export class Magnetic implements AfterViewInit, OnDestroy {
   readonly strength = input(0.15, { alias: 'appMagneticStrength' });
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private gsap: typeof import('gsap')['default'] | null = null;
   private xTo: ((value: number) => void) | null = null;
   private yTo: ((value: number) => void) | null = null;
   private enabled = false;
@@ -28,14 +29,17 @@ export class Magnetic implements AfterViewInit, OnDestroy {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
-    this.enabled = true;
-    this.xTo = gsap.quickTo(this.host.nativeElement, 'x', {
-      duration: 0.4,
-      ease: 'power3.out',
-    });
-    this.yTo = gsap.quickTo(this.host.nativeElement, 'y', {
-      duration: 0.4,
-      ease: 'power3.out',
+    import('gsap').then((gsapModule) => {
+      this.gsap = gsapModule.default;
+      this.enabled = true;
+      this.xTo = this.gsap.quickTo(this.host.nativeElement, 'x', {
+        duration: 0.4,
+        ease: 'power3.out',
+      });
+      this.yTo = this.gsap.quickTo(this.host.nativeElement, 'y', {
+        duration: 0.4,
+        ease: 'power3.out',
+      });
     });
   }
 
@@ -60,6 +64,8 @@ export class Magnetic implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    gsap.killTweensOf(this.host.nativeElement);
+    if (this.gsap) {
+      this.gsap.killTweensOf(this.host.nativeElement);
+    }
   }
 }

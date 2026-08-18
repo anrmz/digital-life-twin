@@ -58,7 +58,7 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
     <!-- ================= Hero ================= -->
     <section
       class="relative flex min-h-[100svh] items-center overflow-hidden bg-cover bg-center bg-no-repeat bg-primary-darker text-white max-md:bg-[center_30%]"
-      [style.backgroundImage]="'url(/brand/hero-section.jpg)'"
+      [style.backgroundImage]="'url(/brand/hero-section.webp)'"
       aria-labelledby="hero-title"
     >
       <div
