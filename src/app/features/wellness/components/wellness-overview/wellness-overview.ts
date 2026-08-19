@@ -1,5 +1,4 @@
 import { Component, ElementRef, computed, effect, inject, viewChild } from '@angular/core';
-import gsap from 'gsap';
 import { LucideHeartPulse, LucideTrendingUp } from '@lucide/angular';
 import { LanguageService } from '../../../../core/services/language.service';
 import { WellnessService } from '../../services/wellness.service';
@@ -138,22 +137,24 @@ export class WellnessOverview {
       value.textContent = '0';
       ring.style.strokeDashoffset = String(CIRCUMFERENCE);
       const proxy = { value: 0 };
-      const numberTween = gsap.to(proxy, {
-        value: target,
-        duration: 1.1,
-        ease: 'power3.out',
-        onUpdate: () => {
-          value.textContent = String(Math.round(proxy.value));
-        },
-      });
-      const ringTween = gsap.to(ring, {
-        strokeDashoffset: targetOffset,
-        duration: 1.1,
-        ease: 'power3.out',
-      });
-      onCleanup(() => {
-        numberTween.kill();
-        ringTween.kill();
+      import('gsap').then(({ default: gsap }) => {
+        const numberTween = gsap.to(proxy, {
+          value: target,
+          duration: 1.1,
+          ease: 'power3.out',
+          onUpdate: () => {
+            value.textContent = String(Math.round(proxy.value));
+          },
+        });
+        const ringTween = gsap.to(ring, {
+          strokeDashoffset: targetOffset,
+          duration: 1.1,
+          ease: 'power3.out',
+        });
+        onCleanup(() => {
+          numberTween.kill();
+          ringTween.kill();
+        });
       });
     });
   }

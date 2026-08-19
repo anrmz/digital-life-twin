@@ -21,7 +21,6 @@ import {
   LucideTrash2,
   LucideX,
 } from '@lucide/angular';
-import gsap from 'gsap';
 import { LanguageService } from '../../../../core/services/language.service';
 import { Badge, type BadgeVariant } from '../../../../shared/ui/badge/badge';
 import { Button } from '../../../../shared/ui/button/button';
@@ -405,12 +404,14 @@ export class TaskDetail {
       requestAnimationFrame(() => {
         const panel = this.host.nativeElement.querySelector<HTMLElement>('.details-panel');
         const overlay = this.host.nativeElement.querySelector<HTMLElement>('.fixed');
-        if (panel) {
-          gsap.fromTo(panel, { x: 48, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
-        }
-        if (overlay) {
-          gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' });
-        }
+        import('gsap').then(({ default: gsap }) => {
+          if (panel) {
+            gsap.fromTo(panel, { x: 48, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
+          }
+          if (overlay) {
+            gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' });
+          }
+        });
       });
     });
   }

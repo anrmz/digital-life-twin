@@ -9,7 +9,6 @@ import {
   LucideTrash2,
   LucideX,
 } from '@lucide/angular';
-import gsap from 'gsap';
 import { LanguageService } from '../../core/services/language.service';
 import { Button } from '../../shared/ui/button/button';
 import { Badge } from '../../shared/ui/badge/badge';
@@ -373,10 +372,12 @@ export class NotificationsPage implements AfterViewInit {
       return;
     }
     const root = this.host.nativeElement;
-    gsap.fromTo(
-      root.querySelectorAll<HTMLElement>('.notification-item'),
-      { opacity: 0, y: 8 },
-      { opacity: 1, y: 0, duration: 0.45, stagger: 0.04, ease: 'power2.out', clearProps: 'transform' },
-    );
+    import('gsap').then(({ default: gsap }) => {
+      gsap.fromTo(
+        root.querySelectorAll<HTMLElement>('.notification-item'),
+        { opacity: 0, y: 8 },
+        { opacity: 1, y: 0, duration: 0.45, stagger: 0.04, ease: 'power2.out', clearProps: 'transform' },
+      );
+    });
   }
 }

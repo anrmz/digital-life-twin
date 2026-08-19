@@ -36,12 +36,11 @@
     />
     <meta name="twitter:image" content="/brand/logo.png" />
 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2" />
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/spacegrotesk/v22/V8mDoQDjQSkFtoMM3T6r8E7mPbF4Cw.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="fonts/Inter-Variable.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="fonts/SpaceGrotesk-Variable.woff2" />
     <style>
-      @font-face{font-family:'Inter';font-style:normal;font-weight:100 900;font-display:swap;src:url(https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2) format('woff2')}
-      @font-face{font-family:'Space Grotesk';font-style:normal;font-weight:500 700;font-display:swap;src:url(https://fonts.gstatic.com/s/spacegrotesk/v22/V8mDoQDjQSkFtoMM3T6r8E7mPbF4Cw.woff2) format('woff2')}
+      @font-face{font-family:'Inter';font-style:normal;font-weight:100 900;font-display:swap;src:url(fonts/Inter-Variable.woff2) format('woff2')}
+      @font-face{font-family:'Space Grotesk';font-style:normal;font-weight:500 700;font-display:swap;src:url(fonts/SpaceGrotesk-Variable.woff2) format('woff2')}
     </style>
   </head>
   <body>
@@ -52,7 +51,7 @@
         .dlt-shell__hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(11,29,45,.85),rgba(11,29,45,.4),transparent);pointer-events:none}
         .dlt-shell__content{position:relative;z-index:1;max-width:28rem}
         .dlt-shell__badge{display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);padding:.375rem .875rem;border-radius:9999px;font-size:.75rem;color:rgba(255,255,255,.7);margin-bottom:1.25rem}
-        .dlt-shell__title{font-size:2.25rem;line-height:1.08;font-weight:600;letter-spacing:-.02em;margin:0 0 1rem}
+        .dlt-shell__title{font-size:2.25rem;line-height:1.08;font-weight:600;letter-spacing:-.025em;margin:0 0 1rem;font-family:'Space Grotesk',system-ui,-apple-system,sans-serif}
         .dlt-shell__title span{background:linear-gradient(115deg,#fff,#b5e3e3);-webkit-background-clip:text;background-clip:text;color:transparent}
         .dlt-shell__line{height:.75rem;border-radius:9999px;background:rgba(255,255,255,.08);margin-bottom:.625rem;animation:dlt-skeleton-pulse 1.8s ease-in-out infinite}
         .dlt-shell__line:nth-child(1){width:65%}
@@ -65,7 +64,7 @@
         <section class="dlt-shell__hero">
           <div class="dlt-shell__content">
             <div class="dlt-shell__badge">✦ Digital Life Twin</div>
-            <h1 class="dlt-shell__title">Votre <span>quotidien</span></h1>
+            <h1 id="hero-title" class="dlt-shell__title">Votre quotidien, <span>enfin compris.</span></h1>
             <div class="dlt-shell__line"></div>
             <div class="dlt-shell__line"></div>
             <div class="dlt-shell__line"></div>

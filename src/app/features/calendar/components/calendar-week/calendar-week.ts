@@ -1,5 +1,4 @@
 import { Component, ElementRef, effect, inject, signal } from '@angular/core';
-import gsap from 'gsap';
 import { LanguageService } from '../../../../core/services/language.service';
 import {
   dayNumber,
@@ -247,18 +246,20 @@ export class CalendarWeek {
         if (blocks.length === 0) {
           return;
         }
-        gsap.fromTo(
-          blocks,
-          { opacity: 0, y: 6 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.35,
-            stagger: 0.03,
-            ease: 'power2.out',
-            clearProps: 'transform',
-          },
-        );
+        import('gsap').then(({ default: gsap }) => {
+          gsap.fromTo(
+            blocks,
+            { opacity: 0, y: 6 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.35,
+              stagger: 0.03,
+              ease: 'power2.out',
+              clearProps: 'transform',
+            },
+          );
+        });
       });
     });
   }

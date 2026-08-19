@@ -20,7 +20,6 @@ import {
   LucideUsers,
   LucideX,
 } from '@lucide/angular';
-import gsap from 'gsap';
 import { LanguageService } from '../../../../core/services/language.service';
 import { Button } from '../../../../shared/ui/button/button';
 import {
@@ -259,12 +258,14 @@ export class EventDetails {
       requestAnimationFrame(() => {
         const panel = this.host.nativeElement.querySelector<HTMLElement>('.details-panel');
         const overlay = this.host.nativeElement.querySelector<HTMLElement>('.fixed');
-        if (panel) {
-          gsap.fromTo(panel, { x: 48, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
-        }
-        if (overlay) {
-          gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' });
-        }
+        import('gsap').then(({ default: gsap }) => {
+          if (panel) {
+            gsap.fromTo(panel, { x: 48, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
+          }
+          if (overlay) {
+            gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' });
+          }
+        });
       });
     });
   }

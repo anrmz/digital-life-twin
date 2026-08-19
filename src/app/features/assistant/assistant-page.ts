@@ -6,7 +6,6 @@ import {
   LucideMessageSquarePlus,
   LucideSparkles,
 } from '@lucide/angular';
-import gsap from 'gsap';
 import { Button } from '../../shared/ui/button/button';
 import { LanguageService } from '../../core/services/language.service';
 import {
@@ -367,10 +366,12 @@ export class AssistantPage implements AfterViewInit {
       return;
     }
     const root = this.host.nativeElement;
-    gsap.fromTo(
-      root.querySelectorAll<HTMLElement>('.message-bubble'),
-      { opacity: 0, y: 6 },
-      { opacity: 1, y: 0, duration: 0.35, stagger: 0.04, ease: 'power2.out', clearProps: 'transform' },
-    );
+    import('gsap').then(({ default: gsap }) => {
+      gsap.fromTo(
+        root.querySelectorAll<HTMLElement>('.message-bubble'),
+        { opacity: 0, y: 6 },
+        { opacity: 1, y: 0, duration: 0.35, stagger: 0.04, ease: 'power2.out', clearProps: 'transform' },
+      );
+    });
   }
 }

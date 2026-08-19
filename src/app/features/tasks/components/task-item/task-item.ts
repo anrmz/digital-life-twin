@@ -15,7 +15,6 @@ import {
   LucideDynamicIcon,
   LucideFlag,
 } from '@lucide/angular';
-import gsap from 'gsap';
 import { LanguageService } from '../../../../core/services/language.service';
 import { Badge, type BadgeVariant } from '../../../../shared/ui/badge/badge';
 import {
@@ -186,7 +185,9 @@ export class TaskItem {
       if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         return;
       }
-      gsap.fromTo(el, { scale: 1.3 }, { scale: 1, duration: 0.4, ease: 'back.out(3)' });
+      import('gsap').then(({ default: gsap }) => {
+        gsap.fromTo(el, { scale: 1.3 }, { scale: 1, duration: 0.4, ease: 'back.out(3)' });
+      });
     });
   }
 }

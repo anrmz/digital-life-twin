@@ -8,7 +8,6 @@ import {
   signal,
 } from '@angular/core';
 import { LucideChevronRight } from '@lucide/angular';
-import gsap from 'gsap';
 import { LanguageService } from '../../../../core/services/language.service';
 import {
   CATEGORY_KEYS,
@@ -266,18 +265,20 @@ export class CalendarMonth {
         if (cells.length === 0) {
           return;
         }
-        gsap.fromTo(
-          cells,
-          { opacity: 0, y: 8 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.3,
-            stagger: 0.008,
-            ease: 'power2.out',
-            clearProps: 'transform',
-          },
-        );
+        import('gsap').then(({ default: gsap }) => {
+          gsap.fromTo(
+            cells,
+            { opacity: 0, y: 8 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.3,
+              stagger: 0.008,
+              ease: 'power2.out',
+              clearProps: 'transform',
+            },
+          );
+        });
       });
     });
 
@@ -293,11 +294,13 @@ export class CalendarMonth {
         if (!selected) {
           return;
         }
-        gsap.fromTo(
-          selected,
-          { scale: 0.8 },
-          { scale: 1, duration: 0.4, ease: 'elastic.out(1, 0.6)', clearProps: 'transform' },
-        );
+        import('gsap').then(({ default: gsap }) => {
+          gsap.fromTo(
+            selected,
+            { scale: 0.8 },
+            { scale: 1, duration: 0.4, ease: 'elastic.out(1, 0.6)', clearProps: 'transform' },
+          );
+        });
       });
     });
 

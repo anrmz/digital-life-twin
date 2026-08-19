@@ -1,6 +1,5 @@
 import { Component, ElementRef, effect, inject, output, signal } from '@angular/core';
 import { LucideCalendarX, LucideClock, LucidePlus } from '@lucide/angular';
-import gsap from 'gsap';
 import { LanguageService } from '../../../../core/services/language.service';
 import {
   formatLongDate,
@@ -165,18 +164,20 @@ export class CalendarDay {
         if (rows.length === 0) {
           return;
         }
-        gsap.fromTo(
-          rows,
-          { opacity: 0, y: 8 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.35,
-            stagger: 0.05,
-            ease: 'power2.out',
-            clearProps: 'transform',
-          },
-        );
+        import('gsap').then(({ default: gsap }) => {
+          gsap.fromTo(
+            rows,
+            { opacity: 0, y: 8 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.35,
+              stagger: 0.05,
+              ease: 'power2.out',
+              clearProps: 'transform',
+            },
+          );
+        });
       });
     });
   }

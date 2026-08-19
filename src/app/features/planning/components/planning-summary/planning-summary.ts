@@ -5,7 +5,6 @@ import {
   LucideListTodo,
   LucideSun,
 } from '@lucide/angular';
-import gsap from 'gsap';
 import { LanguageService } from '../../../../core/services/language.service';
 import { formatMinutesLocale } from '../../models/planning.models';
 import { PlanningService } from '../../services/planning.service';
@@ -134,7 +133,9 @@ export class PlanningSummary implements AfterViewInit {
           bar.style.transform = `scaleX(${target})`;
           return;
         }
-        gsap.to(bar, { scaleX: target, duration: 0.9, ease: 'power3.out' });
+        import('gsap').then(({ default: gsap }) => {
+          gsap.to(bar, { scaleX: target, duration: 0.9, ease: 'power3.out' });
+        });
       });
     });
   }
@@ -143,10 +144,12 @@ export class PlanningSummary implements AfterViewInit {
     if (this.reduced) {
       return;
     }
-    gsap.fromTo(
-      this.host.nativeElement.querySelectorAll<HTMLElement>('.summary-metric'),
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.5, stagger: 0.07, ease: 'power2.out', clearProps: 'transform' },
-    );
+    import('gsap').then(({ default: gsap }) => {
+      gsap.fromTo(
+        this.host.nativeElement.querySelectorAll<HTMLElement>('.summary-metric'),
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.07, ease: 'power2.out', clearProps: 'transform' },
+      );
+    });
   }
 }

@@ -1,5 +1,4 @@
 import { AfterViewInit, Directive, ElementRef, inject } from '@angular/core';
-import gsap from 'gsap';
 import { SettingsService } from './services/settings.service';
 
 /**
@@ -21,16 +20,18 @@ export class SettingsReveal implements AfterViewInit {
     if (this.settings.state().accessibility.reduceMotion) {
       return;
     }
-    gsap.fromTo(
-      this.host.nativeElement,
-      { opacity: 0, y: 14 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.45,
-        ease: 'power2.out',
-        clearProps: 'transform',
-      },
-    );
+    import('gsap').then(({ default: gsap }) => {
+      gsap.fromTo(
+        this.host.nativeElement,
+        { opacity: 0, y: 14 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.45,
+          ease: 'power2.out',
+          clearProps: 'transform',
+        },
+      );
+    });
   }
 }

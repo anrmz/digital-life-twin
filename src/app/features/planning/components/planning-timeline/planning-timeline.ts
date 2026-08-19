@@ -10,7 +10,6 @@ import {
   signal,
 } from '@angular/core';
 import { LucideCalendarDays, LucideClock } from '@lucide/angular';
-import gsap from 'gsap';
 import { LanguageService } from '../../../../core/services/language.service';
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 import {
@@ -173,18 +172,20 @@ export class PlanningTimeline {
         if (items.length === 0) {
           return;
         }
-        gsap.fromTo(
-          items,
-          { opacity: 0, y: 10 },
-          {
-            opacity: 1,
-            y: 0,
-            stagger: 0.05,
-            duration: 0.45,
-            ease: 'power2.out',
-            clearProps: 'transform',
-          },
-        );
+        import('gsap').then(({ default: gsap }) => {
+          gsap.fromTo(
+            items,
+            { opacity: 0, y: 10 },
+            {
+              opacity: 1,
+              y: 0,
+              stagger: 0.05,
+              duration: 0.45,
+              ease: 'power2.out',
+              clearProps: 'transform',
+            },
+          );
+        });
       });
     });
   }

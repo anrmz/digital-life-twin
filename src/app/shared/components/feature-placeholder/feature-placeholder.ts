@@ -6,7 +6,6 @@ import {
   input,
   viewChildren,
 } from '@angular/core';
-import gsap from 'gsap';
 import {
   LucideDynamicIcon,
   type LucideIcon,
@@ -83,10 +82,12 @@ export class FeaturePlaceholder implements AfterViewInit {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
-    gsap.fromTo(
-      nodes,
-      { opacity: 0, y: 14 },
-      { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power2.out', clearProps: 'transform' },
-    );
+    import('gsap').then(({ default: gsap }) => {
+      gsap.fromTo(
+        nodes,
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power2.out', clearProps: 'transform' },
+      );
+    });
   }
 }

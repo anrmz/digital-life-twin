@@ -8,7 +8,6 @@ import {
   LucideRotateCcw,
   LucideSearch,
 } from '@lucide/angular';
-import gsap from 'gsap';
 import { LanguageService } from '../../core/services/language.service';
 import { Toast, type ToastTone } from '../../shared/ui/toast/toast';
 import { EmptyState } from '../../shared/ui/empty-state/empty-state';
@@ -421,23 +420,25 @@ export class TasksPage implements AfterViewInit {
       return;
     }
     const root = this.host.nativeElement;
-    gsap.fromTo(
-      root.querySelectorAll<HTMLElement>('.metric-card'),
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: 'power2.out', clearProps: 'transform' },
-    );
-    gsap.fromTo(
-      root.querySelectorAll<HTMLElement>('.task-item'),
-      { opacity: 0, y: 8 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.45,
-        stagger: 0.04,
-        ease: 'power2.out',
-        delay: 0.15,
-        clearProps: 'transform',
-      },
-    );
+    import('gsap').then(({ default: gsap }) => {
+      gsap.fromTo(
+        root.querySelectorAll<HTMLElement>('.metric-card'),
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: 'power2.out', clearProps: 'transform' },
+      );
+      gsap.fromTo(
+        root.querySelectorAll<HTMLElement>('.task-item'),
+        { opacity: 0, y: 8 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.45,
+          stagger: 0.04,
+          ease: 'power2.out',
+          delay: 0.15,
+          clearProps: 'transform',
+        },
+      );
+    });
   }
 }

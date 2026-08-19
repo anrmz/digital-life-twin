@@ -7,7 +7,6 @@ import {
   LucideTimer,
   LucideTrendingUp,
 } from '@lucide/angular';
-import gsap from 'gsap';
 import { LanguageService } from '../../core/services/language.service';
 import { ChartDirective } from '../../shared/directives/chart/chart';
 import { Button } from '../../shared/ui/button/button';
@@ -405,15 +404,17 @@ export class SportPage implements AfterViewInit {
       return;
     }
     const root = this.host.nativeElement;
-    gsap.fromTo(
-      root.querySelectorAll<HTMLElement>('.metric-card'),
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: 'power2.out', clearProps: 'transform' },
-    );
-    gsap.fromTo(
-      root.querySelectorAll<HTMLElement>('[data-reveal]'),
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power2.out', clearProps: 'transform' },
-    );
+    import('gsap').then(({ default: gsap }) => {
+      gsap.fromTo(
+        root.querySelectorAll<HTMLElement>('.metric-card'),
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: 'power2.out', clearProps: 'transform' },
+      );
+      gsap.fromTo(
+        root.querySelectorAll<HTMLElement>('[data-reveal]'),
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power2.out', clearProps: 'transform' },
+      );
+    });
   }
 }

@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, computed, ElementRef, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LucideArrowUp, LucideDynamicIcon, LucideSparkles } from '@lucide/angular';
-import gsap from 'gsap';
 import { Button } from '../../shared/ui/button/button';
 import { Badge } from '../../shared/ui/badge/badge';
 import { LanguageService } from '../../core/services/language.service';
@@ -370,15 +369,17 @@ export class AiPage implements AfterViewInit {
       return;
     }
     const root = this.host.nativeElement;
-    gsap.fromTo(
-      root.querySelectorAll<HTMLElement>('[data-reveal]'),
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power2.out', clearProps: 'transform' },
-    );
-    gsap.fromTo(
-      root.querySelectorAll<HTMLElement>('.insight-card'),
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.45, stagger: 0.05, ease: 'power2.out', delay: 0.1, clearProps: 'transform' },
-    );
+    import('gsap').then(({ default: gsap }) => {
+      gsap.fromTo(
+        root.querySelectorAll<HTMLElement>('[data-reveal]'),
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power2.out', clearProps: 'transform' },
+      );
+      gsap.fromTo(
+        root.querySelectorAll<HTMLElement>('.insight-card'),
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.45, stagger: 0.05, ease: 'power2.out', delay: 0.1, clearProps: 'transform' },
+      );
+    });
   }
 }

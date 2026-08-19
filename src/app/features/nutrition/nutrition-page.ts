@@ -18,8 +18,6 @@ import {
 } from './models/nutrition.models';
 import { MealForm } from './components/meal-form/meal-form';
 import { MealDetails } from './components/meal-details/meal-details';
-import gsap from 'gsap';
-
 const PERIODS: NutritionPeriod[] = ['today', '7d', '30d'];
 
 interface MacroStat {
@@ -624,17 +622,19 @@ export class NutritionPage implements AfterViewInit {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
-    gsap.fromTo(
-      root.querySelectorAll<HTMLElement>('[data-reveal]'),
-      { opacity: 0, y: 16 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.55,
-        stagger: 0.07,
-        ease: 'power2.out',
-        clearProps: 'transform',
-      },
-    );
+    import('gsap').then(({ default: gsap }) => {
+      gsap.fromTo(
+        root.querySelectorAll<HTMLElement>('[data-reveal]'),
+        { opacity: 0, y: 16 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.55,
+          stagger: 0.07,
+          ease: 'power2.out',
+          clearProps: 'transform',
+        },
+      );
+    });
   }
 }

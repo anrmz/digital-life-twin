@@ -18,7 +18,6 @@ import {
   LucideTimer,
   LucideUser,
 } from '@lucide/angular';
-import gsap from 'gsap';
 import { Button } from '../../shared/ui/button/button';
 import { Badge } from '../../shared/ui/badge/badge';
 import { Avatar } from '../../shared/ui/avatar/avatar';
@@ -434,10 +433,12 @@ export class ProfilePage implements AfterViewInit {
       return;
     }
     const root = this.host.nativeElement;
-    gsap.fromTo(
-      root.querySelectorAll<HTMLElement>('[data-reveal]'),
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power2.out', clearProps: 'transform' },
-    );
+    import('gsap').then(({ default: gsap }) => {
+      gsap.fromTo(
+        root.querySelectorAll<HTMLElement>('[data-reveal]'),
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power2.out', clearProps: 'transform' },
+      );
+    });
   }
 }
