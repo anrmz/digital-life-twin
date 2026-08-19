@@ -14,8 +14,6 @@ import {
   LucideMoveRight,
   LucideSparkles,
   LucideTrendingUp,
-  LucideDynamicIcon,
-  type LucideIcon,
 } from '@lucide/angular';
 import { Badge } from '../../../../shared/ui/badge/badge';
 import { Magnetic } from '../../../../shared/directives/magnetic/magnetic';
@@ -24,7 +22,7 @@ import { Reveal } from '../../../../shared/directives/reveal/reveal';
 import { LanguageService } from '../../../../core/services/language.service';
 
 interface Pillar {
-  icon: LucideIcon;
+  icon: 'calendar' | 'heart' | 'brain';
   title: string;
   description: string;
 }
@@ -36,7 +34,7 @@ interface Step {
 }
 
 interface Insight {
-  icon: LucideIcon;
+  icon: 'moon' | 'droplets' | 'list' | 'arrow-right';
   label: string;
   level: string;
   confidence: number;
@@ -44,7 +42,7 @@ interface Insight {
 }
 
 interface NotificationItem {
-  icon: LucideIcon;
+  icon: 'bell' | 'droplets' | 'brain';
   title: string;
   time: string;
   category: string;
@@ -322,7 +320,13 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
             <span
               class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-white shadow-sm transition-transform duration-300 group-hover:scale-105"
             >
-              <svg [lucideIcon]="pillar.icon" class="h-6 w-6" aria-hidden="true"></svg>
+              @if (pillar.icon === 'calendar') {
+                <svg lucideCalendarDays class="h-6 w-6" aria-hidden="true"></svg>
+              } @else if (pillar.icon === 'heart') {
+                <svg lucideHeartPulse class="h-6 w-6" aria-hidden="true"></svg>
+              } @else {
+                <svg lucideBrain class="h-6 w-6" aria-hidden="true"></svg>
+              }
             </span>
             <h3 class="mt-5 font-display text-h3 text-primary">{{ pillar.title }}</h3>
             <p class="mt-2.5 text-sm leading-relaxed text-ink-muted">{{ pillar.description }}</p>
@@ -416,7 +420,15 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
                   <div class="flex items-center justify-between">
                     <p class="text-xs font-medium text-ink-muted">{{ metric.label }}</p>
                     <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-50 text-accent-dark">
-                      <svg [lucideIcon]="metric.icon" class="h-4 w-4" aria-hidden="true"></svg>
+                      @if (metric.icon === 'moon') {
+                        <svg lucideMoon class="h-4 w-4" aria-hidden="true"></svg>
+                      } @else if (metric.icon === 'droplets') {
+                        <svg lucideDroplets class="h-4 w-4" aria-hidden="true"></svg>
+                      } @else if (metric.icon === 'heart') {
+                        <svg lucideHeartPulse class="h-4 w-4" aria-hidden="true"></svg>
+                      } @else {
+                        <svg lucideCircleAlert class="h-4 w-4" aria-hidden="true"></svg>
+                      }
                     </span>
                   </div>
                   <p class="mt-3 font-display text-2xl font-semibold tracking-tight text-primary">
@@ -479,7 +491,15 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
                 [class.text-primary]="insight.tone === 'navy'"
                 [class.text-amber-600]="insight.tone === 'amber'"
               >
-                <svg [lucideIcon]="insight.icon" class="h-5 w-5" aria-hidden="true"></svg>
+                @if (insight.icon === 'moon') {
+                  <svg lucideMoon class="h-5 w-5" aria-hidden="true"></svg>
+                } @else if (insight.icon === 'droplets') {
+                  <svg lucideDroplets class="h-5 w-5" aria-hidden="true"></svg>
+                } @else if (insight.icon === 'list') {
+                  <svg lucideListTodo class="h-5 w-5" aria-hidden="true"></svg>
+                } @else {
+                  <svg lucideMoveRight class="h-5 w-5" aria-hidden="true"></svg>
+                }
               </span>
               <div class="min-w-0 flex-1">
                 <div class="flex items-center justify-between gap-3">
@@ -520,7 +540,13 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
             @for (notif of notifications(); track notif.title) {
               <div class="notif-item flex items-start gap-4 rounded-2xl border border-line bg-surface p-4 shadow-soft">
                 <span class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/5 text-primary">
-                  <svg [lucideIcon]="notif.icon" class="h-5 w-5" aria-hidden="true"></svg>
+                  @if (notif.icon === 'bell') {
+                    <svg lucideBell class="h-5 w-5" aria-hidden="true"></svg>
+                  } @else if (notif.icon === 'droplets') {
+                    <svg lucideDroplets class="h-5 w-5" aria-hidden="true"></svg>
+                  } @else {
+                    <svg lucideBrain class="h-5 w-5" aria-hidden="true"></svg>
+                  }
                 </span>
                 <div class="min-w-0 flex-1">
                   <p class="text-sm font-medium leading-relaxed text-ink">{{ notif.title }}</p>
@@ -649,11 +675,19 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
     Magnetic,
     MouseGlow,
     Reveal,
-    LucideDynamicIcon,
     LucideArrowRight,
     LucideSparkles,
     LucideTrendingUp,
     LucideCheck,
+    LucideBell,
+    LucideBrain,
+    LucideCalendarDays,
+    LucideCircleAlert,
+    LucideDroplets,
+    LucideHeartPulse,
+    LucideListTodo,
+    LucideMoon,
+    LucideMoveRight,
   ],
 })
 export class HomeComponent {
@@ -762,17 +796,17 @@ export class HomeComponent {
 
   protected readonly pillars = computed<Pillar[]>(() => [
     {
-      icon: LucideCalendarDays,
+      icon: 'calendar',
       title: this.tr('public.home.pillars.planning.title'),
       description: this.tr('public.home.pillars.planning.description'),
     },
     {
-      icon: LucideHeartPulse,
+      icon: 'heart',
       title: this.tr('public.home.pillars.wellness.title'),
       description: this.tr('public.home.pillars.wellness.description'),
     },
     {
-      icon: LucideBrain,
+      icon: 'brain',
       title: this.tr('public.home.pillars.ai.title'),
       description: this.tr('public.home.pillars.ai.description'),
     },
@@ -846,28 +880,28 @@ export class HomeComponent {
       label: this.tr('public.home.wellness.sleep'),
       value: '7h20',
       progress: 82,
-      icon: LucideMoon,
+      icon: 'moon' as const,
       tone: 'navy' as const,
     },
     {
       label: this.tr('public.home.wellness.hydration'),
       value: '1,7 L',
       progress: 68,
-      icon: LucideDroplets,
+      icon: 'droplets' as const,
       tone: 'teal' as const,
     },
     {
       label: this.tr('public.home.wellness.mood'),
       value: this.tr('public.home.wellness.moodValue'),
       progress: 78,
-      icon: LucideHeartPulse,
+      icon: 'heart' as const,
       tone: 'green' as const,
     },
     {
       label: this.tr('public.home.wellness.stress'),
       value: this.tr('public.home.wellness.stressValue'),
       progress: 34,
-      icon: LucideCircleAlert,
+      icon: 'alert' as const,
       tone: 'teal' as const,
     },
   ]);
@@ -879,28 +913,28 @@ export class HomeComponent {
 
   protected readonly insights = computed<Insight[]>(() => [
     {
-      icon: LucideMoon,
+      icon: 'moon',
       label: this.tr('public.home.ai.insights.fatigue'),
       level: this.tr('public.home.ai.levels.moderate'),
       confidence: 82,
       tone: 'amber',
     },
     {
-      icon: LucideDroplets,
+      icon: 'droplets',
       label: this.tr('public.home.ai.insights.hydration'),
       level: this.tr('public.home.ai.levels.follow'),
       confidence: 74,
       tone: 'teal',
     },
     {
-      icon: LucideListTodo,
+      icon: 'list',
       label: this.tr('public.home.ai.insights.overload'),
       level: this.tr('public.home.ai.levels.high'),
       confidence: 88,
       tone: 'navy',
     },
     {
-      icon: LucideMoveRight,
+      icon: 'arrow-right',
       label: this.tr('public.home.ai.insights.sedentary'),
       level: this.tr('public.home.ai.levels.moderate'),
       confidence: 69,
@@ -917,19 +951,19 @@ export class HomeComponent {
 
   protected readonly notifications = computed<NotificationItem[]>(() => [
     {
-      icon: LucideBell,
+      icon: 'bell',
       title: this.tr('public.home.notifications.items.team'),
       time: this.tr('public.home.notifications.items.teamTime'),
       category: this.tr('public.home.notifications.items.teamCategory'),
     },
     {
-      icon: LucideDroplets,
+      icon: 'droplets',
       title: this.tr('public.home.notifications.items.water'),
       time: this.tr('public.home.notifications.items.waterTime'),
       category: this.tr('public.home.notifications.items.waterCategory'),
     },
     {
-      icon: LucideBrain,
+      icon: 'brain',
       title: this.tr('public.home.notifications.items.morning'),
       time: this.tr('public.home.notifications.items.morningTime'),
       category: this.tr('public.home.notifications.items.morningCategory'),

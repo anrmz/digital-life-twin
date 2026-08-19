@@ -43,11 +43,10 @@ export class LanguageService {
 
   private preloadOtherLanguages(active: AppLanguage): void {
     const toLoad = this.availableLanguages.filter((l) => l !== active);
-    // Use requestIdleCallback / setTimeout so we don't block first paint
-    const schedule = typeof requestIdleCallback !== 'undefined'
-      ? () => requestIdleCallback(() => toLoad.forEach((l) => this.loadLanguage(l)), { timeout: 3000 })
-      : () => setTimeout(() => toLoad.forEach((l) => this.loadLanguage(l)), 0);
-    schedule();
+    // Defer non-critical translation loading well after first paint.
+    // Using setTimeout(10s) instead of requestIdleCallback to prevent the
+    // browser from discovering EN/AR chunks during the critical request chain.
+    setTimeout(() => toLoad.forEach((l) => this.loadLanguage(l)), 10_000);
   }
 
   private loadLanguage(lang: AppLanguage): void {
