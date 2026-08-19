@@ -3,11 +3,10 @@ import { NavigationEnd, Router, RouterOutlet, type ActivatedRoute } from '@angul
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SeoService, type SeoConfig } from './core/services/seo/seo.service';
-import { CursorFollower } from './shared/components/cursor-follower/cursor-follower';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CursorFollower],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

@@ -1,8 +1,6 @@
 import { Injectable, signal, computed, type Signal } from '@angular/core';
 
 import { FR_TRANSLATIONS } from '../i18n/fr';
-import { EN_TRANSLATIONS } from '../i18n/en';
-import { AR_TRANSLATIONS } from '../i18n/ar';
 
 export type AppLanguage = 'fr' | 'en' | 'ar';
 
@@ -10,6 +8,10 @@ export type AppLanguage = 'fr' | 'en' | 'ar';
  * Central language management service.
  * Handles language selection, persistence, and translation lookup.
  * All components react via the `activeLanguage` signal.
+ *
+ * EN and AR translations are lazy-loaded — only the active language is
+ * bundled eagerly. Other languages download in the background after first
+ * paint so switching feels instant.
  */
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
@@ -18,9 +20,14 @@ export class LanguageService {
 
   private readonly translations: Record<AppLanguage, Record<string, unknown>> = {
     fr: FR_TRANSLATIONS,
-    en: EN_TRANSLATIONS,
-    ar: AR_TRANSLATIONS,
+    en: null as unknown as Record<string, unknown>,
+    ar: null as unknown as Record<string, unknown>,
   };
+
+  private readonly loadedLanguages = new Set<AppLanguage>(['fr']);
+
+  /** Bumped when lazy translations finish loading so computed signals re-evaluate. */
+  private readonly translationsReady = signal(0);
 
   /** The currently active language code (reactive). */
   readonly activeLanguage = signal<AppLanguage>('fr');
@@ -31,6 +38,33 @@ export class LanguageService {
   constructor() {
     const stored = this.readStoredLanguage();
     this.applyLanguage(stored);
+    this.preloadOtherLanguages(stored);
+  }
+
+  private preloadOtherLanguages(active: AppLanguage): void {
+    const toLoad = this.availableLanguages.filter((l) => l !== active);
+    // Use requestIdleCallback / setTimeout so we don't block first paint
+    const schedule = typeof requestIdleCallback !== 'undefined'
+      ? () => requestIdleCallback(() => toLoad.forEach((l) => this.loadLanguage(l)), { timeout: 3000 })
+      : () => setTimeout(() => toLoad.forEach((l) => this.loadLanguage(l)), 0);
+    schedule();
+  }
+
+  private loadLanguage(lang: AppLanguage): void {
+    if (this.loadedLanguages.has(lang)) return;
+    this.loadedLanguages.add(lang);
+
+    if (lang === 'en') {
+      import('../i18n/en').then((m) => {
+        this.translations.en = m.EN_TRANSLATIONS;
+        this.translationsReady.update((v) => v + 1);
+      });
+    } else {
+      import('../i18n/ar').then((m) => {
+        this.translations.ar = m.AR_TRANSLATIONS;
+        this.translationsReady.update((v) => v + 1);
+      });
+    }
   }
 
   /** All available languages with their display names and flags. */
@@ -69,6 +103,9 @@ export class LanguageService {
     if (value === this.activeLanguage()) {
       return;
     }
+    if (!this.loadedLanguages.has(value)) {
+      this.loadLanguage(value);
+    }
     this.applyLanguage(value);
   }
 
@@ -83,6 +120,9 @@ export class LanguageService {
 
   /** Translate a key using hierarchical dot notation. */
   translate<T = string>(key: string, vars?: Record<string, string>): T {
+    // Subscribe to translationsReady so computed() re-evaluates when lazy chunks load
+    void this.translationsReady();
+
     const lang = this.activeLanguage();
     let result: unknown = this.translations[lang];
 
