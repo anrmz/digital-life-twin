@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, type Signal } from '@angular/core';
 
-import { FR_TRANSLATIONS } from '../i18n/fr';
+import { FR_PUBLIC } from '../i18n/fr-public';
 
 export type AppLanguage = 'fr' | 'en' | 'ar';
 
@@ -9,9 +9,9 @@ export type AppLanguage = 'fr' | 'en' | 'ar';
  * Handles language selection, persistence, and translation lookup.
  * All components react via the `activeLanguage` signal.
  *
- * EN and AR translations are lazy-loaded — only the active language is
- * bundled eagerly. Other languages download in the background after first
- * paint so switching feels instant.
+ * FR translations are split: the public-facing subset (FR_PUBLIC) is
+ * bundled eagerly for fast first paint on the homepage. The full FR file
+ * and EN/AR translations are lazy-loaded after first paint.
  */
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
@@ -19,12 +19,13 @@ export class LanguageService {
   private readonly availableLanguages = ['fr', 'en', 'ar'] as const;
 
   private readonly translations: Record<AppLanguage, Record<string, unknown>> = {
-    fr: FR_TRANSLATIONS,
+    fr: FR_PUBLIC,
     en: null as unknown as Record<string, unknown>,
     ar: null as unknown as Record<string, unknown>,
   };
 
   private readonly loadedLanguages = new Set<AppLanguage>(['fr']);
+  private frFullLoaded = false;
 
   /** Bumped when lazy translations finish loading so computed signals re-evaluate. */
   private readonly translationsReady = signal(0);
@@ -45,8 +46,23 @@ export class LanguageService {
     const toLoad = this.availableLanguages.filter((l) => l !== active);
     // Defer non-critical translation loading well after first paint.
     // Using setTimeout(10s) instead of requestIdleCallback to prevent the
-    // browser from discovering EN/AR chunks during the critical request chain.
-    setTimeout(() => toLoad.forEach((l) => this.loadLanguage(l)), 10_000);
+    // browser from discovering lazy chunks during the critical request chain.
+    setTimeout(() => {
+      toLoad.forEach((l) => this.loadLanguage(l));
+      // Also load the full FR translations in background so authenticated
+      // features have all keys available when the user navigates there.
+      this.loadFullFrTranslations();
+    }, 10_000);
+  }
+
+  /** Replace the public-only FR subset with the complete FR translations. */
+  private loadFullFrTranslations(): void {
+    if (this.frFullLoaded) return;
+    this.frFullLoaded = true;
+    import('../i18n/fr').then((m) => {
+      this.translations.fr = m.FR_TRANSLATIONS;
+      this.translationsReady.update((v) => v + 1);
+    });
   }
 
   private loadLanguage(lang: AppLanguage): void {

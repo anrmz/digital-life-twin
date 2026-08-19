@@ -10,14 +10,12 @@ import {
   LucideShieldCheck,
   LucideSparkles,
   LucideTarget,
-  LucideDynamicIcon,
-  type LucideIcon,
 } from '@lucide/angular';
 import { Reveal } from '../../../../shared/directives/reveal/reveal';
 import { LanguageService } from '../../../../core/services/language.service';
 
 interface Value {
-  icon: LucideIcon;
+  icon: string;
   title: string;
   description: string;
 }
@@ -101,7 +99,17 @@ interface Value {
           @for (value of values(); track value.title) {
             <article class="value-card rounded-2xl border border-line bg-surface p-7 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover">
               <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-50 text-accent-dark">
-                <svg [lucideIcon]="value.icon" class="h-6 w-6" aria-hidden="true"></svg>
+                @switch (value.icon) {
+                  @case ('eye') {
+                    <svg lucideEye class="h-6 w-6" aria-hidden="true"></svg>
+                  }
+                  @case ('heartPulse') {
+                    <svg lucideHeartPulse class="h-6 w-6" aria-hidden="true"></svg>
+                  }
+                  @case ('lock') {
+                    <svg lucideLock class="h-6 w-6" aria-hidden="true"></svg>
+                  }
+                }
               </span>
               <h3 class="mt-5 font-display text-h3 text-primary">{{ value.title }}</h3>
               <p class="mt-2.5 text-sm leading-relaxed text-ink-muted">{{ value.description }}</p>
@@ -172,10 +180,12 @@ interface Value {
   imports: [
     RouterLink,
     Reveal,
-    LucideDynamicIcon,
     LucideArrowRight,
     LucideCompass,
+    LucideEye,
+    LucideHeartPulse,
     LucideLayers,
+    LucideLock,
     LucideShieldCheck,
     LucideSparkles,
     LucideTarget,
@@ -207,17 +217,17 @@ export class AboutComponent {
 
   protected readonly values = computed<Value[]>(() => [
     {
-      icon: LucideEye,
+      icon: 'eye',
       title: this.tr('public.about.vision.values.clarity.title'),
       description: this.tr('public.about.vision.values.clarity.description'),
     },
     {
-      icon: LucideHeartPulse,
+      icon: 'heartPulse',
       title: this.tr('public.about.vision.values.balance.title'),
       description: this.tr('public.about.vision.values.balance.description'),
     },
     {
-      icon: LucideLock,
+      icon: 'lock',
       title: this.tr('public.about.vision.values.trust.title'),
       description: this.tr('public.about.vision.values.trust.description'),
     },

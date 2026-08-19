@@ -12,15 +12,13 @@ import {
   LucideSparkles,
   LucideTrendingUp,
   LucideUtensils,
-  LucideDynamicIcon,
-  type LucideIcon,
 } from '@lucide/angular';
 import { Reveal } from '../../../../shared/directives/reveal/reveal';
 import { LanguageService } from '../../../../core/services/language.service';
 
 interface Feature {
   id: string;
-  icon: LucideIcon;
+  icon: string;
   eyebrow: string;
   title: string;
   description: string;
@@ -74,7 +72,29 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
         >
           <div appReveal [class.lg:order-2]="index % 2 === 1">
             <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-white shadow-sm">
-              <svg [lucideIcon]="feature.icon" class="h-6 w-6" aria-hidden="true"></svg>
+              @switch (feature.icon) {
+                @case ('calendarDays') {
+                  <svg lucideCalendarDays class="h-6 w-6" aria-hidden="true"></svg>
+                }
+                @case ('layoutDashboard') {
+                  <svg lucideLayoutDashboard class="h-6 w-6" aria-hidden="true"></svg>
+                }
+                @case ('heartPulse') {
+                  <svg lucideHeartPulse class="h-6 w-6" aria-hidden="true"></svg>
+                }
+                @case ('utensils') {
+                  <svg lucideUtensils class="h-6 w-6" aria-hidden="true"></svg>
+                }
+                @case ('dumbbell') {
+                  <svg lucideDumbbell class="h-6 w-6" aria-hidden="true"></svg>
+                }
+                @case ('bell') {
+                  <svg lucideBell class="h-6 w-6" aria-hidden="true"></svg>
+                }
+                @case ('brain') {
+                  <svg lucideBrain class="h-6 w-6" aria-hidden="true"></svg>
+                }
+              }
             </span>
             <p class="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-accent-dark">
               {{ feature.eyebrow }}
@@ -100,7 +120,29 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
             <div class="relative rounded-2xl border border-line bg-surface p-6 shadow-card sm:p-8">
               <div class="flex items-center justify-between">
                 <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/5 text-primary">
-                  <svg [lucideIcon]="feature.icon" class="h-5 w-5" aria-hidden="true"></svg>
+                  @switch (feature.icon) {
+                    @case ('calendarDays') {
+                      <svg lucideCalendarDays class="h-5 w-5" aria-hidden="true"></svg>
+                    }
+                    @case ('layoutDashboard') {
+                      <svg lucideLayoutDashboard class="h-5 w-5" aria-hidden="true"></svg>
+                    }
+                    @case ('heartPulse') {
+                      <svg lucideHeartPulse class="h-5 w-5" aria-hidden="true"></svg>
+                    }
+                    @case ('utensils') {
+                      <svg lucideUtensils class="h-5 w-5" aria-hidden="true"></svg>
+                    }
+                    @case ('dumbbell') {
+                      <svg lucideDumbbell class="h-5 w-5" aria-hidden="true"></svg>
+                    }
+                    @case ('bell') {
+                      <svg lucideBell class="h-5 w-5" aria-hidden="true"></svg>
+                    }
+                    @case ('brain') {
+                      <svg lucideBrain class="h-5 w-5" aria-hidden="true"></svg>
+                    }
+                  }
                 </span>
                 <span class="inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-accent-dark">
                   <svg lucideTrendingUp class="h-3.5 w-3.5" aria-hidden="true"></svg>
@@ -156,11 +198,17 @@ const WEEKLY_BARS = [45, 68, 58, 82, 64, 90, 74];
   imports: [
     RouterLink,
     Reveal,
-    LucideDynamicIcon,
     LucideArrowRight,
+    LucideBell,
+    LucideBrain,
+    LucideCalendarDays,
     LucideCheck,
+    LucideDumbbell,
+    LucideHeartPulse,
+    LucideLayoutDashboard,
     LucideSparkles,
     LucideTrendingUp,
+    LucideUtensils,
   ],
 })
 export class FeaturesComponent {
@@ -179,7 +227,7 @@ export class FeaturesComponent {
   protected readonly features = computed<Feature[]>(() => [
     {
       id: 'planning',
-      icon: LucideCalendarDays,
+      icon: 'calendarDays',
       eyebrow: this.tr('public.features.items.planning.eyebrow'),
       title: this.tr('public.features.items.planning.title'),
       description: this.tr('public.features.items.planning.description'),
@@ -187,7 +235,7 @@ export class FeaturesComponent {
     },
     {
       id: 'dashboard',
-      icon: LucideLayoutDashboard,
+      icon: 'layoutDashboard',
       eyebrow: this.tr('public.features.items.dashboard.eyebrow'),
       title: this.tr('public.features.items.dashboard.title'),
       description: this.tr('public.features.items.dashboard.description'),
@@ -195,7 +243,7 @@ export class FeaturesComponent {
     },
     {
       id: 'wellness',
-      icon: LucideHeartPulse,
+      icon: 'heartPulse',
       eyebrow: this.tr('public.features.items.wellness.eyebrow'),
       title: this.tr('public.features.items.wellness.title'),
       description: this.tr('public.features.items.wellness.description'),
@@ -203,7 +251,7 @@ export class FeaturesComponent {
     },
     {
       id: 'nutrition',
-      icon: LucideUtensils,
+      icon: 'utensils',
       eyebrow: this.tr('public.features.items.nutrition.eyebrow'),
       title: this.tr('public.features.items.nutrition.title'),
       description: this.tr('public.features.items.nutrition.description'),
@@ -211,7 +259,7 @@ export class FeaturesComponent {
     },
     {
       id: 'sport',
-      icon: LucideDumbbell,
+      icon: 'dumbbell',
       eyebrow: this.tr('public.features.items.sport.eyebrow'),
       title: this.tr('public.features.items.sport.title'),
       description: this.tr('public.features.items.sport.description'),
@@ -219,7 +267,7 @@ export class FeaturesComponent {
     },
     {
       id: 'notifications',
-      icon: LucideBell,
+      icon: 'bell',
       eyebrow: this.tr('public.features.items.notifications.eyebrow'),
       title: this.tr('public.features.items.notifications.title'),
       description: this.tr('public.features.items.notifications.description'),
@@ -227,7 +275,7 @@ export class FeaturesComponent {
     },
     {
       id: 'ia',
-      icon: LucideBrain,
+      icon: 'brain',
       eyebrow: this.tr('public.features.items.ai.eyebrow'),
       title: this.tr('public.features.items.ai.title'),
       description: this.tr('public.features.items.ai.description'),

@@ -3,9 +3,9 @@ import { PreloadingStrategy, Route } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
 /**
- * Preload all lazy routes after the browser is idle.
- * This makes subsequent navigations instant because chunks
- * are already downloaded in the background.
+ * Preload selected lazy routes after the browser is idle.
+ * Only routes without `data.preload === false` are preloaded.
+ * Uses a long delay to avoid competing with initial page load.
  */
 @Injectable({ providedIn: 'root' })
 export class IdlePreloadStrategy implements PreloadingStrategy {
@@ -14,15 +14,14 @@ export class IdlePreloadStrategy implements PreloadingStrategy {
       return of(null);
     }
 
+    const doLoad = () => load().subscribe();
+
     if (typeof requestIdleCallback !== 'undefined') {
-      requestIdleCallback(
-        () => {
-          load().subscribe();
-        },
-        { timeout: 15000 },
-      );
+      setTimeout(() => {
+        requestIdleCallback(doLoad, { timeout: 30000 });
+      }, 5000);
     } else {
-      setTimeout(() => load().subscribe(), 2000);
+      setTimeout(doLoad, 5000);
     }
 
     return of(null);

@@ -11,21 +11,21 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./features/auth/login/login').then((m) => m.LoginComponent),
-    data: seo({
+    data: { ...seo({
       title: 'Connexion — Digital Life Twin',
       description:
         'Connectez-vous à votre espace Digital Life Twin pour retrouver votre planning, votre bien-être et vos insights personnalisés.',
-    }),
+    }), preload: false },
   },
   {
     path: 'register',
     loadComponent: () =>
       import('./features/auth/register/register').then((m) => m.RegisterComponent),
-    data: seo({
+    data: { ...seo({
       title: 'Créer un compte — Digital Life Twin',
       description:
         'Créez votre compte gratuit et centralisez votre planning, vos habitudes et votre bien-être au même endroit.',
-    }),
+    }), preload: false },
   },
   {
     path: '',
@@ -67,7 +67,7 @@ export const routes: Routes = [
         data: seo({
           title: 'Contact — Digital Life Twin',
           description:
-            'Une question, une idée, un retour ? Contactez l’équipe Digital Life Twin. Temps de réponse moyen : moins de 24 h.',
+            'Une question, une idée, un retour ? Contactez l\'équipe Digital Life Twin. Temps de réponse moyen : moins de 24 h.',
         }),
       },
     ],
@@ -77,76 +77,88 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./layout/components/app-shell/app-shell').then((m) => m.AppShell),
     canActivate: [authGuard],
-    data: seo({
+    data: { ...seo({
       title: 'Digital Life Twin',
       robots: 'noindex, nofollow',
-    }),
+    }), preload: false },
     children: [
       {
         path: 'dashboard',
         loadComponent: () =>
           import('./features/dashboard/dashboard').then((m) => m.DashboardComponent),
+        data: { preload: false },
       },
       {
         path: 'planning',
         loadComponent: () =>
           import('./features/planning/planning').then((m) => m.PlanningComponent),
+        data: { preload: false },
       },
       {
         path: 'tasks',
         loadComponent: () => import('./features/tasks/tasks').then((m) => m.TasksComponent),
+        data: { preload: false },
       },
       {
         path: 'calendar',
         loadComponent: () =>
           import('./features/calendar/calendar').then((m) => m.CalendarComponent),
+        data: { preload: false },
       },
       {
         path: 'wellness',
         loadComponent: () =>
           import('./features/wellness/wellness').then((m) => m.WellnessComponent),
+        data: { preload: false },
       },
       {
         path: 'nutrition',
         loadComponent: () =>
           import('./features/nutrition/nutrition').then((m) => m.NutritionComponent),
+        data: { preload: false },
       },
       {
         path: 'sport',
         loadComponent: () => import('./features/sport/sport').then((m) => m.SportComponent),
+        data: { preload: false },
       },
       {
         path: 'notifications',
         loadComponent: () =>
           import('./features/notifications/notifications').then((m) => m.NotificationsComponent),
+        data: { preload: false },
       },
       {
         path: 'ai',
         loadComponent: () => import('./features/ai/ai').then((m) => m.AiComponent),
+        data: { preload: false },
       },
       {
         path: 'assistant',
         loadComponent: () =>
           import('./features/assistant/assistant').then((m) => m.AssistantComponent),
+        data: { preload: false },
       },
       {
         path: 'profile',
         loadComponent: () => import('./features/profile/profile').then((m) => m.ProfileComponent),
+        data: { preload: false },
       },
       {
         path: 'settings',
         loadComponent: () =>
           import('./features/settings/settings').then((m) => m.SettingsComponent),
-        data: seo({
+        data: { ...seo({
           title: 'Paramètres — Digital Life Twin',
           description:
             'Personnalisez votre compte, votre expérience et vos préférences sur Digital Life Twin.',
-        }),
+        }), preload: false },
       },
       {
         path: 'admin',
         loadComponent: () => import('./features/admin/admin').then((m) => m.AdminComponent),
         canActivate: [adminGuard],
+        data: { preload: false },
       },
     ],
   },
