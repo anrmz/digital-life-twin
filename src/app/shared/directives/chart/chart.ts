@@ -7,9 +7,18 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { Chart, type ChartConfiguration } from 'chart.js/auto';
+import type { ChartConfiguration } from 'chart.js/auto';
 
 const THEME_ATTRIBUTES = ['data-theme', 'data-contrast', 'data-accent'];
+
+let chartJsPromise: Promise<typeof import('chart.js/auto')> | null = null;
+
+function loadChartJs(): Promise<typeof import('chart.js/auto')> {
+  if (!chartJsPromise) {
+    chartJsPromise = import('chart.js/auto');
+  }
+  return chartJsPromise;
+}
 
 @Directive({
   selector: 'canvas[appChart]',
@@ -18,7 +27,7 @@ export class ChartDirective implements AfterViewInit, OnDestroy {
   readonly config = input.required<ChartConfiguration>();
 
   private readonly host = inject<ElementRef<HTMLCanvasElement>>(ElementRef);
-  private chart: Chart | null = null;
+  private chart: InstanceType<typeof import('chart.js/auto')['Chart']> | null = null;
   private themeObserver: MutationObserver | null = null;
 
   constructor() {
@@ -37,19 +46,21 @@ export class ChartDirective implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.chart = new Chart(this.host.nativeElement, this.resolveTokens(this.config()));
+    loadChartJs().then(({ Chart }) => {
+      this.chart = new Chart(this.host.nativeElement, this.resolveTokens(this.config()));
 
-    this.themeObserver = new MutationObserver(() => {
-      const chart = this.chart;
-      if (!chart) {
-        return;
-      }
-      chart.options = this.resolveTokens(this.config()).options ?? chart.options;
-      chart.update();
-    });
-    this.themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: THEME_ATTRIBUTES,
+      this.themeObserver = new MutationObserver(() => {
+        const chart = this.chart;
+        if (!chart) {
+          return;
+        }
+        chart.options = this.resolveTokens(this.config()).options ?? chart.options;
+        chart.update();
+      });
+      this.themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: THEME_ATTRIBUTES,
+      });
     });
   }
 

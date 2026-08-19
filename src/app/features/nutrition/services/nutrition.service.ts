@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Chart, type ChartConfiguration, type TooltipItem } from 'chart.js/auto';
+import type { ChartConfiguration, TooltipItem } from 'chart.js/auto';
 import { LanguageService } from '../../../core/services/language.service';
 import {
   DAILY_CALORIE_GOAL,
