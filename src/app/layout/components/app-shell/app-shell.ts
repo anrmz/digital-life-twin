@@ -2,7 +2,6 @@ import { Component, DestroyRef, ElementRef, inject, signal, viewChild } from '@a
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import gsap from 'gsap';
 import { Header } from '../app-header/app-header';
 import { Sidebar } from '../app-sidebar/app-sidebar';
 import { SidebarContent } from '../sidebar-content/sidebar-content';
@@ -52,10 +51,12 @@ export class AppShell {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
-    gsap.fromTo(
-      el,
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', clearProps: 'transform' },
-    );
+    import('gsap').then(({ default: gsap }) => {
+      gsap.fromTo(
+        el,
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', clearProps: 'transform' },
+      );
+    });
   }
 }

@@ -340,7 +340,6 @@ export class Header {
   });
 
   constructor() {
-    // Scroll active result into view
     effect(() => {
       const idx = this.searchService.activeIndex();
       const flat = this.searchService.flatResults();
@@ -353,7 +352,6 @@ export class Header {
 
   @HostListener('window:keydown', ['$event'])
   onGlobalKeydown(event: KeyboardEvent): void {
-    // Cmd/Ctrl + K → open search
     if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
       event.preventDefault();
       this.openSearch();
@@ -375,7 +373,6 @@ export class Header {
   }
 
   onSearchBlur(): void {
-    // Delay to allow click on results
     setTimeout(() => this.searchFocused.set(false), 150);
   }
 
@@ -418,7 +415,6 @@ export class Header {
   openSearch(): void {
     this.mobileSearchOpen.set(true);
     this.searchService.open();
-    // Focus mobile input after render
     setTimeout(() => {
       this.mobileSearchInput()?.nativeElement.focus();
     }, 50);

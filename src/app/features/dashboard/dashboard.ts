@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, ElementRef, inject, viewChild, computed } from '@angular/core';
-import gsap from 'gsap';
 import { type ChartConfiguration } from 'chart.js/auto';
 import {
   LucideActivity,
@@ -864,61 +863,63 @@ export class DashboardComponent implements AfterViewInit {
       return;
     }
 
-    gsap.fromTo(
-      root.querySelectorAll<HTMLElement>('[data-reveal]'),
-      { opacity: 0, y: 16 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.08,
-        ease: 'power2.out',
-        clearProps: 'transform',
-      },
-    );
+    import('gsap').then(({ default: gsap }) => {
+      gsap.fromTo(
+        root.querySelectorAll<HTMLElement>('[data-reveal]'),
+        { opacity: 0, y: 16 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.08,
+          ease: 'power2.out',
+          clearProps: 'transform',
+        },
+      );
 
-    gsap.delayedCall(0.2, () => {
-      root.querySelectorAll<HTMLElement>('[data-fill]').forEach((el) => {
-        const target = Number(el.dataset['fill'] ?? 0) / 100;
-        gsap.fromTo(
-          el,
-          { scaleX: 0 },
-          { scaleX: target, duration: 1, ease: 'power3.out', transformOrigin: 'left center' },
-        );
-      });
-
-      if (count) {
-        const proxy = { value: 0 };
-        gsap.to(proxy, {
-          value: 78,
-          duration: 1.4,
-          ease: 'power3.out',
-          onUpdate: () => {
-            count.textContent = String(Math.round(proxy.value));
-          },
+      gsap.delayedCall(0.2, () => {
+        root.querySelectorAll<HTMLElement>('[data-fill]').forEach((el) => {
+          const target = Number(el.dataset['fill'] ?? 0) / 100;
+          gsap.fromTo(
+            el,
+            { scaleX: 0 },
+            { scaleX: target, duration: 1, ease: 'power3.out', transformOrigin: 'left center' },
+          );
         });
-      }
 
-      const ring = this.freeRing()?.nativeElement;
-      if (ring) {
-        gsap.fromTo(
-          ring,
-          { strokeDashoffset: FREE_CIRCUMFERENCE },
-          {
-            strokeDashoffset: FREE_CIRCUMFERENCE * (1 - FREE_RATIO),
+        if (count) {
+          const proxy = { value: 0 };
+          gsap.to(proxy, {
+            value: 78,
             duration: 1.4,
             ease: 'power3.out',
-          },
-        );
-      }
-    });
+            onUpdate: () => {
+              count.textContent = String(Math.round(proxy.value));
+            },
+          });
+        }
 
-    gsap.delayedCall(0.4, () => {
-      gsap.fromTo(
-        root.querySelectorAll<HTMLElement>('.timeline-item'),
-        { opacity: 0, x: 8 },
-        { opacity: 1, x: 0, stagger: 0.06, duration: 0.4, ease: 'power2.out' },
-      );
+        const ring = this.freeRing()?.nativeElement;
+        if (ring) {
+          gsap.fromTo(
+            ring,
+            { strokeDashoffset: FREE_CIRCUMFERENCE },
+            {
+              strokeDashoffset: FREE_CIRCUMFERENCE * (1 - FREE_RATIO),
+              duration: 1.4,
+              ease: 'power3.out',
+            },
+          );
+        }
+      });
+
+      gsap.delayedCall(0.4, () => {
+        gsap.fromTo(
+          root.querySelectorAll<HTMLElement>('.timeline-item'),
+          { opacity: 0, x: 8 },
+          { opacity: 1, x: 0, stagger: 0.06, duration: 0.4, ease: 'power2.out' },
+        );
+      });
     });
   }
 }
